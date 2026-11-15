@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ÖMER AI</title>
+
+<style>
+*{box-sizing:border-box}
+:root{--bg:#101329;--panel:#191e38;--text:#fff;--muted:#a7abc5;--accent:#7568ff;--line:#303653}
+body.light{--bg:#f1f2fa;--panel:#fff;--text:#17182a;--muted:#666b82;--line:#dddfea}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{height:65px;padding:12px 18px;display:flex;align-items:center;gap:12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.logo{background:var(--accent);border-radius:12px;padding:9px;font-size:22px}
+header h2{margin:0;font-size:19px}
+header small{color:var(--muted)}
+main{max-width:850px;margin:auto;padding:16px;height:calc(100dvh - 65px);display:flex;flex-direction:column}
+#messages{flex:1;overflow-y:auto;padding:8px 0}
+.msg{padding:13px 15px;margin:12px 0;border-radius:15px;max-width:88%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.user{background:var(--accent);margin-left:auto}
+.bot{background:var(--panel);border:1px solid var(--line)}
+.msg img{max-width:100%;border-radius:10px;margin-top:8px}
+#status{color:var(--muted);font-size:12px;padding:5px}
+.composer{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px}
+textarea{width:100%;resize:none;background:transparent;color:var(--text);border:0;outline:0;font:16px Arial;min-height:48px;padding:8px}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,.filebtn,select{background:var(--accent);color:white;border:0;border-radius:10px;padding:10px 13px;font-size:14px;cursor:pointer}
+button.secondary,.filebtn.secondary{background:var(--line);color:var(--text)}
+select{background:var(--line);color:var(--text)}
+#preview{max-width:100px;max-height:100px;display:none;margin:8px;border-radius:8px}
+.settings{background:var(--panel);padding:13px;border-radius:12px;margin-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.settings label{color:var(--muted);font-size:14px}
+</style>
+</head>
+
+<body>
+<header>
+<div class="logo">🤖</div>
+<div>
+<h2>ÖMER AI</h2>
+<small>Akıllı sohbet asistanın</small>
+</div>
+</header>
+
+<main>
+<div class="settings">
+<label>Dil:</label>
+<select id="language" onchange="dilKaydet()">
+<option value="tr-TR">🇹🇷 Türkçe</option>
+<option value="de-DE">🇩🇪 Almanca</option>
+<option value="en-US">🇬🇧 İngilizce</option>
+<option value="th-TH">🇹🇭 Tayca</option>
+<option value="he-IL">🇮🇱 İbranice</option>
+<option value="hi-IN">🇮🇳 Hintçe</option>
+<option value="ja-JP">🇯🇵 Japonca</option>
+<option value="zh-CN">🇨🇳 Çince</option>
+<option value="ko-KR">🇰🇷 Korece</option>
+<option value="pt-PT">🇵🇹 Portekizce</option>
+<option value="es-ES">🇪🇸 İspanyolca</option>
+<option value="ru-RU">🇷🇺 Rusça</option>
+<option value="fr-FR">🇫🇷 Fransızca</option>
+<option value="it-IT">🇮🇹 İtalyanca</option>
+<option value="ar-SA">🇸🇦 Arapça</option>
+</select>
+<label><input type="checkbox" id="voiceAnswer" checked> Sesli cevap</label>
+<button class="secondary" onclick="temaDegistir()">🌗 Tema</button>
+<button class="secondary" onclick="yeniSohbet()">＋ Yeni sohbet</button>
+</div>
+
+<div id="messages">
+<div class="msg bot">Merhaba! Ben ÖMER AI. Sana nasıl yardımcı olabilirim? 🚀</div>
+</div>
+
+<div id="status"></div>
+
+<div class="composer">
+<textarea id="message" placeholder="ÖMER AI'ye bir şey sor..." onkeydown="enterGonder(event)"></textarea>
+<img id="preview">
+<div class="actions">
+<button onclick="gonder()">Gönder ➤</button>
+<button class="secondary" onclick="dinle()">🎤</button>
+<label class="filebtn secondary">📎 Görsel
+<input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp" hidden onchange="gorselSec(event)">
+</label>
+<button class="secondary" onclick="konusmayiDurdur()">🔇</button>
+</div>
+</div>
+</main>
+
+<script>
+const API_URL="https://omer-ai-server.onrender.com";
+const diller={
+"tr-TR":"Turkish","de-DE":"German","en-US":"English",
+"th-TH":"Thai","he-IL":"Hebrew","hi-IN":"Hindi",
+"ja-JP":"Japanese","zh-CN":"Chinese","ko-KR":"Korean",
+"pt-PT":"Portuguese","es-ES":"Spanish","ru-RU":"Russian",
+"fr-FR":"French","it-IT":"Italian","ar-SA":"Arabic"
+};
+
+let seciliGorsel=null;
+
+function dilKaydet(){
+localStorage.setItem("omerDil",document.getElementById("language").value);
+}
+
+document.getElementById("language").value=localStorage.getItem("omerDil")||"tr-TR";
+
+function mesajEkle(metin,tip,gorsel){
+const div=document.createElement("div");
+div.className="msg "+tip;
+div.textContent=metin;
+if(gorsel){
+const img=document.createElement("img");
+img.src=gorsel;
+div.appendChild(img);
+}
+document.getElementById("messages").appendChild(div);
+div.scrollIntoView({behavior:"smooth"});
+return div;
+}
+
+function enterGonder(e){
+if(e.key==="Enter"&&!e.shiftKey){
+e.preventDefault();
+gonder();
+}
+}
+
+async function gonder(){
+const alan=document.getElementById("message");
+const mesaj=alan.value.trim();
+if(!mesaj&&!seciliGorsel)return;
+
+mesajEkle(mesaj||"Bu görseli incele.", "user",seciliGorsel?.data);
+alan.value="";
+
+const gorsel=seciliGorsel;
+seciliGorsel=null;
+document.getElementById("preview").style.display="none";
+document.getElementById("imageInput").value="";
+
+const dil=document.getElementById("language").value;
+const status=document.getElementById("status");
+status.textContent="ÖMER AI düşünüyor...";
+
+try{
+const response=await fetch(API_URL+"/api/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+mesaj:mesaj,
+dil:dil,
+dilAdi:diller[dil],
+imageBase64:gorsel?.base64||null,
+imageMimeType:gorsel?.mimeType||null
+})
+});
+
+const data=await response.json();
+if(!response.ok)throw new Error(data.error||"Sunucu hatası");
+
+const cevap=data.cevap||data.text||data.response||"Cevap alınamadı.";
+mesajEkle(cevap,"bot");
+
+if(document.getElementById("voiceAnswer").checked){
+seslendir(cevap);
+}
+}catch(error){
+mesajEkle("Hata: "+error.message,"bot");
+}
+status.textContent="";
+}
+
+function gorselSec(event){
+const file=event.target.files[0];
+if(!file)return;
+if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+alert("Lütfen JPG, PNG veya WEBP görsel seç.");
+return;
+}
+const reader=new FileReader();
+reader.onload=()=>{
+const data=reader.result;
+seciliGorsel={
+data:data,
+base64:data.split(",")[1],
+mimeType:file.type
+};
+const preview=document.getElementById("preview");
+preview.src=data;
+preview.style.display="block";
+};
+reader.readAsDataURL(file);
+}
+
+function seslendir(metin){
+if(!("speechSynthesis" in window))return;
+speechSynthesis.cancel();
+
+const dil=document.getElementById("language").value;
+const ses=new SpeechSynthesisUtterance(metin);
+ses.lang=dil;
+ses.rate=1;
+ses.pitch=1;
+
+function sesSec(){
+const voices=speechSynthesis.getVoices();
+const uygun=voices.find(v=>v.lang.toLowerCase()===dil.toLowerCase())
+||voices.find(v=>v.lang.toLowerCase().startsWith(dil.split("-")[0].toLowerCase()));
+if(uygun)ses.voice=uygun;
+speechSynthesis.speak(ses);
+}
+if(speechSynthesis.getVoices().length){
+sesSec();
+}else{
+speechSynthesis.onvoiceschanged=()=>{
+speechSynthesis.onvoiceschanged=null;
+sesSec();
+};
+setTimeout(()=>{
+if(!speechSynthesis.speaking)speechSynthesis.speak(ses);
+},1000);
+}
+}
+
+function dinle(){
+const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!Recognition){
+alert("Tarayıcın sesli yazmayı desteklemiyor.");
+return;
+}
+const rec=new Recognition();
+rec.lang=document.getElementById("language").value;
+rec.interimResults=false;
+rec.onstart=()=>document.getElementById("status").textContent="Dinliyorum...";
+rec.onresult=(e)=>{
+document.getElementById("message").value=e.results[0][0].transcript;
+document.getElementById("status").textContent="";
+};
+rec.onerror=()=>document.getElementById("status").textContent="Mikrofon kullanılamadı.";
+rec.onend=()=>document.getElementById("status").textContent="";
+rec.start();
+}
+
+function konusmayiDurdur(){
+if("speechSynthesis" in window)speechSynthesis.cancel();
+}
+
+function temaDegistir(){
+document.body.classList.toggle("light");
+localStorage.setItem("omerTema",document.body.classList.contains("light")?"light":"dark");
+}
+
+function yeniSohbet(){
+document.getElementById("messages").innerHTML='<div class="msg bot">Yeni sohbet başladı! 🚀</div>';
+konusmayiDurdur();
+}
+
+if(localStorage.getItem("omerTema")==="light"){
+document.body.classList.add("light");
+}
+</script>
+</body>
+  </html>
+  
