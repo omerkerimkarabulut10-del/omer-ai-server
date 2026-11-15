@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ÖMER AI</title>
+
 <style>
 *{box-sizing:border-box}
 :root{--bg:#101329;--panel:#191e38;--text:#fff;--muted:#a7abc5;--accent:#7568ff;--line:#303653}
@@ -36,6 +38,11 @@ button.secondary,.filebtn.secondary,select{background:var(--line);color:var(--te
 textarea{width:100%;resize:none;background:transparent;color:var(--text);border:0;outline:0;font:16px Arial;min-height:48px;padding:8px}
 .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 #preview{max-width:100px;max-height:100px;display:none;margin:8px;border-radius:8px}
+.typing{display:flex;gap:5px;align-items:center;padding:8px}
+.typing span{width:8px;height:8px;background:var(--muted);border-radius:50%;animation:updown 1s infinite ease-in-out}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes updown{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-7px);opacity:1}}
 @media(max-width:650px){
 .layout{height:calc(100dvh - 65px)}
 .sidebar{width:125px;padding:8px}
@@ -48,6 +55,7 @@ main{padding:9px}
 }
 </style>
 </head>
+
 <body>
 <header>
 <div class="logo">🤖</div>
@@ -84,6 +92,15 @@ main{padding:9px}
 <option value="it-IT">🇮🇹 İtalyanca</option>
 <option value="ar-SA">🇸🇦 Arapça</option>
 </select>
+
+<label>Kişilik:</label>
+<select id="personality" onchange="kisilikKaydet()">
+<option value="arkadas">😎 Arkadaş canlısı</option>
+<option value="komik">😂 Komik</option>
+<option value="ogretmen">🎓 Öğretmen</option>
+<option value="ciddi">🧠 Ciddi</option>
+</select>
+
 <label><input type="checkbox" id="voiceAnswer" checked> Sesli cevap</label>
 <button class="secondary" onclick="temaDegistir()">🌗 Tema</button>
 </div>
@@ -125,7 +142,7 @@ function kaydet(){
 try{
 localStorage.setItem("omerSohbetler",JSON.stringify(sohbetler));
 }catch(e){
-alert("Sohbet geçmişi kaydedilemedi. Tarayıcı hafızası dolmuş olabilir.");
+alert("Sohbet geçmişi kaydedilemedi.");
 }
 }
 
@@ -165,7 +182,6 @@ aktifSohbet=sohbet.id;
 kaydet();
 gecmisiGoster();
 mesajlariGoster();
-return sohbet;
 }
 
 function aktifBul(){
@@ -187,14 +203,10 @@ if(!confirm('"'+sohbet.title+'" sohbeti silinsin mi?'))return;
 sohbetler=sohbetler.filter(s=>s.id!==id);
 
 if(aktifSohbet===id){
-aktifSohbet=null;
-if(sohbetler.length){
-aktifSohbet=sohbetler[sohbetler.length-1].id;
-}else{
-sohbetOlustur();
-return;
+aktifSohbet=sohbetler.length?sohbetler[sohbetler.length-1].id:null;
 }
-}
+if(!aktifSohbet)sohbetOlustur();
+
 kaydet();
 gecmisiGoster();
 mesajlariGoster();
@@ -241,7 +253,10 @@ div.scrollIntoView({behavior:"smooth"});
 
 if(kaydetMesaj){
 let sohbet=aktifBul();
-if(!sohbet)sohbet=sohbetOlustur();
+if(!sohbet){
+sohbetOlustur();
+sohbet=aktifBul();
+}
 
 sohbet.messages.push({text:metin,role:tip});
 
@@ -254,8 +269,26 @@ gecmisiGoster();
 return div;
 }
 
+function yaziyorGoster(){
+const div=document.createElement("div");
+div.className="msg bot";
+div.id="typingIndicator";
+div.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+document.getElementById("messages").appendChild(div);
+div.scrollIntoView({behavior:"smooth"});
+}
+
+function yaziyorSil(){
+const div=document.getElementById("typingIndicator");
+if(div)div.remove();
+}
+
 function dilKaydet(){
 localStorage.setItem("omerDil",document.getElementById("language").value);
+}
+
+function kisilikKaydet(){
+localStorage.setItem("omerKisilik",document.getElementById("personality").value);
 }
 
 function enterGonder(e){
@@ -281,8 +314,10 @@ document.getElementById("preview").style.display="none";
 document.getElementById("imageInput").value="";
 
 const dil=document.getElementById("language").value;
-const status=document.getElementById("status");
-status.textContent="ÖMER AI düşünüyor...";
+const kisilik=document.getElementById("personality").value;
+
+yaziyorGoster();
+document.getElementById("status").textContent="ÖMER AI düşünüyor...";
 
 try{
 const response=await fetch(API_URL+"/api/chat",{
@@ -292,6 +327,7 @@ body:JSON.stringify({
 mesaj:mesaj,
 dil:dil,
 dilAdi:diller[dil],
+kisilik:kisilik,
 imageBase64:gorsel?.base64||null,
 imageMimeType:gorsel?.mimeType||null
 })
@@ -301,15 +337,17 @@ const data=await response.json();
 if(!response.ok)throw new Error(data.error||"Sunucu hatası");
 
 const cevap=data.cevap||data.text||data.response||"Cevap alınamadı.";
+yaziyorSil();
 mesajEkle(cevap,"bot");
 
 if(document.getElementById("voiceAnswer").checked){
 seslendir(cevap);
 }
 }catch(error){
+yaziyorSil();
 mesajEkle("Hata: "+error.message,"bot");
 }
-status.textContent="";
+document.getElementById("status").textContent="";
 }
 
 function gorselSec(event){
@@ -378,6 +416,7 @@ localStorage.setItem("omerTema",document.body.classList.contains("light")?"light
 }
 
 document.getElementById("language").value=localStorage.getItem("omerDil")||"tr-TR";
+document.getElementById("personality").value=localStorage.getItem("omerKisilik")||"arkadas";
 
 if(localStorage.getItem("omerTema")==="light"){
 document.body.classList.add("light");
@@ -392,6 +431,7 @@ aktifSohbet=sohbetler[sohbetler.length-1].id;
 }else{
 sohbetOlustur();
 }
+
 mesajlariGoster();
 gecmisiGoster();
 </script>
