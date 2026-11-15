@@ -1,4 +1,7 @@
+
 const http = require("http");
+
+const MODEL = "gemini-3.5-flash-lite";
 
 const server = http.createServer(async (req, res) => {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -14,7 +17,7 @@ const server = http.createServer(async (req, res) => {
   if (req.url === "/") {
     res.end(JSON.stringify({
       bot: "ÖMER AI",
-      durum: "Gemini bağlantısı hazır!"
+      durum: "Görsel destekli sohbet hazır!"
     }));
     return;
   }
@@ -22,14 +25,23 @@ const server = http.createServer(async (req, res) => {
   if (req.url === "/api/chat" && req.method === "POST") {
     let body = "";
 
-    req.on("data", chunk => body += chunk);
+    req.on("data", chunk => {
+      body += chunk;
+      if (body.length > 9 * 1024 * 1024) {
+        req.destroy();
+      }
+    });
 
     req.on("end", async () => {
       try {
-        const { mesaj } = JSON.parse(body);
+        const { mesaj, imageBase64, imageMimeType } = JSON.parse(body);
 
-        if (!mesaj || typeof mesaj !== "string") {
-          throw new Error("Mesaj boş.");
+        if ((!mesaj || typeof mesaj !== "string") && !imageBase64) {
+          throw new Error("Mesaj veya görsel gerekli.");
+        }
+
+        if (imageBase64 && !["image/jpeg", "image/png", "image/webp"].includes(imageMimeType)) {
+          throw new Error("Desteklenmeyen görsel formatı.");
         }
 
         const apiKey = process.env.GEMINI_API_KEY;
@@ -38,8 +50,23 @@ const server = http.createServer(async (req, res) => {
           throw new Error("API anahtarı bulunamadı.");
         }
 
+        const parts = [];
+
+        if (imageBase64) {
+          parts.push({
+            inlineData: {
+              mimeType: imageMimeType,
+              data: imageBase64
+            }
+          });
+        }
+
+        parts.push({
+          text: mesaj || "Bu görselde neler var? Açıklar mısın?"
+        });
+
         const response = await fetch(
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+          `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
           {
             method: "POST",
             headers: {
@@ -49,11 +76,11 @@ const server = http.createServer(async (req, res) => {
             body: JSON.stringify({
               systemInstruction: {
                 parts: [{
-                  text: "Sen ÖMER AI adlı yardımcı, nazik ve güvenli bir yapay zekâ sohbet asistanısın. Türkçe cevap ver."
+                  text: "Sen ÖMER AI adlı yardımcı, nazik ve güvenli bir yapay zekâ asistanısın. Türkçe cevap ver. Gönderilen görselleri dikkatlice incele ve soruları cevapla."
                 }]
               },
               contents: [{
-                parts: [{ text: mesaj }]
+                parts
               }]
             })
           }
@@ -62,7 +89,7 @@ const server = http.createServer(async (req, res) => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error?.message || "Gemini bağlantı hatası.");
+          throw new Error(data.error?.message || "Yapay zekâ bağlantı hatası.");
         }
 
         const cevap = data.candidates?.[0]?.content?.parts
@@ -84,7 +111,7 @@ const server = http.createServer(async (req, res) => {
   res.end(JSON.stringify({ hata: "Sayfa bulunamadı." }));
 });
 
-  server.listen(process.env.PORT || 3000, "0.0.0.0", () => {
-  console.log("ÖMER AI Gemini ile hazır!");
+server.listen(process.env.PORT || 3000, "0.0.0.0", () => {
+  console.log("ÖMER AI hazır!");
 });
             
