@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ÖMER AI</title>
-
 <style>
 *{box-sizing:border-box}
 :root{--bg:#101329;--panel:#191e38;--text:#fff;--muted:#a7abc5;--accent:#7568ff;--line:#303653}
@@ -14,7 +13,19 @@ header{height:65px;padding:12px 18px;display:flex;align-items:center;gap:12px;ba
 .logo{background:var(--accent);border-radius:12px;padding:9px;font-size:22px}
 header h2{margin:0;font-size:19px}
 header small{color:var(--muted)}
-main{max-width:850px;margin:auto;padding:16px;height:calc(100dvh - 65px);display:flex;flex-direction:column}
+.layout{display:flex;max-width:1100px;margin:auto;height:calc(100dvh - 65px)}
+.sidebar{width:245px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;min-height:0}
+.newchat{width:100%;margin-bottom:12px}
+#history{overflow-y:auto;flex:1}
+.history-item{display:flex;align-items:center;gap:5px;margin:5px 0}
+.history-open{flex:1;min-width:0;text-align:left;background:transparent;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-open.active{background:var(--line)}
+.delete{background:transparent;color:#ff7777;padding:9px}
+main{flex:1;min-width:0;padding:16px;display:flex;flex-direction:column}
+.settings{background:var(--panel);padding:12px;border-radius:12px;margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.settings label{color:var(--muted);font-size:14px}
+select,button,.filebtn{background:var(--accent);color:white;border:0;border-radius:10px;padding:10px 13px;font-size:14px;cursor:pointer}
+button.secondary,.filebtn.secondary,select{background:var(--line);color:var(--text)}
 #messages{flex:1;overflow-y:auto;padding:8px 0}
 .msg{padding:13px 15px;margin:12px 0;border-radius:15px;max-width:88%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
 .user{background:var(--accent);margin-left:auto}
@@ -24,15 +35,19 @@ main{max-width:850px;margin:auto;padding:16px;height:calc(100dvh - 65px);display
 .composer{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px}
 textarea{width:100%;resize:none;background:transparent;color:var(--text);border:0;outline:0;font:16px Arial;min-height:48px;padding:8px}
 .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-button,.filebtn,select{background:var(--accent);color:white;border:0;border-radius:10px;padding:10px 13px;font-size:14px;cursor:pointer}
-button.secondary,.filebtn.secondary{background:var(--line);color:var(--text)}
-select{background:var(--line);color:var(--text)}
 #preview{max-width:100px;max-height:100px;display:none;margin:8px;border-radius:8px}
-.settings{background:var(--panel);padding:13px;border-radius:12px;margin-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.settings label{color:var(--muted);font-size:14px}
+@media(max-width:650px){
+.layout{height:calc(100dvh - 65px)}
+.sidebar{width:125px;padding:8px}
+main{padding:9px}
+.history-open{font-size:11px;padding:8px 5px}
+.delete{padding:7px 4px}
+.settings{gap:6px;padding:8px}
+.settings button,.settings select{font-size:12px;padding:8px}
+.msg{max-width:95%}
+}
 </style>
 </head>
-
 <body>
 <header>
 <div class="logo">🤖</div>
@@ -41,6 +56,13 @@ select{background:var(--line);color:var(--text)}
 <small>Akıllı sohbet asistanın</small>
 </div>
 </header>
+
+<div class="layout">
+<aside class="sidebar">
+<button class="newchat" onclick="yeniSohbet()">＋ Yeni sohbet</button>
+<strong style="font-size:13px;color:var(--muted);margin:8px 0">SOHBET GEÇMİŞİ</strong>
+<div id="history"></div>
+</aside>
 
 <main>
 <div class="settings">
@@ -64,13 +86,9 @@ select{background:var(--line);color:var(--text)}
 </select>
 <label><input type="checkbox" id="voiceAnswer" checked> Sesli cevap</label>
 <button class="secondary" onclick="temaDegistir()">🌗 Tema</button>
-<button class="secondary" onclick="yeniSohbet()">＋ Yeni sohbet</button>
 </div>
 
-<div id="messages">
-<div class="msg bot">Merhaba! Ben ÖMER AI. Sana nasıl yardımcı olabilirim? 🚀</div>
-</div>
-
+<div id="messages"></div>
 <div id="status"></div>
 
 <div class="composer">
@@ -86,9 +104,11 @@ select{background:var(--line);color:var(--text)}
 </div>
 </div>
 </main>
+</div>
 
 <script>
 const API_URL="https://omer-ai-server.onrender.com";
+
 const diller={
 "tr-TR":"Turkish","de-DE":"German","en-US":"English",
 "th-TH":"Thai","he-IL":"Hebrew","hi-IN":"Hindi",
@@ -97,26 +117,145 @@ const diller={
 "fr-FR":"French","it-IT":"Italian","ar-SA":"Arabic"
 };
 
+let sohbetler=[];
+let aktifSohbet=null;
 let seciliGorsel=null;
 
-function dilKaydet(){
-localStorage.setItem("omerDil",document.getElementById("language").value);
+function kaydet(){
+try{
+localStorage.setItem("omerSohbetler",JSON.stringify(sohbetler));
+}catch(e){
+alert("Sohbet geçmişi kaydedilemedi. Tarayıcı hafızası dolmuş olabilir.");
+}
 }
 
-document.getElementById("language").value=localStorage.getItem("omerDil")||"tr-TR";
+function gecmisiGoster(){
+const alan=document.getElementById("history");
+alan.innerHTML="";
 
-function mesajEkle(metin,tip,gorsel){
+sohbetler.slice().reverse().forEach(sohbet=>{
+const satir=document.createElement("div");
+satir.className="history-item";
+
+const ac=document.createElement("button");
+ac.className="history-open"+(sohbet.id===aktifSohbet?" active":"");
+ac.textContent=sohbet.title;
+ac.title=sohbet.title;
+ac.onclick=()=>sohbetAc(sohbet.id);
+
+const sil=document.createElement("button");
+sil.className="delete";
+sil.textContent="🗑️";
+sil.title="Sohbeti sil";
+sil.onclick=()=>sohbetSil(sohbet.id);
+
+satir.append(ac,sil);
+alan.appendChild(satir);
+});
+}
+
+function sohbetOlustur(){
+const sohbet={
+id:Date.now().toString()+Math.random().toString(16).slice(2),
+title:"Yeni sohbet",
+messages:[]
+};
+sohbetler.push(sohbet);
+aktifSohbet=sohbet.id;
+kaydet();
+gecmisiGoster();
+mesajlariGoster();
+return sohbet;
+}
+
+function aktifBul(){
+return sohbetler.find(s=>s.id===aktifSohbet);
+}
+
+function sohbetAc(id){
+aktifSohbet=id;
+mesajlariGoster();
+gecmisiGoster();
+konusmayiDurdur();
+}
+
+function sohbetSil(id){
+const sohbet=sohbetler.find(s=>s.id===id);
+if(!sohbet)return;
+if(!confirm('"'+sohbet.title+'" sohbeti silinsin mi?'))return;
+
+sohbetler=sohbetler.filter(s=>s.id!==id);
+
+if(aktifSohbet===id){
+aktifSohbet=null;
+if(sohbetler.length){
+aktifSohbet=sohbetler[sohbetler.length-1].id;
+}else{
+sohbetOlustur();
+return;
+}
+}
+kaydet();
+gecmisiGoster();
+mesajlariGoster();
+}
+
+function yeniSohbet(){
+sohbetOlustur();
+konusmayiDurdur();
+}
+
+function mesajlariGoster(){
+const alan=document.getElementById("messages");
+alan.innerHTML="";
+const sohbet=aktifBul();
+
+if(!sohbet){
+sohbetOlustur();
+return;
+}
+
+if(!sohbet.messages.length){
+mesajEkle("Merhaba! Ben ÖMER AI. Sana nasıl yardımcı olabilirim? 🚀","bot",null,false);
+return;
+}
+
+sohbet.messages.forEach(m=>{
+mesajEkle(m.text,m.role,null,false);
+});
+}
+
+function mesajEkle(metin,tip,gorsel,kaydetMesaj=true){
+const alan=document.getElementById("messages");
 const div=document.createElement("div");
 div.className="msg "+tip;
 div.textContent=metin;
+
 if(gorsel){
 const img=document.createElement("img");
 img.src=gorsel;
 div.appendChild(img);
 }
-document.getElementById("messages").appendChild(div);
+alan.appendChild(div);
 div.scrollIntoView({behavior:"smooth"});
+
+if(kaydetMesaj){
+let sohbet=aktifBul();
+if(!sohbet)sohbet=sohbetOlustur();
+
+sohbet.messages.push({text:metin,role:tip});
+
+if(tip==="user"&&sohbet.title==="Yeni sohbet"){
+sohbet.title=metin.slice(0,30)+(metin.length>30?"…":"");
+}
+kaydet();
+gecmisiGoster();
+}
 return div;
+}
+
+function dilKaydet(){
+localStorage.setItem("omerDil",document.getElementById("language").value);
 }
 
 function enterGonder(e){
@@ -131,7 +270,9 @@ const alan=document.getElementById("message");
 const mesaj=alan.value.trim();
 if(!mesaj&&!seciliGorsel)return;
 
-mesajEkle(mesaj||"Bu görseli incele.", "user",seciliGorsel?.data);
+if(!aktifBul())sohbetOlustur();
+
+mesajEkle(mesaj||"Bu görseli incele.","user",seciliGorsel?.data);
 alan.value="";
 
 const gorsel=seciliGorsel;
@@ -196,31 +337,16 @@ reader.readAsDataURL(file);
 function seslendir(metin){
 if(!("speechSynthesis" in window))return;
 speechSynthesis.cancel();
-
 const dil=document.getElementById("language").value;
 const ses=new SpeechSynthesisUtterance(metin);
 ses.lang=dil;
 ses.rate=1;
 ses.pitch=1;
-
-function sesSec(){
 const voices=speechSynthesis.getVoices();
 const uygun=voices.find(v=>v.lang.toLowerCase()===dil.toLowerCase())
 ||voices.find(v=>v.lang.toLowerCase().startsWith(dil.split("-")[0].toLowerCase()));
 if(uygun)ses.voice=uygun;
 speechSynthesis.speak(ses);
-}
-if(speechSynthesis.getVoices().length){
-sesSec();
-}else{
-speechSynthesis.onvoiceschanged=()=>{
-speechSynthesis.onvoiceschanged=null;
-sesSec();
-};
-setTimeout(()=>{
-if(!speechSynthesis.speaking)speechSynthesis.speak(ses);
-},1000);
-}
 }
 
 function dinle(){
@@ -251,14 +377,23 @@ document.body.classList.toggle("light");
 localStorage.setItem("omerTema",document.body.classList.contains("light")?"light":"dark");
 }
 
-function yeniSohbet(){
-document.getElementById("messages").innerHTML='<div class="msg bot">Yeni sohbet başladı! 🚀</div>';
-konusmayiDurdur();
-}
+document.getElementById("language").value=localStorage.getItem("omerDil")||"tr-TR";
 
 if(localStorage.getItem("omerTema")==="light"){
 document.body.classList.add("light");
 }
+
+try{
+sohbetler=JSON.parse(localStorage.getItem("omerSohbetler")||"[]");
+}catch(e){sohbetler=[];}
+
+if(sohbetler.length){
+aktifSohbet=sohbetler[sohbetler.length-1].id;
+}else{
+sohbetOlustur();
+}
+mesajlariGoster();
+gecmisiGoster();
 </script>
 </body>
   </html>
