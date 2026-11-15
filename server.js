@@ -1,160 +1,160 @@
-
 const http = require("http");
 
-const CHAT_MODEL = "gemini-3.5-flash-lite";
+const PORT = process.env.PORT || 3000;
+const API_KEY = process.env.GEMINI_API_KEY;
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+
+const kisilikler = {
+  arkadas: "Friendly and warm. Talk like a helpful, supportive friend. Be natural and approachable.",
+  komik: "Funny and playful. Use light humor when appropriate, but always answer accurately.",
+  ogretmen: "Patient and educational. Explain things clearly, step by step, using simple examples.",
+  ciddi: "Serious, professional, direct and precise. Avoid unnecessary jokes."
+};
 
 const server = http.createServer(async (req, res) => {
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
-    res.end();
-    return;
+    res.writeHead(204);
+    return res.end();
   }
 
-  if (req.url === "/") {
-    res.end(JSON.stringify({
-      bot: "ÖMER AI",
-      durum: "15 dilde sohbet ve görsel yorumlama hazır!"
-    }));
-    return;
+  if (req.method === "GET" && req.url === "/") {
+    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+    return res.end("ÖMER AI server çalışıyor!");
   }
 
-  if (req.url === "/api/chat" && req.method === "POST") {
-    let body = "";
+  if (req.method !== "POST" || req.url !== "/api/chat") {
+    res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+    return res.end(JSON.stringify({ error: "Sayfa bulunamadı." }));
+  }
 
-    req.on("data", chunk => {
-      body += chunk;
+  if (!API_KEY) {
+    res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+    return res.end(JSON.stringify({ error: "GEMINI_API_KEY ayarlanmamış." }));
+  }
 
-      if (body.length > 10 * 1024 * 1024) {
-        req.destroy();
+  let body = "";
+
+  req.on("data", chunk => {
+    body += chunk;
+    if (body.length > 20 * 1024 * 1024) {
+      req.destroy();
+    }
+  });
+
+  req.on("end", async () => {
+    try {
+      const data = JSON.parse(body || "{}");
+
+      const mesaj = String(data.mesaj || "");
+      const dil = String(data.dil || "tr-TR");
+      const dilAdi = String(data.dilAdi || "Turkish");
+      const kisilik = kisilikler[data.kisilik] || kisilikler.arkadas;
+
+      const parts = [];
+
+      if (mesaj.trim()) {
+        parts.push({ text: mesaj });
       }
-    });
 
-    req.on("end", async () => {
-      try {
-        const {
-          mesaj,
-          dil,
-          dilAdi,
-          imageBase64,
-          imageMimeType
-        } = JSON.parse(body);
+      if (data.imageBase64 && data.imageMimeType) {
+        const izinliTurler = ["image/jpeg", "image/png", "image/webp"];
 
-        if ((!mesaj || typeof mesaj !== "string") && !imageBase64) {
-          throw new Error("Mesaj veya görsel gerekli.");
-        }
-
-        const desteklenenDiller = {
-          "tr-TR": "Türkçe",
-          "de-DE": "Almanca",
-          "en-US": "İngilizce",
-          "th-TH": "Tayca",
-          "he-IL": "İbranice",
-          "hi-IN": "Hintçe",
-          "ja-JP": "Japonca",
-          "zh-CN": "Çince",
-          "ko-KR": "Korece",
-          "pt-PT": "Portekizce",
-          "es-ES": "İspanyolca",
-          "ru-RU": "Rusça",
-          "fr-FR": "Fransızca",
-          "it-IT": "İtalyanca",
-          "ar-SA": "Arapça"
-        };
-
-        const secilenDil = desteklenenDiller[dil]
-          ? desteklenenDiller[dil]
-          : "Türkçe";
-
-        if (
-          imageBase64 &&
-          !["image/jpeg", "image/png", "image/webp"].includes(imageMimeType)
-        ) {
-          throw new Error("Desteklenmeyen görsel formatı.");
-        }
-
-        const apiKey = process.env.GEMINI_API_KEY;
-
-        if (!apiKey) {
-          throw new Error("API anahtarı bulunamadı.");
-        }
-
-        const parts = [];
-
-        if (imageBase64) {
-          parts.push({
-            inlineData: {
-              mimeType: imageMimeType,
-              data: imageBase64
-            }
-          });
+        if (!izinliTurler.includes(data.imageMimeType)) {
+          throw new Error("Desteklenmeyen görsel türü.");
         }
 
         parts.push({
-          text: mesaj || "Bu görselde neler var?"
-        });
-
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${CHAT_MODEL}:generateContent`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-goog-api-key": apiKey
-            },
-            body: JSON.stringify({
-              systemInstruction: {
-                parts: [{
-                  text:
-                    `Sen ÖMER AI adlı nazik, yardımsever ve güvenli bir yapay zekâ asistanısın. ` +
-                    `Kullanıcıya daima ${secilenDil} dilinde cevap ver. ` +
-                    `Başka bir dilde cevap verme. ` +
-                    `Soruları anlaşılır ve doğal şekilde yanıtla. ` +
-                    `Gönderilen görselleri dikkatlice incele.`
-                }]
-              },
-              contents: [{
-                parts
-              }]
-            })
+          inlineData: {
+            mimeType: data.imageMimeType,
+            data: data.imageBase64
           }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.error?.message || "Gemini bağlantı hatası."
-          );
-        }
-
-        const cevap = data.candidates?.[0]?.content?.parts
-          ?.map(part => part.text || "")
-          .join("") || "Cevap oluşturulamadı.";
-
-        res.end(JSON.stringify({ cevap }));
-
-      } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({
-          hata: error.message
-        }));
+        });
       }
-    });
 
-    return;
-  }
+      if (!parts.length) {
+        throw new Error("Bir mesaj veya görsel gönder.");
+      }
 
-  res.statusCode = 404;
-  res.end(JSON.stringify({
-    hata: "Sayfa bulunamadı."
-  }));
+      const systemText = `
+You are ÖMER AI, a helpful AI assistant.
+
+IMPORTANT LANGUAGE RULE:
+Always answer in ${dilAdi}. The selected language code is ${dil}.
+Do not switch languages unless the user explicitly asks you to.
+
+PERSONALITY:
+${kisilik}
+
+Be helpful, accurate and respectful.
+`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": API_KEY
+          },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: systemText }]
+            },
+            contents: [{
+              role: "user",
+              parts
+            }],
+            generationConfig: {
+              temperature: 0.8,
+              maxOutputTokens: 2048
+            }
+          })
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("Gemini error:", result);
+        throw new Error(
+          result.error?.message || "Gemini cevap veremedi."
+        );
+      }
+
+      const cevap = result.candidates?.[0]?.content?.parts
+        ?.map(part => part.text || "")
+        .join("")
+        .trim();
+
+      if (!cevap) {
+        throw new Error("Gemini boş cevap gönderdi.");
+      }
+
+      res.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8"
+      });
+
+      res.end(JSON.stringify({ cevap }));
+
+    } catch (error) {
+      console.error(error);
+
+      res.writeHead(500, {
+        "Content-Type": "application/json; charset=utf-8"
+      });
+
+      res.end(JSON.stringify({
+        error: error.message || "Bir hata oluştu."
+      }));
+    }
+  });
 });
 
-server.listen(process.env.PORT || 3000, "0.0.0.0", () => {
-  console.log("ÖMER AI hazır!");
+server.listen(PORT, "0.0.0.0", () => {
+  console.log("ÖMER AI server çalışıyor. Port:", PORT);
 });
-          
+      
