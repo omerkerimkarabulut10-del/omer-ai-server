@@ -17,7 +17,7 @@ const server = http.createServer(async (req, res) => {
   if (req.url === "/") {
     res.end(JSON.stringify({
       bot: "ÖMER AI",
-      durum: "Sohbet ve görsel yorumlama hazır!"
+      durum: "15 dilde sohbet ve görsel yorumlama hazır!"
     }));
     return;
   }
@@ -37,6 +37,8 @@ const server = http.createServer(async (req, res) => {
       try {
         const {
           mesaj,
+          dil,
+          dilAdi,
           imageBase64,
           imageMimeType
         } = JSON.parse(body);
@@ -44,6 +46,28 @@ const server = http.createServer(async (req, res) => {
         if ((!mesaj || typeof mesaj !== "string") && !imageBase64) {
           throw new Error("Mesaj veya görsel gerekli.");
         }
+
+        const desteklenenDiller = {
+          "tr-TR": "Türkçe",
+          "de-DE": "Almanca",
+          "en-US": "İngilizce",
+          "th-TH": "Tayca",
+          "he-IL": "İbranice",
+          "hi-IN": "Hintçe",
+          "ja-JP": "Japonca",
+          "zh-CN": "Çince",
+          "ko-KR": "Korece",
+          "pt-PT": "Portekizce",
+          "es-ES": "İspanyolca",
+          "ru-RU": "Rusça",
+          "fr-FR": "Fransızca",
+          "it-IT": "İtalyanca",
+          "ar-SA": "Arapça"
+        };
+
+        const secilenDil = desteklenenDiller[dil]
+          ? desteklenenDiller[dil]
+          : "Türkçe";
 
         if (
           imageBase64 &&
@@ -84,7 +108,12 @@ const server = http.createServer(async (req, res) => {
             body: JSON.stringify({
               systemInstruction: {
                 parts: [{
-                  text: "Sen ÖMER AI adlı nazik ve güvenli bir yapay zekâ asistanısın. Türkçe cevap ver. Gönderilen görselleri dikkatlice incele ve soruları cevapla."
+                  text:
+                    `Sen ÖMER AI adlı nazik, yardımsever ve güvenli bir yapay zekâ asistanısın. ` +
+                    `Kullanıcıya daima ${secilenDil} dilinde cevap ver. ` +
+                    `Başka bir dilde cevap verme. ` +
+                    `Soruları anlaşılır ve doğal şekilde yanıtla. ` +
+                    `Gönderilen görselleri dikkatlice incele.`
                 }]
               },
               contents: [{
