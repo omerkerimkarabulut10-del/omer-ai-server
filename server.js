@@ -6,55 +6,13 @@ const API_KEY = process.env.GEMINI_API_KEY;
 const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
 const kisilikler = {
-  arkadas: "Friendly and warm. Talk like a helpful, supportive friend.",
-  komik: "Funny and playful. Use light humor when appropriate, but always answer accurately.",
-  ogretmen: "Patient and educational. Explain clearly, step by step, with simple examples.",
-  ciddi: "Serious, professional, direct and precise."
+  arkadas: "Samimi, sıcak ve yardımsever bir arkadaş gibi konuş. Doğal ve anlaşılır ol.",
+  komik: "Neşeli, eğlenceli ve yerinde espriler yapan bir asistansın.",
+  ogretmen: "Sabırlı bir öğretmen gibi davran. Konuları adım adım ve örneklerle açıkla.",
+  ciddi: "Profesyonel, ciddi, net ve doğrudan cevaplar ver."
 };
 
-const bekle = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-async function geminiIstek(body) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
-
-  for (let deneme = 0; deneme < 3; deneme++) {
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": API_KEY
-        },
-        body: JSON.stringify(body)
-      });
-
-      const result = await response.json();
-
-      if (response.ok) return result;
-
-      const tekrarDenenecek = [429, 500, 502, 503, 504].includes(response.status);
-
-      if (!tekrarDenenecek || deneme === 2) {
-        const hata = new Error(
-          result.error?.message || "Gemini cevap veremedi."
-        );
-        hata.status = response.status;
-        throw hata;
-      }
-
-      console.log(`Gemini geçici hata: ${response.status}. Tekrar deneniyor...`);
-      await bekle(1000 * Math.pow(2, deneme));
-
-    } catch (error) {
-      if (error.status || deneme === 2) throw error;
-
-      console.log("Bağlantı hatası. Tekrar deneniyor...");
-      await bekle(1000 * Math.pow(2, deneme));
-    }
-  }
-}
-
-const server = http.createServer((req, res) => {
+const sunucu = http.createServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -70,140 +28,169 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method !== "POST" || req.url !== "/api/chat") {
-    res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
-    return res.end(JSON.stringify({ error: "Sayfa bulunamadı." }));
+    res.writeHead(404);
+    return res.end("Sayfa bulunamadı");
   }
 
   if (!API_KEY) {
-    res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
-    return res.end(JSON.stringify({ error: "GEMINI_API_KEY ayarlanmamış." }));
+    res.writeHead(500, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({ hata: "GEMINI_API_KEY ayarlanmamış." }));
   }
 
   let body = "";
-  let fazlaBuyuk = false;
 
-  req.on("data", chunk => {
-    body += chunk;
-
-    if (body.length > 20 * 1024 * 1024) {
-      fazlaBuyuk = true;
+  req.on("data", parca => {
+    body += parca;
+    if (body.length > 15 * 1024 * 1024) {
       req.destroy();
     }
   });
 
   req.on("end", async () => {
-    if (fazlaBuyuk) return;
-
     try {
-      const data = JSON.parse(body || "{}");
+      const data = JSON.parse(body);
 
-      const dil = String(data.dil || "tr-TR");
-      const dilAdi = String(data.dilAdi || "Turkish");
+      const mesaj = String(data.mesaj || "").trim();
+      const dil = String(data.dilAdi || data.dil || "Türkçe");
       const kisilik = kisilikler[data.kisilik] || kisilikler.arkadas;
 
-      const systemText = `
-You are ÖMER AI, a helpful AI assistant.
+      if (!mesaj) {
+        return cevapla(res, 400, { hata: "Mesaj boş olamaz." });
+      }
 
-Always answer in ${dilAdi}. Language code: ${dil}.
-Do not switch languages unless the user asks.
-
-PERSONALITY:
+      const systemInstruction = `
+Senin adın ÖMER AI.
+Kullanıcıyla ${dil} dilinde konuş.
 ${kisilik}
 
-IMPORTANT:
-- Use the previous messages in this conversation to understand context.
-- Remember what was said earlier in this same conversation.
-- Answer follow-up questions using the conversation history.
-- Do not claim to remember information that is not in the conversation.
-- Be helpful, accurate and respectful.
+Önceki konuşmaları dikkate al.
+Kullanıcının sorusuna doğrudan ve anlaşılır cevap ver.
+Kullanıcı başka bir dil istemedikçe ${dil} kullan.
 `;
 
-      let gecmis = Array.isArray(data.gecmis) ? data.gecmis : [];
+      const contents = [];
 
-      gecmis = gecmis
-        .filter(m =>
-          m &&
-          ["user", "bot"].includes(m.role) &&
-          typeof m.text === "string" &&
-          m.text.trim()
-        )
-        .slice(-20);
+      const gecmis = Array.isArray(data.gecmis) ? data.gecmis.slice(-20) : [];
 
-      const contents = gecmis.map((m, index) => {
-        const parts = [{ text: m.text.slice(0, 12000) }];
+      for (const item of gecmis) {
+        if (!item || !["user", "bot"].includes(item.rol)) continue;
 
-        // Görseli yalnızca son kullanıcı mesajına ekle.
-        if (
-          index === gecmis.length - 1 &&
-          m.role === "user" &&
-          data.imageBase64 &&
-          data.imageMimeType
-        ) {
-          const izinliTurler = ["image/jpeg", "image/png", "image/webp"];
+        const text = String(item.metin || "").slice(0, 12000);
+        if (!text.trim()) continue;
 
-          if (!izinliTurler.includes(data.imageMimeType)) {
-            throw new Error("Desteklenmeyen görsel türü.");
-          }
-
-          parts.push({
-            inlineData: {
-              mimeType: data.imageMimeType,
-              data: data.imageBase64
-            }
-          });
-        }
-
-        return {
-          role: m.role === "bot" ? "model" : "user",
-          parts
-        };
-      });
-
-      if (!contents.length) {
-        throw new Error("Bir mesaj veya görsel gönder.");
+        contents.push({
+          role: item.rol === "bot" ? "model" : "user",
+          parts: [{ text }]
+        });
       }
 
-      const result = await geminiIstek({
-        systemInstruction: {
-          parts: [{ text: systemText }]
-        },
-        contents,
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 2048
+      const parts = [{ text: mesaj }];
+
+      if (data.imageBase64 && data.imageMimeType) {
+        const izinliTurler = ["image/jpeg", "image/png", "image/webp"];
+
+        if (!izinliTurler.includes(data.imageMimeType)) {
+          return cevapla(res, 400, { hata: "Bu görsel formatı desteklenmiyor." });
         }
+
+        parts.push({
+          inline_data: {
+            mime_type: data.imageMimeType,
+            data: data.imageBase64
+          }
+        });
+      }
+
+      contents.push({
+        role: "user",
+        parts
       });
 
-      const cevap = result.candidates?.[0]?.content?.parts
-        ?.map(part => part.text || "")
-        .join("")
-        .trim();
+      const sonuc = await geminiIstek({
+        systemInstruction,
+        contents
+      });
+
+      const cevap =
+        sonuc.candidates?.[0]?.content?.parts
+          ?.map(p => p.text || "")
+          .join("")
+          .trim();
 
       if (!cevap) {
-        throw new Error("Gemini boş cevap gönderdi.");
+        return cevapla(res, 502, { hata: "Yapay zekâ boş cevap verdi. Tekrar deneyebilirsin." });
       }
 
-      res.writeHead(200, {
-        "Content-Type": "application/json; charset=utf-8"
-      });
-
-      res.end(JSON.stringify({ cevap }));
+      cevapla(res, 200, { cevap });
 
     } catch (error) {
-      console.error("ÖMER AI hata:", error);
-
-      res.writeHead(error.status || 500, {
-        "Content-Type": "application/json; charset=utf-8"
+      console.error("ÖMER AI Hatası:", error);
+      cevapla(res, 500, {
+        hata: error.message || "Bir hata oluştu."
       });
-
-      res.end(JSON.stringify({
-        error: error.message || "Bir hata oluştu."
-      }));
     }
   });
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log("ÖMER AI server çalışıyor. Port:", PORT);
+async function geminiIstek(payload) {
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+
+  const tekrarDenemeleri = 3;
+  let sonHata;
+
+  for (let deneme = 0; deneme < tekrarDenemeleri; deneme++) {
+    let response;
+
+    try {
+      response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": API_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+    } catch (error) {
+      sonHata = error;
+
+      if (deneme === tekrarDenemeleri - 1) break;
+
+      await bekle(1000 * (deneme + 1));
+      continue;
+    }
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+    const hataMetni = await response.text();
+    sonHata = new Error(hataMetni || `Gemini HTTP ${response.status}`);
+    sonHata.status = response.status;
+
+    const tekrarEdilebilir = [429, 500, 502, 503, 504].includes(response.status);
+
+    if (!tekrarEdilebilir || deneme === tekrarDenemeleri - 1) {
+      throw sonHata;
+    }
+
+    await bekle(1000 * (deneme + 1));
+  }
+
+  throw sonHata || new Error("Gemini sunucusuna ulaşılamadı.");
+}
+
+function bekle(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function cevapla(res, status, data) {
+  res.writeHead(status, {
+    "Content-Type": "application/json; charset=utf-8"
+  });
+  res.end(JSON.stringify(data));
+}
+
+sunucu.listen(PORT, () => {
+  console.log(`ÖMER AI sunucusu ${PORT} portunda çalışıyor.`);
 });
-              
