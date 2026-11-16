@@ -366,18 +366,56 @@ function gecmisiGoster() {
   alan.innerHTML = "";
 
   sohbetler.slice(0, 30).forEach(s => {
+    const satir = document.createElement("div");
+    satir.style.display = "flex";
+    satir.style.gap = "5px";
+    satir.style.marginBottom = "7px";
+
     const btn = document.createElement("button");
-    btn.className = "history-item" + (aktifSohbet?.id === s.id ? " active" : "");
+    btn.className = "history-item";
+    btn.style.flex = "1";
+    btn.style.marginBottom = "0";
+    btn.classList.toggle("active", aktifSohbet?.id === s.id);
     btn.textContent = "💬 " + (s.baslik || "Sohbet");
+
     btn.onclick = () => {
       aktifSohbet = s;
       sohbetiGoster();
       gecmisiGoster();
       menuKapat();
     };
-    alan.appendChild(btn);
+
+    const sil = document.createElement("button");
+    sil.textContent = "🗑️";
+    sil.title = "Sohbeti sil";
+    sil.style.cssText = `
+      border:0;
+      border-radius:11px;
+      background:#343047;
+      color:white;
+      padding:0 12px;
+      font-size:17px;
+    `;
+
+    sil.onclick = () => {
+      if (!confirm("Bu sohbeti silmek istediğine emin misin?")) return;
+
+      sohbetler = sohbetler.filter(x => x.id !== s.id);
+
+      if (aktifSohbet?.id === s.id) {
+        aktifSohbet = null;
+        sohbetiGoster();
+      }
+
+      kaydet();
+      gecmisiGoster();
+    };
+
+    satir.appendChild(btn);
+    satir.appendChild(sil);
+    alan.appendChild(satir);
   });
-}
+  }
 
 function dosyaSec() {
   dosyaInput.click();
