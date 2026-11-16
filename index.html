@@ -18,24 +18,17 @@ button{cursor:pointer}
 .sidebar{
  width:260px;flex:0 0 260px;background:#171c35;padding:18px;
  display:flex;flex-direction:column;gap:12px;
- transition:width .3s ease,flex-basis .3s ease,padding .3s ease,transform .3s ease;
- z-index:20;min-height:0;overflow-y:auto;overflow-x:hidden;
- scrollbar-width:thin;scrollbar-color:#465477 #171c35;
+ transition:.3s;z-index:20;min-height:0;overflow-y:auto;
+ scrollbar-width:thin
 }
-.sidebar.collapsed{
- width:0;flex-basis:0;padding-left:0;padding-right:0;
- overflow:hidden;
-}
+.sidebar.collapsed{width:0;flex-basis:0;padding-left:0;padding-right:0;overflow:hidden}
 .logo{font-size:24px;font-weight:bold;color:#62e6dc;padding:10px;display:flex;align-items:center;gap:9px;flex-shrink:0}
 .sidebtn,.navbtn{
  border:0;background:#222945;color:white;padding:13px;
  border-radius:12px;text-align:left;width:100%;flex-shrink:0
 }
 .sidebtn:hover,.navbtn:hover{background:#303a5d}
-.history{
- overflow-y:auto;overflow-x:hidden;flex:1;min-height:120px;
- scrollbar-width:thin;scrollbar-color:#465477 #171c35
-}
+.history{overflow-y:auto;flex:1;min-height:120px}
 .history-row{display:flex;gap:5px;margin-bottom:5px}
 .history-open{
  flex:1;min-width:0;text-align:left;background:transparent;
@@ -43,10 +36,7 @@ button{cursor:pointer}
  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 .history-open:hover{background:#252d4c}
-.history-delete{
- background:#402936;color:#ffb5c0;border:0;
- border-radius:8px;padding:8px 10px
-}
+.history-delete{background:#402936;color:#ffb5c0;border:0;border-radius:8px;padding:8px 10px}
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
 .top{
  height:65px;display:flex;align-items:center;gap:14px;
@@ -61,16 +51,10 @@ button{cursor:pointer}
 .welcome h1{font-size:34px;color:#62e6dc}
 .welcome p{color:#aeb8d5}
 .messages{display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
-.msg{
- padding:14px 17px;border-radius:15px;max-width:90%;
- white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5
-}
+.msg{padding:14px 17px;border-radius:15px;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
 .user{background:#285b70;align-self:flex-end}
 .bot{background:#202945;align-self:flex-start}
-.composer{
- display:flex;gap:10px;padding:14px 18px;
- border-top:1px solid #29304d;flex-shrink:0
-}
+.composer{display:flex;gap:10px;padding:14px 18px;border-top:1px solid #29304d;flex-shrink:0}
 .composer textarea{
  flex:1;resize:none;min-height:48px;max-height:130px;
  background:#1c2440;color:white;border:1px solid #394464;
@@ -93,8 +77,7 @@ button{cursor:pointer}
 }
 .output{
  background:#1b2340;border-radius:14px;padding:16px;
- margin-top:18px;white-space:pre-wrap;
- overflow-wrap:anywhere;line-height:1.5
+ margin-top:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5
 }
 .modal{
  display:none;position:fixed;inset:0;background:#000b;
@@ -109,22 +92,19 @@ button{cursor:pointer}
 .modalbox button{margin:5px}
 .small{color:#aeb8d5;font-size:13px}
 .hidden{display:none!important}
-#sidebarBackdrop{
- display:none;position:fixed;inset:0;background:#0008;z-index:15
-}
+#sidebarBackdrop{display:none;position:fixed;inset:0;background:#0008;z-index:15}
 #sidebarBackdrop.show{display:block}
 #gamePreview{
  width:100%;height:520px;border:1px solid #394464;
  border-radius:14px;background:white;margin-top:15px
 }
 .game-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.file-item{padding:8px 0;border-bottom:1px solid #303957;color:#d7e4f5;overflow-wrap:anywhere}
 @media(max-width:700px){
  .sidebar{
   position:fixed;left:0;top:0;bottom:0;
-  transform:translateX(-105%);
-  width:270px;flex-basis:270px;
-  box-shadow:5px 0 25px #0005;
-  padding:18px;
+  transform:translateX(-105%);width:270px;flex-basis:270px;
+  box-shadow:5px 0 25px #0005;padding:18px
  }
  .sidebar.open{transform:translateX(0)}
  .sidebar.collapsed{width:270px;flex-basis:270px;padding:18px}
@@ -206,17 +186,18 @@ button{cursor:pointer}
 
   <div id="studioOutput" class="output hidden"></div>
 
-  <div id="gameActions" class="game-actions hidden">
-   <button class="primary" onclick="downloadGame()">⬇️ Oyunu indir</button>
-   <button class="sidebtn" onclick="showGamePreview()">▶️ Oyunu oyna</button>
+  <div id="projectActions" class="hidden">
+   <div class="output">
+    <h3>📁 Proje dosyaları</h3>
+    <div id="generatedFileList"></div>
+   </div>
+   <div class="game-actions">
+    <button class="primary" onclick="downloadProject()">⬇️ TÜM PROJEYİ İNDİR (.ZIP)</button>
+    <button class="sidebtn hidden" id="previewButton" onclick="showGamePreview()">▶️ Oyunu oyna</button>
+   </div>
   </div>
 
-  <iframe
-   id="gamePreview"
-   class="hidden"
-   title="ÖMER AI oyun önizlemesi"
-   sandbox="allow-scripts">
-  </iframe>
+  <iframe id="gamePreview" class="hidden" title="ÖMER AI oyun önizlemesi" sandbox="allow-scripts"></iframe>
  </div>
 </section>
 </div>
@@ -271,6 +252,7 @@ try{
 let currentChat=null;
 let studioMode="code";
 let generatedGame="";
+let generatedFiles=[];
 
 function saveChats(){
  localStorage.setItem("omerSohbetlerV2",JSON.stringify(chats));
@@ -449,6 +431,7 @@ function closeModal(id){
 function openStudio(mode){
  studioMode=mode;
  generatedGame="";
+ generatedFiles=[];
 
  document.getElementById("studioTitle").textContent={
   code:"💻 Kodlama Stüdyosu",
@@ -459,7 +442,7 @@ function openStudio(mode){
  document.getElementById("studioPrompt").value="";
  document.getElementById("studioForm").classList.remove("hidden");
  document.getElementById("studioOutput").classList.add("hidden");
- document.getElementById("gameActions").classList.add("hidden");
+ document.getElementById("projectActions").classList.add("hidden");
  document.getElementById("gamePreview").classList.add("hidden");
  document.getElementById("gamePreview").srcdoc="";
  document.getElementById("studioForm").scrollIntoView({behavior:"smooth"});
@@ -471,13 +454,13 @@ async function runStudio(){
  const createButton=document.getElementById("createButton");
 
  if(!prompt){
-  alert("Önce ne istediğini yaz!");
+  alert("Önce ne yapmak istediğini yaz!");
   return;
  }
 
  output.classList.remove("hidden");
- output.textContent="Hazırlanıyor... Lütfen bekle.";
- document.getElementById("gameActions").classList.add("hidden");
+ output.textContent="ÖMER AI projen üzerinde çalışıyor...";
+ document.getElementById("projectActions").classList.add("hidden");
  document.getElementById("gamePreview").classList.add("hidden");
 
  createButton.disabled=true;
@@ -493,17 +476,35 @@ async function runStudio(){
   const data=await response.json();
   if(!response.ok)throw new Error(data.error||"Sunucu hatası");
 
-  if(studioMode==="game"){
-   if(!data.gameHtml)throw new Error("Oyun dosyası sunucudan gelmedi.");
-
-   generatedGame=data.gameHtml;
-   output.textContent=data.answer||"Oyunun hazır!";
-   document.getElementById("gameActions").classList.remove("hidden");
-  }else{
-   output.textContent=data.answer||"Tamamlandı!";
+  if(!Array.isArray(data.files)||!data.files.length){
+   throw new Error("Proje dosyaları alınamadı.");
   }
 
+  generatedFiles=data.files;
+  const htmlFile=generatedFiles.find(f=>f.name==="index.html");
+  generatedGame=htmlFile?.content||"";
+
+  const list=document.getElementById("generatedFileList");
+  list.replaceChildren();
+
+  generatedFiles.forEach(file=>{
+   const item=document.createElement("div");
+   item.className="file-item";
+   item.textContent="📄 "+file.name;
+   list.appendChild(item);
+  });
+
+  output.textContent=
+   (data.answer||"Projen hazır!")+
+   "\n\n📦 "+generatedFiles.length+" dosya hazır.";
+
+  document.getElementById("projectActions").classList.remove("hidden");
+  document.getElementById("previewButton")
+   .classList.toggle("hidden",!generatedGame);
+
  }catch(e){
+  generatedFiles=[];
+  generatedGame="";
   output.textContent="Hata: "+e.message;
  }finally{
   createButton.disabled=false;
@@ -511,27 +512,110 @@ async function runStudio(){
  }
 }
 
-function downloadGame(){
- if(!generatedGame){
-  alert("Önce bir oyun oluşturmalısın.");
+function makeZip(files){
+ const encoder=new TextEncoder();
+
+ function u16(n){return [n&255,(n>>>8)&255]}
+ function u32(n){
+  return [n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255]
+ }
+
+ function join(arrays){
+  const size=arrays.reduce((n,a)=>n+a.length,0);
+  const result=new Uint8Array(size);
+  let offset=0;
+  for(const a of arrays){
+   result.set(a,offset);
+   offset+=a.length;
+  }
+  return result;
+ }
+
+ function crc32(data){
+  let crc=0xffffffff;
+  for(const byte of data){
+   crc^=byte;
+   for(let k=0;k<8;k++){
+    crc=(crc>>>1)^((crc&1)?0xedb88320:0);
+   }
+  }
+  return (crc^0xffffffff)>>>0;
+ }
+
+ const localParts=[];
+ const centralParts=[];
+ let offset=0;
+
+ const now=new Date();
+ const dosTime=(now.getHours()<<11)|(now.getMinutes()<<5)|Math.floor(now.getSeconds()/2);
+ const dosDate=((Math.max(1980,now.getFullYear())-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
+
+ for(const file of files){
+  const name=encoder.encode(file.name);
+  const data=encoder.encode(file.content);
+  const crc=crc32(data);
+
+  const local=join([
+   u32(0x04034b50),u16(20),u16(0x0800),u16(0),
+   u16(dosTime),u16(dosDate),u32(crc),
+   u32(data.length),u32(data.length),u16(name.length),u16(0),
+   name,data
+  ]);
+
+  localParts.push(local);
+
+  const central=join([
+   u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),
+   u16(dosTime),u16(dosDate),u32(crc),
+   u32(data.length),u32(data.length),u16(name.length),
+   u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name
+  ]);
+
+  centralParts.push(central);
+  offset+=local.length;
+ }
+
+ const centralDirectory=join(centralParts);
+
+ const end=join([
+  u32(0x06054b50),u16(0),u16(0),
+  u16(files.length),u16(files.length),
+  u32(centralDirectory.length),u32(offset),u16(0)
+ ]);
+
+ return new Blob([...localParts,centralDirectory,end],{
+  type:"application/zip"
+ });
+}
+
+function downloadProject(){
+ if(!generatedFiles.length){
+  alert("Önce bir proje oluşturmalısın.");
   return;
  }
 
- const blob=new Blob([generatedGame],{type:"text/html;charset=utf-8"});
- const url=URL.createObjectURL(blob);
- const link=document.createElement("a");
+ try{
+  const blob=makeZip(generatedFiles);
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
 
- link.href=url;
- link.download="omer-ai-oyunum.html";
- document.body.appendChild(link);
- link.click();
- link.remove();
+  link.href=url;
+  link.download="omer-ai-proje.zip";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 
- setTimeout(()=>URL.revokeObjectURL(url),30000);
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+ }catch(error){
+  alert("ZIP oluşturulamadı: "+error.message);
+ }
 }
 
 function showGamePreview(){
- if(!generatedGame)return;
+ if(!generatedGame){
+  alert("Önizlenecek HTML dosyası bulunamadı.");
+  return;
+ }
 
  const preview=document.getElementById("gamePreview");
  preview.srcdoc=generatedGame;
@@ -543,4 +627,5 @@ renderHistory();
 console.log("ÖMER AI hazır!");
 </script>
 </body>
-</html>
+ </html>
+ 
