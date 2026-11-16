@@ -20,6 +20,7 @@ function send(res, status, data) {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   });
+
   res.end(JSON.stringify(data));
 }
 
@@ -46,15 +47,6 @@ function readBody(req) {
 
     req.on("error", reject);
   });
-}
-
-function cleanHistory(history) {
-  if (!Array.isArray(history)) return [];
-
-  return history.slice(-20).map(item => ({
-    role: item.role === "assistant" ? "model" : "user",
-    parts: [{ text: String(item.text || "").slice(0, 12000) }]
-  })).filter(item => item.parts[0].text.trim());
 }
 
 async function callGemini(payload) {
@@ -86,7 +78,9 @@ async function callGemini(payload) {
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(result?.error?.message || `Gemini API hatası (${response.status})`);
+    throw new Error(
+      result?.error?.message || `Gemini API hatası (${response.status})`
+    );
   }
 
   return result;
@@ -99,7 +93,155 @@ function getAnswer(result) {
     .trim() || "";
 }
 
+function cleanHistory(history) {
+  if (!Array.isArray(history)) return [];
 
+  return history.slice(-20).map(item => ({
+    role: item.role === "assistant" || item.role === "model"
+      ? "model"
+      : "user",
+    parts: [{
+      text: String(item.text || "").slice(0, 12000)
+    }]
+  })).filter(item => item.parts[0].text.trim());
+}
+
+// NORMAL SOHBET
+async function askChat(data) {
+  const message = String(data.message || "").trim();
+
+  if (!message) {
+    throw new Error("Mesaj boş olamaz.");
+  }
+
+  const language = String(data.dil || "Türkçe");
+  const personality = personalities[data.kisilik] || personalities.arkadas;
+  const memory = String(data.hafiza || "").slice(0, 5000);
+
+  const history = cleanHistory(data.gecmis);
+
+  // Son mesajı ayrıca ekleyeceğimiz için geçmişten çıkar.
+  if (history.length && history[history.length - 1].role === "user") {
+    history.pop();
+  }
+
+  history.push({
+    role: "user",
+    parts: [{ text: message.slice(0, 12000) }]
+  });
+
+  const system = `
+Sen ÖMER AI adlı gelişmiş bir yapay zekâ asistanısın.
+
+KONUŞMA TARZI:
+${personality}
+
+DİL:
+Kullanıcı başka bir dil istemedikçe ${language} dilinde cevap ver.
+
+DAVRANIŞ:
+- Soruları doğru ve anlaşılır cevapla.
+- Gerektiğinde adım adım anlat.
+- Kodlama sorularında çalışabilir örnekler ver.
+- Bilmediğin şeyleri biliyormuş gibi gösterme.
+- Hatalı kodları analiz edip düzelt.
+- Kullanıcının önceki mesajlarını dikkate al.
+- Gereksiz tekrar yapma.
+- Samimi, saygılı ve yardımcı ol.
+
+KULLANICI HAFIZASI:
+${memory || "Henüz kayıtlı hafıza notu yok."}
+`;
+
+  const result = await callGemini({
+    systemInstruction: {
+      parts: [{ text: system }]
+    },
+    contents: history,
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 8192
+    }
+  });
+
+  const answer = getAnswer(result);
+
+  if (!answer) {
+    throw new Error("Yapay zekâ boş cevap verdi.");
+  }
+
+  return answer;
+}
+
+// PROJE DOSYALARINI KONTROL ET
+function validateFiles(files) {
+  if (!Array.isArray(files) || files.length === 0) {
+    throw new Error("Yapay zekâ proje dosyalarını oluşturamadı.");
+  }
+
+  if (files.length > 30) {
+    throw new Error("Proje en fazla 30 dosya içerebilir.");
+  }
+
+  const allowedExtensions =
+    /\.(html|css|js|mjs|cjs|json|md|txt|svg|xml|yml|yaml|py|java|ts|tsx|jsx|php|sql|sh|toml|gitignore)$/i;
+
+  const seen = new Set();
+  let totalSize = 0;
+
+  return files.map(file => {
+    let name = String(file.name || "").replace(/\\/g, "/").trim();
+    const content = String(file.content || "");
+
+    if (
+      !name ||
+      name.startsWith("/") ||
+      name.includes("..") ||
+      name.includes("\0") ||
+      !allowedExtensions.test(name)
+    ) {
+      throw new Error("Geçersiz proje dosyası adı: " + name);
+    }
+
+    if (seen.has(name)) {
+      throw new Error("Aynı isimde birden fazla dosya var: " + name);
+    }
+
+    seen.add(name);
+
+    if (!content.trim()) {
+      throw new Error(name + " dosyası boş oluşturuldu.");
+    }
+
+    totalSize += Buffer.byteLength(content, "utf8");
+
+    if (totalSize > 3 * 1024 * 1024) {
+      throw new Error("Proje dosyalarının toplam boyutu çok büyük.");
+    }
+
+    return { name, content };
+  });
+}
+
+function parseProjectJSON(text) {
+  let cleaned = text.trim();
+
+  cleaned = cleaned
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "")
+    .trim();
+
+  const first = cleaned.indexOf("{");
+  const last = cleaned.lastIndexOf("}");
+
+  if (first === -1 || last <= first) {
+    throw new Error("Proje verisi okunamadı. Daha kısa bir istek dene.");
+  }
+
+  return JSON.parse(cleaned.slice(first, last + 1));
+}
+
+// KODLAMA / PROJE / OYUN STÜDYOSU
 async function askStudio(data) {
   const mode = String(data.mode || "");
   const prompt = String(data.prompt || "").trim();
@@ -108,199 +250,152 @@ async function askStudio(data) {
     throw new Error("Önce bir istek yaz.");
   }
 
+  if (!["code", "project", "game"].includes(mode)) {
+    throw new Error("Geçersiz stüdyo seçimi.");
+  }
+
   const basePrompt = `
 Sen ÖMER AI Gelişmiş Yazılım Motorusun.
 
 Uzmanlık alanların:
-- Yazılım mimarisi
-- Profesyonel web geliştirme
+- Profesyonel yazılım geliştirme
 - HTML, CSS, JavaScript
 - Node.js ve API geliştirme
 - Oyun programlama
 - Hata ayıklama
-- Kod optimizasyonu
+- Yazılım mimarisi
 - Responsive tasarım
-- Kullanıcı arayüzü tasarımı
+- Güvenli kodlama
 
-KODLAMA KURALLARI:
-1. Eksiksiz ve çalışabilir kod üret.
-2. Kullanıcının istediği hiçbir özelliği atlama.
-3. Modern ve anlaşılır kod yaz.
-4. Gereksiz kod tekrarından kaçın.
-5. Güvenli programlama yöntemleri kullan.
-6. Mobil, tablet ve bilgisayar uyumluluğunu sağla.
-7. Hataları önceden düşün ve gerekli kontrolleri ekle.
-8. Kodun tamamını üretmeden yarım bırakma.
-9. Gerçekleştirmediğin özellikleri yapılmış gibi gösterme.
-10. Kullanıcı mevcut projesini güncelliyorsa eski özellikleri koru.
+GENEL KURALLAR:
+1. Eksiksiz ve tutarlı dosyalar üret.
+2. Dosyalar birbirleriyle uyumlu olsun.
+3. Gerekli bütün dosyaları oluştur.
+4. Dosya isimlerini açıkça belirle.
+5. Kodları yarım bırakma.
+6. Gerçekleştirmediğin özellikleri yapılmış gibi gösterme.
+7. Kullanıcının istediği özellikleri atlama.
+8. Mobil ve masaüstü uyumluluğuna dikkat et.
+9. Gereksiz dosya oluşturma.
+10. Dosya içeriklerinde Markdown kod çitleri kullanma.
+
+ÇIKTI FORMATI ÇOK ÖNEMLİ:
+Sadece geçerli JSON döndür.
+JSON dışında açıklama veya Markdown yazma.
+
+Şu yapıyı kullan:
+{
+  "projectName": "Proje adı",
+  "description": "Kısa proje açıklaması",
+  "files": [
+    {
+      "name": "index.html",
+      "content": "Dosyanın tam kodu"
+    }
+  ]
+}
+
+Dosya isimleri gerçek dosya isimleri olmalı.
+Dosya içerikleri eksiksiz olmalı.
+JSON biçimini bozma.
 `;
 
-  let system = basePrompt;
+  let task = "";
 
   if (mode === "code") {
-    system += `
+    task = `
 GÖREV: PROFESYONEL KODLAMA STÜDYOSU.
 
-Bir kıdemli yazılım mühendisi gibi çalış.
-
-İstekleri önce analiz et, sonra çözümü planla.
-Gerektiğinde birden fazla dosya oluştur.
-Her dosyanın kodunu eksiksiz ver.
-Dosya isimlerini açıkça belirt.
-Kurulum ve çalıştırma talimatlarını yaz.
-
-Özellikle:
-- JavaScript mantığını doğru kur.
-- Fonksiyonları modüler tasarla.
-- Hata yönetimi ekle.
-- Kullanıcı arayüzünü profesyonel hazırla.
-- Performans ve güvenliğe dikkat et.
-- Kodları birbirleriyle uyumlu üret.
-- Mevcut kodu güncellerken eski özellikleri bozma.
-
-Basit örneklerle yetinme.
-Kullanıcının istediği kapsamda gerçek bir çözüm üret.
+Kullanıcının istediği yazılımı geliştir.
+Gerektiğinde HTML, CSS, JavaScript, JSON ve diğer gerekli dosyaları ayrı oluştur.
+Her dosyanın tam içeriğini files listesine ekle.
+Dosyalar arasında doğru bağlantıları kur.
+README.md dosyasıyla kurulum ve çalıştırma bilgilerini açıkla.
 `;
   }
 
-  else if (mode === "project") {
-    system += `
+  if (mode === "project") {
+    task = `
 GÖREV: PROFESYONEL PROJE FABRİKASI.
 
 Kullanıcının fikrini gerçek bir yazılım projesine dönüştür.
-
-Şunları hazırla:
-- Proje adı
-- Proje amacı
-- Profesyonel özellikler
-- Teknoloji seçimi
-- Dosya ve klasör mimarisi
-- Kullanıcı arayüzü
-- Backend ve frontend planı
-- Veri yönetimi
-- Güvenlik sistemi
-- Hata yönetimi
-- Test planı
-- Geliştirme aşamaları
-
-Gerektiğinde eksiksiz başlangıç kodları da üret.
-Projenin nasıl geliştirileceğini açıkla.
+Proje mimarisini ve gerekli kaynak dosyalarını oluştur.
+Kullanıcı arayüzü, veri yönetimi, hata yönetimi ve güvenlik konularını düşün.
+Gerekli başlangıç kodlarını dosyalar halinde üret.
+README.md dosyası ekle.
 `;
   }
 
-  else if (mode === "game") {
-    system += `
-GÖREV: PROFESYONEL OYUN GELİŞTİRME MOTORU.
+  if (mode === "game") {
+    task = `
+GÖREV: PROFESYONEL OYUN FABRİKASI.
 
-Kullanıcının istediği oyunu gerçek bir oyun olarak geliştir.
-
-ÇIKTI:
-- Yalnızca tek bir HTML belgesi üret.
-- CSS ve JavaScript aynı dosyada olsun.
-- Harici kütüphane gerektirmesin.
-- HTML dışında açıklama yazma.
-- <!DOCTYPE html> ile başla.
-- </html> ile bitir.
-
-OYUN ÖZELLİKLERİ:
-- Profesyonel ana menü.
-- Başlatma sistemi.
-- Duraklatma ve devam etme.
-- Yeniden başlatma.
-- Skor ve rekor sistemi.
-- Seviye sistemi.
-- Görevler ve hedefler.
-- Oyun sonu ekranı.
-- Animasyonlar ve efektler.
-- Ses açma ve kapatma.
-- Gelişmiş oyun mekanikleri.
-- Akıcı oynanış.
-
-KONTROLLER:
-- Mobil dokunmatik kontroller.
-- Bilgisayar klavye kontrolleri.
-- Kolay kullanılabilir butonlar.
-- Responsive ekran tasarımı.
-
-GELİŞMİŞ OYUN TASARIMI:
-- Gerçekçi hareket ve çarpışma mantığı.
-- Rakip yapay zekâsı gerekiyorsa ekle.
-- Oyun fiziğini doğru hesapla.
-- Oyuncu ilerlemesini yönet.
-- Zorluk seviyesini dengeli ayarla.
-- Görsel efektleri oynanışla uyumlu kullan.
-- Menü ve oyun ekranlarını birbirinden ayır.
-
-KALİTE KONTROLÜ:
-Kodunu tamamlamadan önce şu noktaları gözden geçir:
-- JavaScript sözdizimi.
-- Buton bağlantıları.
-- Oyun döngüsü.
-- Skor hesaplamaları.
-- Kontroller.
-- Yeniden başlatma.
-- Mobil uyumluluk.
-
-Basit bir prototip yerine kapsamlı ve oynanabilir bir oyun oluştur.
+Gerçekten oynanabilir bir oyun oluştur.
+index.html, style.css ve game.js dosyalarını ayrı üret.
+Gerekiyorsa başka yerel dosyalar da ekle.
+Harici kütüphane kullanmadan çalışmaya öncelik ver.
+Mobil dokunmatik ve bilgisayar klavye kontrollerini destekle.
+Menü, başlatma, duraklatma, yeniden başlatma, skor ve oyun sonu sistemi ekle.
+Dosyalar birbirine doğru bağlansın.
 `;
-  }
-
-  else {
-    throw new Error("Geçersiz stüdyo seçimi.");
   }
 
   const result = await callGemini({
     systemInstruction: {
-      parts: [{ text: system }]
+      parts: [{ text: basePrompt + "\n" + task }]
     },
     contents: [{
       role: "user",
-      parts: [{ text: prompt.slice(0, 20000) }]
+      parts: [{ text: prompt.slice(0, 16000) }]
     }],
     generationConfig: {
-      temperature: mode === "game" ? 0.35 : 0.5,
-      maxOutputTokens: 16000
+      temperature: mode === "game" ? 0.35 : 0.45,
+      maxOutputTokens: 16000,
+      responseMimeType: "application/json"
     }
   });
 
-  const answer = result?.candidates?.[0]?.content?.parts
-    ?.map(part => part.text || "")
-    .join("")
-    .trim();
+  const answer = getAnswer(result);
 
   if (!answer) {
     throw new Error("Model boş yanıt verdi.");
   }
 
-  if (mode === "game") {
-    const gameHtml = answer
-      .replace(/^```(?:html)?\s*/i, "")
-      .replace(/\s*```$/, "")
-      .trim();
+  let project;
 
-    if (
-      !/^<!doctype html/i.test(gameHtml) ||
-      !/<\/html>\s*$/i.test(gameHtml)
-    ) {
-      throw new Error(
-        "Oyun kodu eksik oluşturuldu. Daha kısa bir oyun isteği dene."
-      );
-    }
-
-    return {
-      answer: "Oyunun hazır!",
-      gameHtml
-    };
+  try {
+    project = parseProjectJSON(answer);
+  } catch (error) {
+    throw new Error(
+      "Proje JSON biçiminde tamamlanamadı. Daha kısa ve daha sade bir istek dene."
+    );
   }
 
-  return { answer };
+  const files = validateFiles(project.files);
+
+  if (mode === "game") {
+    const html = files.find(file => file.name === "index.html");
+
+    if (!html) {
+      throw new Error("Oyun projesinde index.html dosyası bulunamadı.");
+    }
+  }
+
+  return {
+    answer: String(project.description || project.projectName || "Projen hazır!"),
+    projectName: String(project.projectName || "omer-ai-proje"),
+    files
+  };
 }
-
-
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
-    return send(res, 204, {});
+    res.writeHead(204, {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
+    });
+    return res.end();
   }
 
   if (req.method === "GET" && (req.url === "/" || req.url === "/health")) {
@@ -311,8 +406,10 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  if (req.method !== "POST" ||
-      !["/api/chat", "/api/studio"].includes(req.url)) {
+  if (
+    req.method !== "POST" ||
+    !["/api/chat", "/api/studio"].includes(req.url)
+  ) {
     return send(res, 404, { error: "Sayfa bulunamadı." });
   }
 
@@ -320,7 +417,8 @@ const server = http.createServer(async (req, res) => {
     const data = await readBody(req);
 
     if (req.url === "/api/chat") {
-      return send(res, 200, { answer: await askChat(data) });
+      const answer = await askChat(data);
+      return send(res, 200, { answer });
     }
 
     if (req.url === "/api/studio") {
@@ -328,7 +426,8 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, result);
     }
   } catch (error) {
-    console.error("ÖMER AI error:", error.message);
+    console.error("ÖMER AI error:", error);
+
     return send(res, 500, {
       error: error.message || "Beklenmeyen sunucu hatası."
     });
@@ -339,3 +438,4 @@ server.listen(PORT, () => {
   console.log("ÖMER AI server çalışıyor: " + PORT);
   console.log("Sohbet modeli: " + CHAT_MODEL);
 });
+        
