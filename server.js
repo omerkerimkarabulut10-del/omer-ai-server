@@ -99,117 +99,204 @@ function getAnswer(result) {
     .trim() || "";
 }
 
-async function askChat(data) {
-  const language = String(data.dil || "Türkçe").slice(0, 40);
-  const personality = personalities[data.kisilik] || personalities.arkadas;
-  const memory = String(data.hafiza || "").slice(0, 5000);
-
-  const system = [
-    "Sen ÖMER AI adlı yardımcı sohbet asistanısın.",
-    personality,
-    `Yanıtlarını ${language} dilinde ver.`,
-    "Doğru, güvenli ve anlaşılır cevaplar ver. Bilmediğin bilgileri uydurma.",
-    memory ? `Kullanıcının hafıza notları: ${memory}` : ""
-  ].filter(Boolean).join("\n\n");
-
-  const contents = cleanHistory(data.gecmis);
-
-  if (!contents.length && data.message) {
-    contents.push({
-      role: "user",
-      parts: [{ text: String(data.message).slice(0, 12000) }]
-    });
-  }
-
-  if (!contents.length) throw new Error("Mesaj boş olamaz.");
-
-  const result = await callGemini({
-    systemInstruction: { parts: [{ text: system }] },
-    contents,
-    generationConfig: {
-      temperature: 0.8,
-      maxOutputTokens: 4096
-    }
-  });
-
-  const answer = getAnswer(result);
-  if (!answer) throw new Error("Model boş yanıt verdi.");
-
-  return answer;
-}
 
 async function askStudio(data) {
   const mode = String(data.mode || "");
   const prompt = String(data.prompt || "").trim();
 
-  if (!prompt) throw new Error("Önce bir istek yaz.");
+  if (!prompt) {
+    throw new Error("Önce bir istek yaz.");
+  }
 
-  let system = "";
+  const basePrompt = `
+Sen ÖMER AI Gelişmiş Yazılım Motorusun.
+
+Uzmanlık alanların:
+- Yazılım mimarisi
+- Profesyonel web geliştirme
+- HTML, CSS, JavaScript
+- Node.js ve API geliştirme
+- Oyun programlama
+- Hata ayıklama
+- Kod optimizasyonu
+- Responsive tasarım
+- Kullanıcı arayüzü tasarımı
+
+KODLAMA KURALLARI:
+1. Eksiksiz ve çalışabilir kod üret.
+2. Kullanıcının istediği hiçbir özelliği atlama.
+3. Modern ve anlaşılır kod yaz.
+4. Gereksiz kod tekrarından kaçın.
+5. Güvenli programlama yöntemleri kullan.
+6. Mobil, tablet ve bilgisayar uyumluluğunu sağla.
+7. Hataları önceden düşün ve gerekli kontrolleri ekle.
+8. Kodun tamamını üretmeden yarım bırakma.
+9. Gerçekleştirmediğin özellikleri yapılmış gibi gösterme.
+10. Kullanıcı mevcut projesini güncelliyorsa eski özellikleri koru.
+`;
+
+  let system = basePrompt;
 
   if (mode === "code") {
-    system = `Sen ÖMER AI Kodlama Stüdyosu'sun.
-Eksiksiz, çalışabilir ve anlaşılır kodlar üret.
-Gerekli dosyaları ve kurulum adımlarını belirt.
-Zararlı yazılım, veri çalma veya güvenlik aşma özellikleri üretme.`;
-  } else if (mode === "project") {
-    system = `Sen ÖMER AI Proje Fabrikası'sın.
-Kullanıcının fikrini uygulanabilir projeye dönüştür.
-Proje adı, amaç, özellikler, teknolojiler, dosya yapısı ve yapım aşamalarını açıkla.
-Yapılmamış özellikleri tamamlanmış gibi gösterme.`;
-  } else if (mode === "game") {
-    system = `Sen ÖMER AI Oyun Fabrikası'sın.
+    system += `
+GÖREV: PROFESYONEL KODLAMA STÜDYOSU.
 
-Kullanıcının istediği oyunu TEK DOSYALIK, TAMAMEN ÇALIŞAN bir HTML oyunu olarak üret.
+Bir kıdemli yazılım mühendisi gibi çalış.
 
-ÇOK ÖNEMLİ KURALLAR:
-- Cevabın yalnızca HTML kodu olsun.
-- Kod <!DOCTYPE html> ile başlasın ve </html> ile bitsin.
-- CSS ve JavaScript aynı HTML dosyasının içinde bulunsun.
-- Harici kütüphane, CDN veya internet bağlantısı gerektirme.
-- Gerçek oynanış mekanikleri, skor, hedefler ve yeniden başlatma ekle.
-- Mobil dokunmatik kontrolleri ve bilgisayar klavye kontrolleri ekle.
-- Ekrana sığan, responsive bir oyun tasarla.
-- Boş buton, çalışmayan kontrol veya sahte özellik bırakma.
-- Güvenli ve yaşa uygun içerik üret.
-- Açıklama veya Markdown kod çiti ekleme.`;
-  } else {
+İstekleri önce analiz et, sonra çözümü planla.
+Gerektiğinde birden fazla dosya oluştur.
+Her dosyanın kodunu eksiksiz ver.
+Dosya isimlerini açıkça belirt.
+Kurulum ve çalıştırma talimatlarını yaz.
+
+Özellikle:
+- JavaScript mantığını doğru kur.
+- Fonksiyonları modüler tasarla.
+- Hata yönetimi ekle.
+- Kullanıcı arayüzünü profesyonel hazırla.
+- Performans ve güvenliğe dikkat et.
+- Kodları birbirleriyle uyumlu üret.
+- Mevcut kodu güncellerken eski özellikleri bozma.
+
+Basit örneklerle yetinme.
+Kullanıcının istediği kapsamda gerçek bir çözüm üret.
+`;
+  }
+
+  else if (mode === "project") {
+    system += `
+GÖREV: PROFESYONEL PROJE FABRİKASI.
+
+Kullanıcının fikrini gerçek bir yazılım projesine dönüştür.
+
+Şunları hazırla:
+- Proje adı
+- Proje amacı
+- Profesyonel özellikler
+- Teknoloji seçimi
+- Dosya ve klasör mimarisi
+- Kullanıcı arayüzü
+- Backend ve frontend planı
+- Veri yönetimi
+- Güvenlik sistemi
+- Hata yönetimi
+- Test planı
+- Geliştirme aşamaları
+
+Gerektiğinde eksiksiz başlangıç kodları da üret.
+Projenin nasıl geliştirileceğini açıkla.
+`;
+  }
+
+  else if (mode === "game") {
+    system += `
+GÖREV: PROFESYONEL OYUN GELİŞTİRME MOTORU.
+
+Kullanıcının istediği oyunu gerçek bir oyun olarak geliştir.
+
+ÇIKTI:
+- Yalnızca tek bir HTML belgesi üret.
+- CSS ve JavaScript aynı dosyada olsun.
+- Harici kütüphane gerektirmesin.
+- HTML dışında açıklama yazma.
+- <!DOCTYPE html> ile başla.
+- </html> ile bitir.
+
+OYUN ÖZELLİKLERİ:
+- Profesyonel ana menü.
+- Başlatma sistemi.
+- Duraklatma ve devam etme.
+- Yeniden başlatma.
+- Skor ve rekor sistemi.
+- Seviye sistemi.
+- Görevler ve hedefler.
+- Oyun sonu ekranı.
+- Animasyonlar ve efektler.
+- Ses açma ve kapatma.
+- Gelişmiş oyun mekanikleri.
+- Akıcı oynanış.
+
+KONTROLLER:
+- Mobil dokunmatik kontroller.
+- Bilgisayar klavye kontrolleri.
+- Kolay kullanılabilir butonlar.
+- Responsive ekran tasarımı.
+
+GELİŞMİŞ OYUN TASARIMI:
+- Gerçekçi hareket ve çarpışma mantığı.
+- Rakip yapay zekâsı gerekiyorsa ekle.
+- Oyun fiziğini doğru hesapla.
+- Oyuncu ilerlemesini yönet.
+- Zorluk seviyesini dengeli ayarla.
+- Görsel efektleri oynanışla uyumlu kullan.
+- Menü ve oyun ekranlarını birbirinden ayır.
+
+KALİTE KONTROLÜ:
+Kodunu tamamlamadan önce şu noktaları gözden geçir:
+- JavaScript sözdizimi.
+- Buton bağlantıları.
+- Oyun döngüsü.
+- Skor hesaplamaları.
+- Kontroller.
+- Yeniden başlatma.
+- Mobil uyumluluk.
+
+Basit bir prototip yerine kapsamlı ve oynanabilir bir oyun oluştur.
+`;
+  }
+
+  else {
     throw new Error("Geçersiz stüdyo seçimi.");
   }
 
   const result = await callGemini({
-    systemInstruction: { parts: [{ text: system }] },
+    systemInstruction: {
+      parts: [{ text: system }]
+    },
     contents: [{
       role: "user",
       parts: [{ text: prompt.slice(0, 20000) }]
     }],
     generationConfig: {
-      temperature: mode === "game" ? 0.5 : 0.7,
-      maxOutputTokens: 12000
+      temperature: mode === "game" ? 0.35 : 0.5,
+      maxOutputTokens: 16000
     }
   });
 
-  let answer = getAnswer(result);
+  const answer = result?.candidates?.[0]?.content?.parts
+    ?.map(part => part.text || "")
+    .join("")
+    .trim();
 
-  if (!answer) throw new Error("Model boş yanıt verdi.");
+  if (!answer) {
+    throw new Error("Model boş yanıt verdi.");
+  }
 
   if (mode === "game") {
-    answer = answer
+    const gameHtml = answer
       .replace(/^```(?:html)?\s*/i, "")
       .replace(/\s*```$/, "")
       .trim();
 
-    if (!/^<!doctype html/i.test(answer) || !/<\/html>\s*$/i.test(answer)) {
-      throw new Error("Model geçerli bir HTML oyun dosyası oluşturamadı. Tekrar dene.");
+    if (
+      !/^<!doctype html/i.test(gameHtml) ||
+      !/<\/html>\s*$/i.test(gameHtml)
+    ) {
+      throw new Error(
+        "Oyun kodu eksik oluşturuldu. Daha kısa bir oyun isteği dene."
+      );
     }
 
     return {
-      answer: "Oyunun hazır! HTML dosyasını indirip tarayıcıda açabilirsin.",
-      gameHtml: answer
+      answer: "Oyunun hazır!",
+      gameHtml
     };
   }
 
   return { answer };
 }
+
+
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
