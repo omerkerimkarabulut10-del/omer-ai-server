@@ -14,19 +14,28 @@ body{margin:0;background:#101329;color:#fff;font-family:Arial,sans-serif}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 .app{display:flex;height:100dvh;overflow:hidden}
+
 .sidebar{
- width:260px;background:#171c35;padding:18px;
+ width:260px;flex:0 0 260px;background:#171c35;padding:18px;
  display:flex;flex-direction:column;gap:12px;
- flex-shrink:0;transition:transform .3s ease,margin .3s ease;
- z-index:20
+ transition:width .3s ease,flex-basis .3s ease,padding .3s ease,transform .3s ease;
+ z-index:20;min-height:0;overflow-y:auto;overflow-x:hidden;
+ scrollbar-width:thin;scrollbar-color:#465477 #171c35;
 }
-.logo{font-size:24px;font-weight:bold;color:#62e6dc;padding:10px;display:flex;align-items:center;gap:9px}
+.sidebar.collapsed{
+ width:0;flex-basis:0;padding-left:0;padding-right:0;
+ overflow:hidden;
+}
+.logo{font-size:24px;font-weight:bold;color:#62e6dc;padding:10px;display:flex;align-items:center;gap:9px;flex-shrink:0}
 .sidebtn,.navbtn{
  border:0;background:#222945;color:white;padding:13px;
- border-radius:12px;text-align:left;width:100%
+ border-radius:12px;text-align:left;width:100%;flex-shrink:0
 }
 .sidebtn:hover,.navbtn:hover{background:#303a5d}
-.history{overflow:auto;flex:1}
+.history{
+ overflow-y:auto;overflow-x:hidden;flex:1;min-height:120px;
+ scrollbar-width:thin;scrollbar-color:#465477 #171c35
+}
 .history-row{display:flex;gap:5px;margin-bottom:5px}
 .history-open{
  flex:1;min-width:0;text-align:left;background:transparent;
@@ -71,6 +80,7 @@ button{cursor:pointer}
  background:#28b9ad;color:#071c25;border:0;
  border-radius:12px;padding:13px 18px;font-weight:bold
 }
+.primary:disabled{opacity:.55;cursor:wait}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:22px}
 .card{background:#1b2340;border:1px solid #303b60;border-radius:17px;padding:20px;transition:.2s}
 .card:hover{transform:translateY(-3px);border-color:#62e6dc}
@@ -103,23 +113,28 @@ button{cursor:pointer}
  display:none;position:fixed;inset:0;background:#0008;z-index:15
 }
 #sidebarBackdrop.show{display:block}
-#imageResult img{display:block;width:100%;max-width:700px;border-radius:15px;margin-top:15px}
-#downloadImage{display:inline-block;margin-top:12px;text-decoration:none}
-
+#gamePreview{
+ width:100%;height:520px;border:1px solid #394464;
+ border-radius:14px;background:white;margin-top:15px
+}
+.game-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 @media(max-width:700px){
  .sidebar{
   position:fixed;left:0;top:0;bottom:0;
   transform:translateX(-105%);
-  width:270px;box-shadow:5px 0 25px #0005
+  width:270px;flex-basis:270px;
+  box-shadow:5px 0 25px #0005;
+  padding:18px;
  }
  .sidebar.open{transform:translateX(0)}
+ .sidebar.collapsed{width:270px;flex-basis:270px;padding:18px}
  .content{padding:15px}
  .welcome{margin:35px auto 25px}
  .welcome h1{font-size:28px}
  .composer{padding:10px}
  .composer textarea{min-width:0}
+ #gamePreview{height:420px}
 }
-.sidebar.collapsed{display:none}
 </style>
 </head>
 
@@ -172,18 +187,13 @@ button{cursor:pointer}
    <button class="primary" onclick="openStudio('code')">Başla</button>
   </div>
   <div class="card">
-   <h3>🎨 Görsel Stüdyosu</h3>
-   <p>Görsel oluştur ve fotoğraflarını düzenle.</p>
-   <button class="primary" onclick="openStudio('image')">Başla</button>
-  </div>
-  <div class="card">
    <h3>🏭 Proje Fabrikası</h3>
    <p>Bir fikri adım adım projeye dönüştür.</p>
    <button class="primary" onclick="openStudio('project')">Başla</button>
   </div>
   <div class="card">
-   <h3>🎮 Oyun Tasarımcısı</h3>
-   <p>Tarayıcıda oynanabilen oyunlar tasarla ve kodla.</p>
+   <h3>🎮 Oyun Fabrikası</h3>
+   <p>Oynanabilir oyunlar oluştur, indir ve oyna.</p>
    <button class="primary" onclick="openStudio('game')">Başla</button>
   </div>
  </div>
@@ -192,18 +202,21 @@ button{cursor:pointer}
   <h2 id="studioTitle"></h2>
   <textarea class="field" id="studioPrompt" rows="5" placeholder="Ne yapmak istiyorsun?"></textarea>
 
-  <div id="imageUploadArea" class="hidden">
-   <p>İstersen düzenlemek için bir fotoğraf seç:</p>
-   <input class="field" type="file" id="imageFile" accept="image/png,image/jpeg,image/webp">
-  </div>
-
   <button class="primary" id="createButton" onclick="runStudio()">Oluştur ✨</button>
+
   <div id="studioOutput" class="output hidden"></div>
 
-  <div id="imageResult" class="hidden">
-   <img id="generatedImage" alt="ÖMER AI tarafından oluşturulan görsel">
-   <a id="downloadImage" class="primary" download="omer-ai-gorsel.png">Görseli indir ↓</a>
+  <div id="gameActions" class="game-actions hidden">
+   <button class="primary" onclick="downloadGame()">⬇️ Oyunu indir</button>
+   <button class="sidebtn" onclick="showGamePreview()">▶️ Oyunu oyna</button>
   </div>
+
+  <iframe
+   id="gamePreview"
+   class="hidden"
+   title="ÖMER AI oyun önizlemesi"
+   sandbox="allow-scripts">
+  </iframe>
  </div>
 </section>
 </div>
@@ -211,7 +224,7 @@ button{cursor:pointer}
 <div class="composer" id="composer">
  <textarea id="message" placeholder="ÖMER AI'a bir şey sor..." rows="1"
  onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
- <button class="primary" onclick="sendMessage()">Gönder ➤</button>
+ <button class="primary" id="sendButton" onclick="sendMessage()">Gönder ➤</button>
 </div>
 </main>
 </div>
@@ -248,9 +261,16 @@ button{cursor:pointer}
 
 <script>
 const API="https://omer-ai-server.onrender.com";
-let chats=JSON.parse(localStorage.getItem("omerSohbetlerV2")||"[]");
+
+let chats=[];
+try{
+ chats=JSON.parse(localStorage.getItem("omerSohbetlerV2")||"[]");
+ if(!Array.isArray(chats))chats=[];
+}catch(e){chats=[];}
+
 let currentChat=null;
 let studioMode="code";
+let generatedGame="";
 
 function saveChats(){
  localStorage.setItem("omerSohbetlerV2",JSON.stringify(chats));
@@ -306,7 +326,7 @@ function renderHistory(){
   del.className="history-delete";
   del.textContent="🗑️";
   del.title="Bu sohbeti sil";
-  del.onclick=(e)=>{
+  del.onclick=e=>{
    e.stopPropagation();
    deleteChat(chat.id);
   };
@@ -355,14 +375,18 @@ function addBubble(role,text){
  b.className="msg "+(role==="user"?"user":"bot");
  b.textContent=text;
  document.getElementById("messages").appendChild(b);
+ document.querySelector(".content").scrollTop=
+  document.querySelector(".content").scrollHeight;
 }
 
 async function sendMessage(){
  const input=document.getElementById("message");
+ const sendButton=document.getElementById("sendButton");
  const text=input.value.trim();
  if(!text)return;
 
  if(!currentChat)newChat();
+
  input.value="";
  currentChat.messages.push({role:"user",text});
  addBubble("user",text);
@@ -373,6 +397,7 @@ async function sendMessage(){
  loading.className="msg bot";
  loading.textContent="Düşünüyorum...";
  document.getElementById("messages").appendChild(loading);
+ sendButton.disabled=true;
 
  try{
   const response=await fetch(API+"/api/chat",{
@@ -397,6 +422,8 @@ async function sendMessage(){
 
  }catch(e){
   loading.textContent="Hata: "+e.message;
+ }finally{
+  sendButton.disabled=false;
  }
 }
 
@@ -421,27 +448,26 @@ function closeModal(id){
 
 function openStudio(mode){
  studioMode=mode;
+ generatedGame="";
 
- document.getElementById("imageUploadArea").classList.toggle("hidden",mode!=="image");
- document.getElementById("imageResult").classList.add("hidden");
- document.getElementById("studioOutput").classList.add("hidden");
  document.getElementById("studioTitle").textContent={
   code:"💻 Kodlama Stüdyosu",
-  image:"🎨 Görsel Stüdyosu",
   project:"🏭 Proje Fabrikası",
-  game:"🎮 Oyun Tasarımcısı"
+  game:"🎮 Oyun Fabrikası"
  }[mode];
 
  document.getElementById("studioPrompt").value="";
- document.getElementById("imageFile").value="";
  document.getElementById("studioForm").classList.remove("hidden");
+ document.getElementById("studioOutput").classList.add("hidden");
+ document.getElementById("gameActions").classList.add("hidden");
+ document.getElementById("gamePreview").classList.add("hidden");
+ document.getElementById("gamePreview").srcdoc="";
  document.getElementById("studioForm").scrollIntoView({behavior:"smooth"});
 }
 
 async function runStudio(){
  const prompt=document.getElementById("studioPrompt").value.trim();
  const output=document.getElementById("studioOutput");
- const imageResult=document.getElementById("imageResult");
  const createButton=document.getElementById("createButton");
 
  if(!prompt){
@@ -450,65 +476,30 @@ async function runStudio(){
  }
 
  output.classList.remove("hidden");
- imageResult.classList.add("hidden");
  output.textContent="Hazırlanıyor... Lütfen bekle.";
+ document.getElementById("gameActions").classList.add("hidden");
+ document.getElementById("gamePreview").classList.add("hidden");
+
  createButton.disabled=true;
  createButton.textContent="Hazırlanıyor...";
 
  try{
-  if(studioMode==="image"){
-   const file=document.getElementById("imageFile").files[0];
+  const response=await fetch(API+"/api/studio",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({mode:studioMode,prompt})
+  });
 
-   if(file && file.size>7*1024*1024){
-    throw new Error("Fotoğraf en fazla 7 MB olabilir.");
-   }
+  const data=await response.json();
+  if(!response.ok)throw new Error(data.error||"Sunucu hatası");
 
-   let imageData=null;
+  if(studioMode==="game"){
+   if(!data.gameHtml)throw new Error("Oyun dosyası sunucudan gelmedi.");
 
-   if(file){
-    imageData=await new Promise((resolve,reject)=>{
-     const reader=new FileReader();
-     reader.onload=()=>resolve(reader.result.split(",")[1]);
-     reader.onerror=()=>reject(new Error("Fotoğraf okunamadı."));
-     reader.readAsDataURL(file);
-    });
-   }
-
-   const response=await fetch(API+"/api/image",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-     prompt:prompt,
-     image:imageData,
-     imageMime:file?file.type:undefined
-    })
-   });
-
-   const data=await response.json();
-   if(!response.ok)throw new Error(data.error||"Görsel oluşturulamadı.");
-
-   if(!data.image)throw new Error("Sunucu görsel döndürmedi.");
-
-   const mime=data.mimeType||"image/png";
-   const imageUrl="data:"+mime+";base64,"+data.image;
-
-   document.getElementById("generatedImage").src=imageUrl;
-   document.getElementById("downloadImage").href=imageUrl;
-   document.getElementById("downloadImage").download=
-    "omer-ai-gorsel."+(mime.split("/")[1]||"png");
-
-   output.textContent=data.answer||"Görselin hazır!";
-   imageResult.classList.remove("hidden");
-
+   generatedGame=data.gameHtml;
+   output.textContent=data.answer||"Oyunun hazır!";
+   document.getElementById("gameActions").classList.remove("hidden");
   }else{
-   const response=await fetch(API+"/api/studio",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({mode:studioMode,prompt})
-   });
-
-   const data=await response.json();
-   if(!response.ok)throw new Error(data.error||"Sunucu hatası");
    output.textContent=data.answer||"Tamamlandı!";
   }
 
@@ -518,6 +509,34 @@ async function runStudio(){
   createButton.disabled=false;
   createButton.textContent="Oluştur ✨";
  }
+}
+
+function downloadGame(){
+ if(!generatedGame){
+  alert("Önce bir oyun oluşturmalısın.");
+  return;
+ }
+
+ const blob=new Blob([generatedGame],{type:"text/html;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+
+ link.href=url;
+ link.download="omer-ai-oyunum.html";
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+
+function showGamePreview(){
+ if(!generatedGame)return;
+
+ const preview=document.getElementById("gamePreview");
+ preview.srcdoc=generatedGame;
+ preview.classList.remove("hidden");
+ preview.scrollIntoView({behavior:"smooth",block:"center"});
 }
 
 renderHistory();
