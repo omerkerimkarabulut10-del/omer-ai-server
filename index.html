@@ -7,21 +7,42 @@
 <meta name="theme-color" content="#101329">
 <title>ÖMER AI</title>
 <link rel="manifest" href="manifest.json">
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#101329;color:#fff;font-family:Arial,sans-serif}
-button,input,textarea{font:inherit}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 .app{display:flex;height:100dvh;overflow:hidden}
-.sidebar{width:260px;background:#171c35;padding:18px;display:flex;flex-direction:column;gap:12px;transition:.25s;flex-shrink:0}
-.logo{font-size:24px;font-weight:bold;color:#62e6dc;padding:10px}
-.sidebtn,.navbtn{border:0;background:#222945;color:white;padding:13px;border-radius:12px;text-align:left;width:100%}
+.sidebar{
+ width:260px;background:#171c35;padding:18px;
+ display:flex;flex-direction:column;gap:12px;
+ flex-shrink:0;transition:transform .3s ease,margin .3s ease;
+ z-index:20
+}
+.logo{font-size:24px;font-weight:bold;color:#62e6dc;padding:10px;display:flex;align-items:center;gap:9px}
+.sidebtn,.navbtn{
+ border:0;background:#222945;color:white;padding:13px;
+ border-radius:12px;text-align:left;width:100%
+}
 .sidebtn:hover,.navbtn:hover{background:#303a5d}
 .history{overflow:auto;flex:1}
-.history button{display:block;width:100%;text-align:left;background:transparent;color:#cbd1e8;border:0;padding:10px;border-radius:8px;overflow:hidden;text-overflow:ellipsis}
-.history button:hover{background:#252d4c}
+.history-row{display:flex;gap:5px;margin-bottom:5px}
+.history-open{
+ flex:1;min-width:0;text-align:left;background:transparent;
+ color:#cbd1e8;border:0;padding:10px;border-radius:8px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.history-open:hover{background:#252d4c}
+.history-delete{
+ background:#402936;color:#ffb5c0;border:0;
+ border-radius:8px;padding:8px 10px
+}
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
-.top{height:65px;display:flex;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid #29304d}
+.top{
+ height:65px;display:flex;align-items:center;gap:14px;
+ padding:0 18px;border-bottom:1px solid #29304d;flex-shrink:0
+}
 .top button{background:#222945;border:0;color:white;padding:10px 14px;border-radius:10px}
 .top strong{font-size:19px;color:#62e6dc}
 .content{flex:1;overflow:auto;padding:22px}
@@ -31,165 +52,198 @@ button{cursor:pointer}
 .welcome h1{font-size:34px;color:#62e6dc}
 .welcome p{color:#aeb8d5}
 .messages{display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
-.msg{padding:14px 17px;border-radius:15px;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.msg{
+ padding:14px 17px;border-radius:15px;max-width:90%;
+ white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5
+}
 .user{background:#285b70;align-self:flex-end}
 .bot{background:#202945;align-self:flex-start}
-.composer{display:flex;gap:10px;padding:14px 18px;border-top:1px solid #29304d}
-.composer textarea{flex:1;resize:none;min-height:48px;max-height:130px;background:#1c2440;color:white;border:1px solid #394464;border-radius:14px;padding:14px;outline:none}
-.primary{background:#28b9ad;color:#071c25;border:0;border-radius:12px;padding:13px 18px;font-weight:bold}
+.composer{
+ display:flex;gap:10px;padding:14px 18px;
+ border-top:1px solid #29304d;flex-shrink:0
+}
+.composer textarea{
+ flex:1;resize:none;min-height:48px;max-height:130px;
+ background:#1c2440;color:white;border:1px solid #394464;
+ border-radius:14px;padding:14px;outline:none
+}
+.primary{
+ background:#28b9ad;color:#071c25;border:0;
+ border-radius:12px;padding:13px 18px;font-weight:bold
+}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:22px}
 .card{background:#1b2340;border:1px solid #303b60;border-radius:17px;padding:20px;transition:.2s}
 .card:hover{transform:translateY(-3px);border-color:#62e6dc}
 .card h3{color:#62e6dc;margin-top:0}
 .card button{margin-top:10px}
-.field{width:100%;background:#1c2440;color:white;border:1px solid #394464;border-radius:12px;padding:14px;margin:10px 0;outline:none}
-.output{background:#1b2340;border-radius:14px;padding:16px;margin-top:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
-.modal{display:none;position:fixed;inset:0;background:#000b;z-index:10;align-items:center;justify-content:center;padding:18px}
+.field{
+ width:100%;background:#1c2440;color:white;
+ border:1px solid #394464;border-radius:12px;
+ padding:14px;margin:10px 0;outline:none
+}
+.output{
+ background:#1b2340;border-radius:14px;padding:16px;
+ margin-top:18px;white-space:pre-wrap;
+ overflow-wrap:anywhere;line-height:1.5
+}
+.modal{
+ display:none;position:fixed;inset:0;background:#000b;
+ z-index:30;align-items:center;justify-content:center;padding:18px
+}
 .modal.show{display:flex}
-.modalbox{background:#1b2340;padding:22px;border-radius:18px;width:min(500px,100%);max-height:85vh;overflow:auto}
+.modalbox{
+ background:#1b2340;padding:22px;border-radius:18px;
+ width:min(500px,100%);max-height:85vh;overflow:auto
+}
 .modalbox h2{color:#62e6dc}
 .modalbox button{margin:5px}
 .small{color:#aeb8d5;font-size:13px}
 .hidden{display:none!important}
-@media(max-width:700px){
-.sidebar{position:fixed;z-index:5;left:-280px;top:0;bottom:0}
-.sidebar.open{left:0}
-.content{padding:15px}
-.welcome{margin:35px auto 25px}
-.welcome h1{font-size:28px}
-.composer{padding:10px}
-.composer textarea{min-width:0}
- /* ÖMER AI menü animasyonu */
-.sidebar {
-  position: fixed !important;
-  z-index: 20;
-  left: 0 !important;
-  top: 0;
-  bottom: 0;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out !important;
-  box-shadow: 5px 0 25px #0005;
+#sidebarBackdrop{
+ display:none;position:fixed;inset:0;background:#0008;z-index:15
 }
+#sidebarBackdrop.show{display:block}
+#imageResult img{display:block;width:100%;max-width:700px;border-radius:15px;margin-top:15px}
+#downloadImage{display:inline-block;margin-top:12px;text-decoration:none}
 
-.sidebar.open {
-  transform: translateX(0);
+@media(max-width:700px){
+ .sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  transform:translateX(-105%);
+  width:270px;box-shadow:5px 0 25px #0005
+ }
+ .sidebar.open{transform:translateX(0)}
+ .content{padding:15px}
+ .welcome{margin:35px auto 25px}
+ .welcome h1{font-size:28px}
+ .composer{padding:10px}
+ .composer textarea{min-width:0}
 }
-}
+.sidebar.collapsed{display:none}
 </style>
 </head>
+
 <body>
+<div id="sidebarBackdrop" onclick="toggleMenu()"></div>
+
 <div class="app">
 <aside class="sidebar" id="sidebar">
-<div class="logo">
+ <div class="logo">
   <img src="icon-192.png" width="42" height="42" alt="ÖMER AI">
   ÖMER AI
-</div>
-<button class="sidebtn" onclick="newChat()">＋ Yeni sohbet</button>
-<button class="sidebtn" onclick="showPage('chat')">💬 Sohbet</button>
-<button class="sidebtn" onclick="showPage('studio')">🧪 Yapay Zeka Stüdyosu</button>
-<button class="sidebtn" onclick="openMemory()">🧠 Hafızam</button>
-<button class="sidebtn" onclick="openSettings()">⚙️ Ayarlar</button>
-<hr style="width:100%;border-color:#303957">
-<div class="small">SOHBET GEÇMİŞİ</div>
-<div class="history" id="history"></div>
+ </div>
+
+ <button class="sidebtn" onclick="newChat()">＋ Yeni sohbet</button>
+ <button class="sidebtn" onclick="showPage('chat')">💬 Sohbet</button>
+ <button class="sidebtn" onclick="showPage('studio')">🧪 Yapay Zeka Stüdyosu</button>
+ <button class="sidebtn" onclick="openMemory()">🧠 Hafızam</button>
+ <button class="sidebtn" onclick="openSettings()">⚙️ Ayarlar</button>
+
+ <hr style="width:100%;border-color:#303957">
+ <div class="small">SOHBET GEÇMİŞİ</div>
+ <div class="history" id="history"></div>
+ <button class="sidebtn" onclick="deleteAllChats()">🗑️ Bütün sohbetleri sil</button>
 </aside>
 
 <main class="main">
 <header class="top">
-<button onclick="toggleMenu()">☰</button>
-<strong>ÖMER AI</strong>
-<span class="small" id="status">Yapay zeka asistanın</span>
+ <button onclick="toggleMenu()">☰</button>
+ <strong>ÖMER AI</strong>
+ <span class="small" id="status">Yapay zeka asistanın</span>
 </header>
 
 <div class="content">
 <section class="page active" id="chat">
-<div class="welcome" id="welcome">
-<h1>Merhaba! 👋</h1>
-<p>Ben ÖMER AI. Bugün ne yapmak istersin?</p>
-</div>
-<div class="messages" id="messages"></div>
+ <div class="welcome" id="welcome">
+  <h1>Merhaba! 👋</h1>
+  <p>Ben ÖMER AI. Bugün ne yapmak istersin?</p>
+ </div>
+ <div class="messages" id="messages"></div>
 </section>
 
 <section class="page" id="studio">
-<h1>Yapay Zeka Stüdyosu ✨</h1>
-<p class="small">Fikrini seç, isteğini yaz ve başlayalım.</p>
-<div class="cards">
-<div class="card">
-<h3>💻 Kodlama Stüdyosu</h3>
-<p>Uygulama, web sitesi ve kod projeleri oluştur.</p>
-<button class="primary" onclick="openStudio('code')">Başla</button>
-</div>
-<div class="card">
-<h3>🎨 Görsel Stüdyosu</h3>
-<p>Görselleri incele ve görsel üretim fikirleri hazırla.</p>
-<button class="primary" onclick="openStudio('image')">Başla</button>
-</div>
-<div class="card">
-<h3>🏭 Proje Fabrikası</h3>
-<p>Bir fikri adım adım projeye dönüştür.</p>
-<button class="primary" onclick="openStudio('project')">Başla</button>
-</div>
-<div class="card">
-<h3>🎮 Oyun Tasarımcısı</h3>
-<p>Tarayıcıda oynanabilen oyunlar tasarla ve kodla.</p>
-<button class="primary" onclick="openStudio('game')">Başla</button>
-</div>
-</div>
-<div id="studioForm" class="hidden">
-<h2 id="studioTitle"></h2>
-<textarea class="field" id="studioPrompt" rows="5" placeholder="Ne yapmak istiyorsun?"></textarea>
- <div id="imageUploadArea" class="hidden">
-  <p>İstersen düzenlemek için bir fotoğraf yükle:</p>
-  <input class="field" type="file" id="imageFile" accept="image/png,image/jpeg,image/webp">
+ <h1>Yapay Zeka Stüdyosu ✨</h1>
+ <p class="small">Fikrini seç, isteğini yaz ve başlayalım.</p>
+
+ <div class="cards">
+  <div class="card">
+   <h3>💻 Kodlama Stüdyosu</h3>
+   <p>Uygulama, web sitesi ve kod projeleri oluştur.</p>
+   <button class="primary" onclick="openStudio('code')">Başla</button>
+  </div>
+  <div class="card">
+   <h3>🎨 Görsel Stüdyosu</h3>
+   <p>Görsel oluştur ve fotoğraflarını düzenle.</p>
+   <button class="primary" onclick="openStudio('image')">Başla</button>
+  </div>
+  <div class="card">
+   <h3>🏭 Proje Fabrikası</h3>
+   <p>Bir fikri adım adım projeye dönüştür.</p>
+   <button class="primary" onclick="openStudio('project')">Başla</button>
+  </div>
+  <div class="card">
+   <h3>🎮 Oyun Tasarımcısı</h3>
+   <p>Tarayıcıda oynanabilen oyunlar tasarla ve kodla.</p>
+   <button class="primary" onclick="openStudio('game')">Başla</button>
+  </div>
  </div>
-<button class="primary" onclick="runStudio()">Oluştur ✨</button>
-<div id="studioOutput" class="output hidden"></div>
- <div id="imageResult" class="hidden">
-  <img id="generatedImage" alt="ÖMER AI tarafından oluşturulan görsel"
-       style="width:100%;max-width:700px;border-radius:15px;margin-top:15px">
-  <br>
-  <a id="downloadImage" class="primary"
-     style="display:inline-block;margin-top:12px;text-decoration:none"
-     download="omer-ai-gorsel.png">Görseli indir ↓</a>
+
+ <div id="studioForm" class="hidden">
+  <h2 id="studioTitle"></h2>
+  <textarea class="field" id="studioPrompt" rows="5" placeholder="Ne yapmak istiyorsun?"></textarea>
+
+  <div id="imageUploadArea" class="hidden">
+   <p>İstersen düzenlemek için bir fotoğraf seç:</p>
+   <input class="field" type="file" id="imageFile" accept="image/png,image/jpeg,image/webp">
+  </div>
+
+  <button class="primary" id="createButton" onclick="runStudio()">Oluştur ✨</button>
+  <div id="studioOutput" class="output hidden"></div>
+
+  <div id="imageResult" class="hidden">
+   <img id="generatedImage" alt="ÖMER AI tarafından oluşturulan görsel">
+   <a id="downloadImage" class="primary" download="omer-ai-gorsel.png">Görseli indir ↓</a>
+  </div>
  </div>
-</div>
 </section>
 </div>
 
 <div class="composer" id="composer">
-<textarea id="message" placeholder="ÖMER AI'a bir şey sor..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
-<button class="primary" onclick="sendMessage()">Gönder ➤</button>
+ <textarea id="message" placeholder="ÖMER AI'a bir şey sor..." rows="1"
+ onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+ <button class="primary" onclick="sendMessage()">Gönder ➤</button>
 </div>
 </main>
 </div>
 
 <div class="modal" id="memoryModal">
-<div class="modalbox">
-<h2>🧠 Hafızam</h2>
-<p class="small">ÖMER AI'ın hatırlamasını istediğin notları buraya yaz.</p>
-<textarea class="field" id="memoryText" rows="7" placeholder="Hafıza notların..."></textarea>
-<button class="primary" onclick="saveMemory()">Kaydet</button>
-<button class="sidebtn" onclick="closeModal('memoryModal')">Kapat</button>
-</div>
+ <div class="modalbox">
+  <h2>🧠 Hafızam</h2>
+  <p class="small">ÖMER AI'ın hatırlamasını istediğin notları buraya yaz.</p>
+  <textarea class="field" id="memoryText" rows="7" placeholder="Hafıza notların..."></textarea>
+  <button class="primary" onclick="saveMemory()">Kaydet</button>
+  <button class="sidebtn" onclick="closeModal('memoryModal')">Kapat</button>
+ </div>
 </div>
 
 <div class="modal" id="settingsModal">
-<div class="modalbox">
-<h2>⚙️ Ayarlar</h2>
-<label>Dil</label>
-<select class="field" id="language">
-<option>Türkçe</option><option>English</option><option>Deutsch</option><option>Français</option><option>العربية</option>
-</select>
-<label>Konuşma tarzı</label>
-<select class="field" id="personality">
-<option value="arkadas">Arkadaş canlısı</option>
-<option value="resmi">Resmi</option>
-<option value="ogretmen">Öğretmen</option>
-<option value="kisa">Kısa ve net</option>
-<option value="eglenceli">Eğlenceli</option>
-</select>
-<button class="primary" onclick="closeModal('settingsModal')">Tamam</button>
-</div>
+ <div class="modalbox">
+  <h2>⚙️ Ayarlar</h2>
+  <label>Dil</label>
+  <select class="field" id="language">
+   <option>Türkçe</option><option>English</option><option>Deutsch</option>
+   <option>Français</option><option>العربية</option>
+  </select>
+  <label>Konuşma tarzı</label>
+  <select class="field" id="personality">
+   <option value="arkadas">Arkadaş canlısı</option>
+   <option value="resmi">Resmi</option>
+   <option value="ogretmen">Öğretmen</option>
+   <option value="kisa">Kısa ve net</option>
+   <option value="eglenceli">Eğlenceli</option>
+  </select>
+  <button class="primary" onclick="closeModal('settingsModal')">Tamam</button>
+ </div>
 </div>
 
 <script>
@@ -202,15 +256,31 @@ function saveChats(){
  localStorage.setItem("omerSohbetlerV2",JSON.stringify(chats));
  renderHistory();
 }
+
 function toggleMenu(){
- document.getElementById("sidebar").classList.toggle("open");
+ const sidebar=document.getElementById("sidebar");
+ const backdrop=document.getElementById("sidebarBackdrop");
+
+ if(window.innerWidth<=700){
+  sidebar.classList.toggle("open");
+  backdrop.classList.toggle("show");
+ }else{
+  sidebar.classList.toggle("collapsed");
+ }
 }
+
+function closeMenu(){
+ document.getElementById("sidebar").classList.remove("open");
+ document.getElementById("sidebarBackdrop").classList.remove("show");
+}
+
 function showPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  document.getElementById("composer").style.display=id==="chat"?"flex":"none";
- document.getElementById("sidebar").classList.remove("open");
+ closeMenu();
 }
+
 function newChat(){
  currentChat={id:Date.now(),messages:[]};
  chats.unshift(currentChat);
@@ -218,21 +288,60 @@ function newChat(){
  renderMessages();
  showPage("chat");
 }
+
 function renderHistory(){
  const box=document.getElementById("history");
  box.innerHTML="";
+
  chats.forEach(chat=>{
-  const b=document.createElement("button");
-  b.textContent=chat.messages?.[0]?.text?.slice(0,28)||"Yeni sohbet";
-  b.onclick=()=>loadChat(chat.id);
-  box.appendChild(b);
+  const row=document.createElement("div");
+  row.className="history-row";
+
+  const open=document.createElement("button");
+  open.className="history-open";
+  open.textContent=chat.messages?.[0]?.text?.slice(0,28)||"Yeni sohbet";
+  open.onclick=()=>loadChat(chat.id);
+
+  const del=document.createElement("button");
+  del.className="history-delete";
+  del.textContent="🗑️";
+  del.title="Bu sohbeti sil";
+  del.onclick=(e)=>{
+   e.stopPropagation();
+   deleteChat(chat.id);
+  };
+
+  row.appendChild(open);
+  row.appendChild(del);
+  box.appendChild(row);
  });
 }
+
+function deleteChat(id){
+ if(!confirm("Bu sohbet silinsin mi?"))return;
+ chats=chats.filter(c=>c.id!==id);
+ if(currentChat?.id===id){
+  currentChat=null;
+  renderMessages();
+ }
+ saveChats();
+}
+
+function deleteAllChats(){
+ if(!confirm("Bütün sohbetler silinsin mi?"))return;
+ chats=[];
+ currentChat=null;
+ saveChats();
+ renderMessages();
+ showPage("chat");
+}
+
 function loadChat(id){
  currentChat=chats.find(c=>c.id===id);
  renderMessages();
  showPage("chat");
 }
+
 function renderMessages(){
  const box=document.getElementById("messages");
  box.innerHTML="";
@@ -240,26 +349,31 @@ function renderMessages(){
  document.getElementById("welcome").style.display=messages.length?"none":"block";
  messages.forEach(m=>addBubble(m.role,m.text));
 }
+
 function addBubble(role,text){
  const b=document.createElement("div");
  b.className="msg "+(role==="user"?"user":"bot");
  b.textContent=text;
  document.getElementById("messages").appendChild(b);
 }
+
 async function sendMessage(){
  const input=document.getElementById("message");
  const text=input.value.trim();
  if(!text)return;
+
  if(!currentChat)newChat();
  input.value="";
  currentChat.messages.push({role:"user",text});
  addBubble("user",text);
  document.getElementById("welcome").style.display="none";
  saveChats();
+
  const loading=document.createElement("div");
  loading.className="msg bot";
  loading.textContent="Düşünüyorum...";
  document.getElementById("messages").appendChild(loading);
+
  try{
   const response=await fetch(API+"/api/chat",{
    method:"POST",
@@ -272,66 +386,140 @@ async function sendMessage(){
     kisilik:document.getElementById("personality").value
    })
   });
+
   const data=await response.json();
   if(!response.ok)throw new Error(data.error||"Sunucu hatası");
+
   loading.remove();
   currentChat.messages.push({role:"assistant",text:data.answer});
   addBubble("assistant",data.answer);
   saveChats();
+
  }catch(e){
   loading.textContent="Hata: "+e.message;
  }
 }
+
 function openMemory(){
  document.getElementById("memoryText").value=localStorage.getItem("omerAIMemory")||"";
  document.getElementById("memoryModal").classList.add("show");
 }
+
 function saveMemory(){
  localStorage.setItem("omerAIMemory",document.getElementById("memoryText").value);
  closeModal("memoryModal");
  alert("Hafıza kaydedildi!");
 }
+
 function openSettings(){
  document.getElementById("settingsModal").classList.add("show");
 }
+
 function closeModal(id){
  document.getElementById(id).classList.remove("show");
 }
+
 function openStudio(mode){
  studioMode=mode;
- document.getElementById("imageUploadArea").classList.toggle("hidden", mode !== "image");
-document.getElementById("imageResult").classList.add("hidden");
- const names={code:"💻 Kodlama Stüdyosu",image:"🎨 Görsel Stüdyosu",project:"🏭 Proje Fabrikası",game:"🎮 Oyun Tasarımcısı"};
- document.getElementById("studioTitle").textContent=names[mode];
- document.getElementById("studioForm").classList.remove("hidden");
+
+ document.getElementById("imageUploadArea").classList.toggle("hidden",mode!=="image");
+ document.getElementById("imageResult").classList.add("hidden");
  document.getElementById("studioOutput").classList.add("hidden");
+ document.getElementById("studioTitle").textContent={
+  code:"💻 Kodlama Stüdyosu",
+  image:"🎨 Görsel Stüdyosu",
+  project:"🏭 Proje Fabrikası",
+  game:"🎮 Oyun Tasarımcısı"
+ }[mode];
+
  document.getElementById("studioPrompt").value="";
+ document.getElementById("imageFile").value="";
+ document.getElementById("studioForm").classList.remove("hidden");
  document.getElementById("studioForm").scrollIntoView({behavior:"smooth"});
 }
+
 async function runStudio(){
  const prompt=document.getElementById("studioPrompt").value.trim();
- if(!prompt){alert("Önce bir istek yaz!");return;}
  const output=document.getElementById("studioOutput");
+ const imageResult=document.getElementById("imageResult");
+ const createButton=document.getElementById("createButton");
+
+ if(!prompt){
+  alert("Önce ne istediğini yaz!");
+  return;
+ }
+
  output.classList.remove("hidden");
+ imageResult.classList.add("hidden");
  output.textContent="Hazırlanıyor... Lütfen bekle.";
+ createButton.disabled=true;
+ createButton.textContent="Hazırlanıyor...";
+
  try{
-  const response=await fetch(API+"/api/studio",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({mode:studioMode,prompt})
-  });
-  const data=await response.json();
-  if(!response.ok)throw new Error(data.error||"Sunucu hatası");
-  output.textContent=data.answer;
+  if(studioMode==="image"){
+   const file=document.getElementById("imageFile").files[0];
+
+   if(file && file.size>7*1024*1024){
+    throw new Error("Fotoğraf en fazla 7 MB olabilir.");
+   }
+
+   let imageData=null;
+
+   if(file){
+    imageData=await new Promise((resolve,reject)=>{
+     const reader=new FileReader();
+     reader.onload=()=>resolve(reader.result.split(",")[1]);
+     reader.onerror=()=>reject(new Error("Fotoğraf okunamadı."));
+     reader.readAsDataURL(file);
+    });
+   }
+
+   const response=await fetch(API+"/api/image",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     prompt:prompt,
+     image:imageData,
+     imageMime:file?file.type:undefined
+    })
+   });
+
+   const data=await response.json();
+   if(!response.ok)throw new Error(data.error||"Görsel oluşturulamadı.");
+
+   if(!data.image)throw new Error("Sunucu görsel döndürmedi.");
+
+   const mime=data.mimeType||"image/png";
+   const imageUrl="data:"+mime+";base64,"+data.image;
+
+   document.getElementById("generatedImage").src=imageUrl;
+   document.getElementById("downloadImage").href=imageUrl;
+   document.getElementById("downloadImage").download=
+    "omer-ai-gorsel."+(mime.split("/")[1]||"png");
+
+   output.textContent=data.answer||"Görselin hazır!";
+   imageResult.classList.remove("hidden");
+
+  }else{
+   const response=await fetch(API+"/api/studio",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({mode:studioMode,prompt})
+   });
+
+   const data=await response.json();
+   if(!response.ok)throw new Error(data.error||"Sunucu hatası");
+   output.textContent=data.answer||"Tamamlandı!";
+  }
+
  }catch(e){
   output.textContent="Hata: "+e.message;
+ }finally{
+  createButton.disabled=false;
+  createButton.textContent="Oluştur ✨";
  }
 }
-function deleteAllChats(){
- if(confirm("Bütün sohbetler silinsin mi?")){
-  chats=[];currentChat=null;saveChats();renderMessages();
- }
-}
+
 renderHistory();
 console.log("ÖMER AI hazır!");
 </script>
