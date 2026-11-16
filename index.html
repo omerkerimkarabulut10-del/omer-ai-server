@@ -4,66 +4,259 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101329">
 <title>ÖMER AI</title>
 
 <style>
 *{box-sizing:border-box}
-:root{--bg:#101329;--panel:#191e38;--text:#fff;--muted:#a7abc5;--accent:#7568ff;--line:#303653}
-body.light{--bg:#f1f2fa;--panel:#fff;--text:#17182a;--muted:#666b82;--line:#dddfea}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-header{height:65px;padding:12px 18px;display:flex;align-items:center;gap:12px;background:var(--panel);border-bottom:1px solid var(--line)}
-.logo{background:var(--accent);border-radius:12px;padding:9px;font-size:22px}
-header h2{margin:0;font-size:19px}
-header small{color:var(--muted)}
-.layout{display:flex;max-width:1100px;margin:auto;height:calc(100dvh - 65px)}
-.sidebar{width:245px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;min-height:0}
-.newchat{width:100%;margin-bottom:12px}
+:root{
+ --bg:#101329;
+ --panel:#191e38;
+ --text:#fff;
+ --muted:#a7abc5;
+ --accent:#7568ff;
+ --line:#303653;
+}
+body.light{
+ --bg:#f1f2fa;
+ --panel:#fff;
+ --text:#17182a;
+ --muted:#666b82;
+ --line:#dddfea;
+}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+ background:var(--bg);
+ color:var(--text);
+ font-family:Arial,sans-serif;
+ font-size:16px;
+}
+button,select,.filebtn{font:inherit}
+header{
+ height:72px;
+ padding:12px 24px;
+ display:flex;
+ align-items:center;
+ gap:14px;
+ background:var(--panel);
+ border-bottom:1px solid var(--line);
+}
+.logo{
+ background:var(--accent);
+ border-radius:14px;
+ padding:10px;
+ font-size:25px;
+}
+header h2{margin:0;font-size:23px}
+header small{color:var(--muted);font-size:13px}
+#historyToggle{display:none}
+.layout{
+ display:flex;
+ width:100%;
+ max-width:1600px;
+ margin:auto;
+ height:calc(100dvh - 72px);
+}
+.sidebar{
+ width:280px;
+ flex-shrink:0;
+ background:var(--panel);
+ border-right:1px solid var(--line);
+ padding:18px;
+ display:flex;
+ flex-direction:column;
+ min-height:0;
+}
+.newchat{width:100%;margin-bottom:18px}
 #history{overflow-y:auto;flex:1}
-.history-item{display:flex;align-items:center;gap:5px;margin:5px 0}
-.history-open{flex:1;min-width:0;text-align:left;background:transparent;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item{
+ display:flex;
+ align-items:center;
+ gap:5px;
+ margin:6px 0;
+}
+.history-open{
+ flex:1;
+ min-width:0;
+ text-align:left;
+ background:transparent;
+ color:var(--text);
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
 .history-open.active{background:var(--line)}
 .delete{background:transparent;color:#ff7777;padding:9px}
-main{flex:1;min-width:0;padding:16px;display:flex;flex-direction:column}
-.settings{background:var(--panel);padding:12px;border-radius:12px;margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+main{
+ flex:1;
+ min-width:0;
+ max-width:1200px;
+ margin:auto;
+ padding:22px 30px;
+ display:flex;
+ flex-direction:column;
+}
+.settings{
+ background:var(--panel);
+ padding:14px 16px;
+ border-radius:14px;
+ margin-bottom:16px;
+ display:flex;
+ gap:12px;
+ align-items:center;
+ flex-wrap:wrap;
+}
 .settings label{color:var(--muted);font-size:14px}
-select,button,.filebtn{background:var(--accent);color:white;border:0;border-radius:10px;padding:10px 13px;font-size:14px;cursor:pointer}
-button.secondary,.filebtn.secondary,select{background:var(--line);color:var(--text)}
-#messages{flex:1;overflow-y:auto;padding:8px 0}
-.msg{padding:13px 15px;margin:12px 0;border-radius:15px;max-width:88%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+select,button,.filebtn{
+ background:var(--accent);
+ color:white;
+ border:0;
+ border-radius:10px;
+ padding:11px 15px;
+ font-size:14px;
+ cursor:pointer;
+}
+button:hover,.filebtn:hover{filter:brightness(1.12)}
+button.secondary,.filebtn.secondary,select{
+ background:var(--line);
+ color:var(--text);
+}
+#messages{
+ flex:1;
+ min-height:0;
+ overflow-y:auto;
+ padding:12px 5px;
+}
+.msg{
+ padding:15px 18px;
+ margin:14px 0;
+ border-radius:17px;
+ max-width:85%;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ line-height:1.65;
+ font-size:16px;
+}
 .user{background:var(--accent);margin-left:auto}
 .bot{background:var(--panel);border:1px solid var(--line)}
-.msg img{max-width:100%;border-radius:10px;margin-top:8px}
-#status{color:var(--muted);font-size:12px;padding:5px}
-.composer{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px}
-textarea{width:100%;resize:none;background:transparent;color:var(--text);border:0;outline:0;font:16px Arial;min-height:48px;padding:8px}
-.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#preview{max-width:100px;max-height:100px;display:none;margin:8px;border-radius:8px}
+.msg img{max-width:100%;border-radius:12px;margin-top:8px}
+#status{color:var(--muted);font-size:13px;padding:7px}
+.composer{
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:18px;
+ padding:13px;
+}
+textarea{
+ width:100%;
+ resize:vertical;
+ max-height:180px;
+ background:transparent;
+ color:var(--text);
+ border:0;
+ outline:0;
+ font:16px Arial;
+ min-height:55px;
+ padding:10px;
+}
+.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+#preview{
+ max-width:120px;
+ max-height:120px;
+ display:none;
+ margin:8px;
+ border-radius:10px;
+}
 .typing{display:flex;gap:5px;align-items:center;padding:8px}
-.typing span{width:8px;height:8px;background:var(--muted);border-radius:50%;animation:updown 1s infinite ease-in-out}
+.typing span{
+ width:8px;height:8px;
+ background:var(--muted);
+ border-radius:50%;
+ animation:updown 1s infinite ease-in-out;
+}
 .typing span:nth-child(2){animation-delay:.15s}
 .typing span:nth-child(3){animation-delay:.3s}
-@keyframes updown{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-7px);opacity:1}}
-@media(max-width:650px){
-.layout{height:calc(100dvh - 65px)}
-.sidebar{width:125px;padding:8px}
-main{padding:9px}
-.history-open{font-size:11px;padding:8px 5px}
-.delete{padding:7px 4px}
-.settings{gap:6px;padding:8px}
-.settings button,.settings select{font-size:12px;padding:8px}
-.msg{max-width:95%}
+@keyframes updown{
+ 0%,60%,100%{transform:translateY(0);opacity:.5}
+ 30%{transform:translateY(-7px);opacity:1}
+}
+#overlay{display:none}
+
+@media(min-width:1200px){
+ main{padding:28px 42px}
+ .msg{font-size:17px;max-width:80%}
+ textarea{font-size:17px}
+ .settings{padding:17px 20px}
+}
+
+@media(max-width:800px){
+ header{height:64px;padding:9px 13px}
+ header h2{font-size:20px}
+ .layout{height:calc(100dvh - 64px)}
+ .sidebar{
+  position:fixed;
+  z-index:20;
+  top:64px;
+  bottom:0;
+  left:0;
+  width:min(300px,85vw);
+  transform:translateX(-105%);
+  transition:transform .22s ease;
+  box-shadow:8px 0 30px #0003;
+ }
+ body.show-sidebar .sidebar{transform:translateX(0)}
+ #historyToggle{display:block;padding:9px 12px}
+ #overlay{
+  position:fixed;
+  z-index:15;
+  inset:64px 0 0;
+  background:#0008;
+ }
+ body.show-sidebar #overlay{display:block}
+ main{padding:12px;max-width:none}
+ .settings{gap:8px;padding:11px}
+ .settings label{font-size:13px}
+ .settings select{max-width:100%;padding:9px;font-size:13px}
+ .msg{max-width:94%;font-size:15px;padding:12px 14px}
+}
+
+@media(max-width:480px){
+ header{gap:9px}
+ header h2{font-size:18px}
+ header small{font-size:11px}
+ .logo{font-size:21px;padding:8px}
+ main{padding:8px}
+ .settings{gap:7px;padding:9px;margin-bottom:8px}
+ .settings label{font-size:12px}
+ .settings select{font-size:12px;padding:8px}
+ .settings button{font-size:12px;padding:8px 10px}
+ .settings input{margin:0 3px}
+ #messages{padding:6px 2px}
+ .msg{max-width:96%;font-size:15px;line-height:1.55}
+ .composer{padding:9px;border-radius:14px}
+ textarea{font-size:16px;min-height:48px}
+ .actions{gap:6px}
+ .actions button,.filebtn{padding:10px 11px;font-size:13px}
+ #status{font-size:12px}
+}
+
+@media(max-height:550px) and (max-width:800px){
+ .settings{max-height:95px;overflow-y:auto}
 }
 </style>
 </head>
 
 <body>
 <header>
+<button id="historyToggle" class="secondary" onclick="gecmisMenu()">☰</button>
 <div class="logo">🤖</div>
 <div>
 <h2>ÖMER AI</h2>
 <small>Akıllı sohbet asistanın</small>
 </div>
 </header>
+
+<div id="overlay" onclick="gecmisMenu(false)"></div>
 
 <div class="layout">
 <aside class="sidebar">
@@ -137,13 +330,19 @@ const diller={
 let sohbetler=[];
 let aktifSohbet=null;
 let seciliGorsel=null;
+let istekDevamEdiyor=false;
 
 function kaydet(){
 try{
 localStorage.setItem("omerSohbetler",JSON.stringify(sohbetler));
 }catch(e){
-alert("Sohbet geçmişi kaydedilemedi.");
+console.error("Sohbet geçmişi kaydedilemedi:",e);
 }
+}
+
+function gecmisMenu(acik){
+if(acik===undefined)document.body.classList.toggle("show-sidebar");
+else document.body.classList.toggle("show-sidebar",acik);
 }
 
 function gecmisiGoster(){
@@ -193,6 +392,7 @@ aktifSohbet=id;
 mesajlariGoster();
 gecmisiGoster();
 konusmayiDurdur();
+gecmisMenu(false);
 }
 
 function sohbetSil(id){
@@ -215,6 +415,7 @@ mesajlariGoster();
 function yeniSohbet(){
 sohbetOlustur();
 konusmayiDurdur();
+gecmisMenu(false);
 }
 
 function mesajlariGoster(){
@@ -249,7 +450,7 @@ img.src=gorsel;
 div.appendChild(img);
 }
 alan.appendChild(div);
-div.scrollIntoView({behavior:"smooth"});
+alan.scrollTop=alan.scrollHeight;
 
 if(kaydetMesaj){
 let sohbet=aktifBul();
@@ -299,23 +500,27 @@ gonder();
 }
 
 async function gonder(){
+if(istekDevamEdiyor)return;
+
 const alan=document.getElementById("message");
 const mesaj=alan.value.trim();
 if(!mesaj&&!seciliGorsel)return;
 
 if(!aktifBul())sohbetOlustur();
 
-mesajEkle(mesaj||"Bu görseli incele.","user",seciliGorsel?.data);
-alan.value="";
-
 const gorsel=seciliGorsel;
+mesajEkle(mesaj||"Bu görseli incele.","user",gorsel?.data);
+
+alan.value="";
 seciliGorsel=null;
 document.getElementById("preview").style.display="none";
 document.getElementById("imageInput").value="";
 
+const sohbet=aktifBul();
 const dil=document.getElementById("language").value;
 const kisilik=document.getElementById("personality").value;
 
+istekDevamEdiyor=true;
 yaziyorGoster();
 document.getElementById("status").textContent="ÖMER AI düşünüyor...";
 
@@ -324,19 +529,25 @@ const response=await fetch(API_URL+"/api/chat",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
-mesaj:mesaj,
 dil:dil,
 dilAdi:diller[dil],
 kisilik:kisilik,
+gecmis:sohbet.messages.slice(-20),
 imageBase64:gorsel?.base64||null,
 imageMimeType:gorsel?.mimeType||null
 })
 });
 
-const data=await response.json();
+let data;
+try{
+data=await response.json();
+}catch(e){
+throw new Error("Sunucudan geçerli cevap alınamadı.");
+}
+
 if(!response.ok)throw new Error(data.error||"Sunucu hatası");
 
-const cevap=data.cevap||data.text||data.response||"Cevap alınamadı.";
+const cevap=data.cevap||"Cevap alınamadı.";
 yaziyorSil();
 mesajEkle(cevap,"bot");
 
@@ -347,7 +558,10 @@ seslendir(cevap);
 yaziyorSil();
 mesajEkle("Hata: "+error.message,"bot");
 }
+finally{
+istekDevamEdiyor=false;
 document.getElementById("status").textContent="";
+}
 }
 
 function gorselSec(event){
@@ -355,6 +569,11 @@ const file=event.target.files[0];
 if(!file)return;
 if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
 alert("Lütfen JPG, PNG veya WEBP görsel seç.");
+return;
+}
+if(file.size>8*1024*1024){
+alert("Görsel en fazla 8 MB olabilir.");
+event.target.value="";
 return;
 }
 const reader=new FileReader();
@@ -424,6 +643,7 @@ document.body.classList.add("light");
 
 try{
 sohbetler=JSON.parse(localStorage.getItem("omerSohbetler")||"[]");
+if(!Array.isArray(sohbetler))sohbetler=[];
 }catch(e){sohbetler=[];}
 
 if(sohbetler.length){
@@ -436,5 +656,4 @@ mesajlariGoster();
 gecmisiGoster();
 </script>
 </body>
-  </html>
-  
+</html>
