@@ -59,13 +59,31 @@ button{cursor:pointer}
 .welcome h1{font-size:28px}
 .composer{padding:10px}
 .composer textarea{min-width:0}
+ /* ÖMER AI menü animasyonu */
+.sidebar {
+  position: fixed !important;
+  z-index: 20;
+  left: 0 !important;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out !important;
+  box-shadow: 5px 0 25px #0005;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
 }
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar" id="sidebar">
-<div class="logo">✦ ÖMER AI</div>
+<div class="logo">
+  <img src="icon-192.png" width="42" height="42" alt="ÖMER AI">
+  ÖMER AI
+</div>
 <button class="sidebtn" onclick="newChat()">＋ Yeni sohbet</button>
 <button class="sidebtn" onclick="showPage('chat')">💬 Sohbet</button>
 <button class="sidebtn" onclick="showPage('studio')">🧪 Yapay Zeka Stüdyosu</button>
