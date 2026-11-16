@@ -107,9 +107,11 @@ Kullanıcı başka bir dil istemedikçe ${dil} kullan.
       });
 
       const sonuc = await geminiIstek({
-        systemInstruction,
-        contents
-      });
+  systemInstruction: {
+    parts: [{ text: systemInstruction }]
+  },
+  contents
+});
 
       const cevap =
         sonuc.candidates?.[0]?.content?.parts
