@@ -4,7 +4,6 @@ const http = require("http");
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.GEMINI_API_KEY;
 const CHAT_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "gemini-3.1-flash-image";
 
 const personalities = {
   arkadas: "Sıcak, arkadaş canlısı ve destekleyici konuş.",
@@ -31,8 +30,8 @@ function readBody(req) {
     req.on("data", chunk => {
       body += chunk;
 
-      if (body.length > 15 * 1024 * 1024) {
-        reject(new Error("İstek çok büyük. Daha küçük bir görsel dene."));
+      if (body.length > 5 * 1024 * 1024) {
+        reject(new Error("İstek çok büyük."));
         req.destroy();
       }
     });
@@ -58,13 +57,13 @@ function cleanHistory(history) {
   })).filter(item => item.parts[0].text.trim());
 }
 
-async function callGemini(model, payload) {
+async function callGemini(payload) {
   if (!API_KEY) {
     throw new Error("GEMINI_API_KEY Render ayarlarında bulunamadı.");
   }
 
   const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(API_KEY)}`;
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(CHAT_MODEL)}:generateContent?key=${encodeURIComponent(API_KEY)}`;
 
   let response;
 
@@ -77,25 +76,27 @@ async function callGemini(model, payload) {
 
     if (response.ok) break;
 
-    if (
-      ![429, 500, 502, 503, 504].includes(response.status) ||
-      attempt === 2
-    ) break;
+    if (![429, 500, 502, 503, 504].includes(response.status) || attempt === 2) {
+      break;
+    }
 
-    await new Promise(resolve =>
-      setTimeout(resolve, 1000 * (attempt + 1))
-    );
+    await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
   }
 
   const result = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(
-      result?.error?.message || `Gemini API hatası (${response.status})`
-    );
+    throw new Error(result?.error?.message || `Gemini API hatası (${response.status})`);
   }
 
   return result;
+}
+
+function getAnswer(result) {
+  return result?.candidates?.[0]?.content?.parts
+    ?.map(part => part.text || "")
+    .join("")
+    .trim() || "";
 }
 
 async function askChat(data) {
@@ -120,26 +121,10 @@ async function askChat(data) {
     });
   }
 
-  if (!contents.length) {
-    throw new Error("Mesaj boş olamaz.");
-  }
+  if (!contents.length) throw new Error("Mesaj boş olamaz.");
 
-  if (data.image) {
-    const mime = ["image/png", "image/jpeg", "image/webp"]
-      .includes(data.imageMime) ? data.imageMime : "image/jpeg";
-
-    contents[contents.length - 1].parts.push({
-      inline_data: {
-        mime_type: mime,
-        data: String(data.image)
-      }
-    });
-  }
-
-  const result = await callGemini(CHAT_MODEL, {
-    systemInstruction: {
-      parts: [{ text: system }]
-    },
+  const result = await callGemini({
+    systemInstruction: { parts: [{ text: system }] },
     contents,
     generationConfig: {
       temperature: 0.8,
@@ -147,147 +132,83 @@ async function askChat(data) {
     }
   });
 
-  const answer = result?.candidates?.[0]?.content?.parts
-    ?.map(part => part.text || "")
-    .join("")
-    .trim();
-
-  if (!answer) {
-    throw new Error("Model boş yanıt verdi. Biraz sonra tekrar dene.");
-  }
+  const answer = getAnswer(result);
+  if (!answer) throw new Error("Model boş yanıt verdi.");
 
   return answer;
 }
-
-const studioPrompts = {
-  code: `Sen ÖMER AI Kodlama Stüdyosu'sun.
-Çalışabilir ve eksiksiz kodlar üret.
-Gerekli dosyaları ve çalıştırma adımlarını belirt.
-Zararlı yazılım veya veri çalma özellikleri üretme.`,
-
-  project: `Sen ÖMER AI Proje Fabrikası'sın.
-Kullanıcının fikrini uygulanabilir projeye dönüştür.
-Proje adı, amaç, özellikler, teknolojiler, dosya yapısı ve yapım aşamalarını açıkla.
-Yapılmamış özellikleri tamamlanmış gibi gösterme.`,
-
-  game: `Sen ÖMER AI Oyun Tasarımcısı'sın.
-Tarayıcıda çalışabilen, gerçek oynanış mekanikleri olan oyunlar üret.
-Kontroller, çarpışmalar, skor, hedefler ve yeniden başlatma ekle.
-Mobil, tablet ve bilgisayara uyumlu tasarla.
-Oyunu test etmediysen test edildiğini iddia etme.`,
-
-  image: `Sen ÖMER AI Görsel Asistanısın.
-Görsel üretme ve düzenleme konusunda yardımcı ol.`
-};
 
 async function askStudio(data) {
   const mode = String(data.mode || "");
-  const system = studioPrompts[mode];
+  const prompt = String(data.prompt || "").trim();
 
-  if (!system) {
+  if (!prompt) throw new Error("Önce bir istek yaz.");
+
+  let system = "";
+
+  if (mode === "code") {
+    system = `Sen ÖMER AI Kodlama Stüdyosu'sun.
+Eksiksiz, çalışabilir ve anlaşılır kodlar üret.
+Gerekli dosyaları ve kurulum adımlarını belirt.
+Zararlı yazılım, veri çalma veya güvenlik aşma özellikleri üretme.`;
+  } else if (mode === "project") {
+    system = `Sen ÖMER AI Proje Fabrikası'sın.
+Kullanıcının fikrini uygulanabilir projeye dönüştür.
+Proje adı, amaç, özellikler, teknolojiler, dosya yapısı ve yapım aşamalarını açıkla.
+Yapılmamış özellikleri tamamlanmış gibi gösterme.`;
+  } else if (mode === "game") {
+    system = `Sen ÖMER AI Oyun Fabrikası'sın.
+
+Kullanıcının istediği oyunu TEK DOSYALIK, TAMAMEN ÇALIŞAN bir HTML oyunu olarak üret.
+
+ÇOK ÖNEMLİ KURALLAR:
+- Cevabın yalnızca HTML kodu olsun.
+- Kod <!DOCTYPE html> ile başlasın ve </html> ile bitsin.
+- CSS ve JavaScript aynı HTML dosyasının içinde bulunsun.
+- Harici kütüphane, CDN veya internet bağlantısı gerektirme.
+- Gerçek oynanış mekanikleri, skor, hedefler ve yeniden başlatma ekle.
+- Mobil dokunmatik kontrolleri ve bilgisayar klavye kontrolleri ekle.
+- Ekrana sığan, responsive bir oyun tasarla.
+- Boş buton, çalışmayan kontrol veya sahte özellik bırakma.
+- Güvenli ve yaşa uygun içerik üret.
+- Açıklama veya Markdown kod çiti ekleme.`;
+  } else {
     throw new Error("Geçersiz stüdyo seçimi.");
   }
 
-  const prompt = String(data.prompt || "").trim();
-
-  if (!prompt) {
-    throw new Error("Önce bir istek yaz.");
-  }
-
-  const result = await callGemini(CHAT_MODEL, {
-    systemInstruction: {
-      parts: [{ text: system }]
-    },
+  const result = await callGemini({
+    systemInstruction: { parts: [{ text: system }] },
     contents: [{
       role: "user",
-      parts: [{ text: prompt.slice(0, 30000) }]
+      parts: [{ text: prompt.slice(0, 20000) }]
     }],
     generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 8192
+      temperature: mode === "game" ? 0.5 : 0.7,
+      maxOutputTokens: 12000
     }
   });
 
-  const answer = result?.candidates?.[0]?.content?.parts
-    ?.map(part => part.text || "")
-    .join("")
-    .trim();
+  let answer = getAnswer(result);
 
-  if (!answer) {
-    throw new Error("Model boş yanıt verdi.");
-  }
+  if (!answer) throw new Error("Model boş yanıt verdi.");
 
-  return answer;
-}
+  if (mode === "game") {
+    answer = answer
+      .replace(/^```(?:html)?\s*/i, "")
+      .replace(/\s*```$/, "")
+      .trim();
 
-async function generateImage(data) {
-  const prompt = String(data.prompt || "").trim();
-
-  if (!prompt) {
-    throw new Error("Önce görselini tarif et.");
-  }
-
-  const parts = [{
-    text:
-      "Create a polished, high-quality image based on this request. " +
-      "Pay attention to composition, lighting, details and visual consistency. " +
-      "User request: " + prompt.slice(0, 10000)
-  }];
-
-  if (data.image) {
-    const mime = ["image/png", "image/jpeg", "image/webp"]
-      .includes(data.imageMime) ? data.imageMime : "image/jpeg";
-
-    parts.push({
-      inline_data: {
-        mime_type: mime,
-        data: String(data.image)
-      }
-    });
-  }
-
-  const result = await callGemini(IMAGE_MODEL, {
-    contents: [{
-      role: "user",
-      parts
-    }],
-    generationConfig: {
-      responseModalities: ["TEXT", "IMAGE"]
-    }
-  });
-
-  const responseParts =
-    result?.candidates?.[0]?.content?.parts || [];
-
-  let answer = "";
-  let image = null;
-  let mimeType = "image/png";
-
-  for (const part of responseParts) {
-    if (part.text) {
-      answer += part.text + "\n";
+    if (!/^<!doctype html/i.test(answer) || !/<\/html>\s*$/i.test(answer)) {
+      throw new Error("Model geçerli bir HTML oyun dosyası oluşturamadı. Tekrar dene.");
     }
 
-    const imageData = part.inlineData || part.inline_data;
-
-    if (imageData?.data) {
-      image = imageData.data;
-      mimeType = imageData.mimeType || imageData.mime_type || "image/png";
-    }
+    return {
+      answer: "Oyunun hazır! HTML dosyasını indirip tarayıcıda açabilirsin.",
+      gameHtml: answer
+    };
   }
 
-  if (!image) {
-    throw new Error(
-      answer.trim() ||
-      "Görsel oluşturulamadı. Model erişimini ve API kotanı kontrol et."
-    );
-  }
-
-  return {
-    answer: answer.trim() || "Görselin hazır!",
-    image,
-    mimeType
-  };
+  return { answer };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -295,18 +216,16 @@ const server = http.createServer(async (req, res) => {
     return send(res, 204, {});
   }
 
-  if (req.method === "GET" &&
-      (req.url === "/" || req.url === "/health")) {
+  if (req.method === "GET" && (req.url === "/" || req.url === "/health")) {
     return send(res, 200, {
       ok: true,
       service: "omer-ai-server",
-      chatModel: CHAT_MODEL,
-      imageModel: IMAGE_MODEL
+      chatModel: CHAT_MODEL
     });
   }
 
   if (req.method !== "POST" ||
-      !["/api/chat", "/api/studio", "/api/image"].includes(req.url)) {
+      !["/api/chat", "/api/studio"].includes(req.url)) {
     return send(res, 404, { error: "Sayfa bulunamadı." });
   }
 
@@ -314,23 +233,15 @@ const server = http.createServer(async (req, res) => {
     const data = await readBody(req);
 
     if (req.url === "/api/chat") {
-      const answer = await askChat(data);
-      return send(res, 200, { answer });
+      return send(res, 200, { answer: await askChat(data) });
     }
 
     if (req.url === "/api/studio") {
-      const answer = await askStudio(data);
-      return send(res, 200, { answer });
-    }
-
-    if (req.url === "/api/image") {
-      const result = await generateImage(data);
+      const result = await askStudio(data);
       return send(res, 200, result);
     }
-
   } catch (error) {
     console.error("ÖMER AI error:", error.message);
-
     return send(res, 500, {
       error: error.message || "Beklenmeyen sunucu hatası."
     });
@@ -340,5 +251,4 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log("ÖMER AI server çalışıyor: " + PORT);
   console.log("Sohbet modeli: " + CHAT_MODEL);
-  console.log("Görsel modeli: " + IMAGE_MODEL);
 });
