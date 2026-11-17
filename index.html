@@ -5,2345 +5,593 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#101329">
-<meta name="description" content="ÖMER AI - Akıllı yapay zeka asistanı">
 <title>ÖMER AI</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 <style>
-:root {
- --bg:#101329;
- --panel:#171b35;
- --panel2:#1d2242;
- --panel3:#252b50;
- --border:#30365d;
- --text:#f4f5ff;
- --muted:#969dbd;
- --primary:#7667ff;
- --primary2:#9b70ff;
- --green:#42d6a4;
- --red:#ff647c;
- --yellow:#ffc65c;
- --radius:16px;
- --sidebar:265px;
-}
-
-* {
- box-sizing:border-box;
-}
-
-html {
- scroll-behavior:smooth;
-}
-
-body {
- margin:0;
- min-height:100vh;
- background:var(--bg);
- color:var(--text);
- font-family:Inter,Arial,sans-serif;
- overflow:hidden;
-}
-
-button,
-input,
-textarea,
-select {
- font:inherit;
-}
-
-button {
- cursor:pointer;
-}
-
-button:disabled {
- opacity:.45;
- cursor:not-allowed;
-}
-
-.hidden {
- display:none!important;
-}
-
-.app {
- display:flex;
- height:100dvh;
- width:100%;
- overflow:hidden;
-}
-
-/* SIDEBAR */
-
-.sidebar {
- width:var(--sidebar);
- min-width:var(--sidebar);
- height:100%;
- background:#0d1024;
- border-right:1px solid var(--border);
- display:flex;
- flex-direction:column;
- padding:17px;
- z-index:20;
- transition:transform .25s ease;
-}
-
-.brand {
- display:flex;
- align-items:center;
- gap:12px;
- padding:7px 4px 22px;
-}
-
-.brand-logo {
- width:43px;
- height:43px;
- border-radius:14px;
- display:grid;
- place-items:center;
- background:linear-gradient(135deg,#7566ff,#b06cff);
- font-size:23px;
- box-shadow:0 7px 25px #7766ff55;
-}
-
-.brand-name {
- font-size:20px;
- font-weight:900;
- letter-spacing:.5px;
-}
-
-.brand-version {
- color:var(--muted);
- font-size:10px;
- margin-top:4px;
-}
-
-.new-chat {
- width:100%;
- border:1px solid #5148a3;
- background:linear-gradient(110deg,#6558dc,#8b60e8);
- color:white;
- border-radius:13px;
- padding:13px;
- font-weight:800;
- margin-bottom:20px;
- transition:.2s;
-}
-
-.new-chat:hover {
- transform:translateY(-2px);
- box-shadow:0 8px 25px #7667ff55;
-}
-
-.side-label {
- color:#747c9e;
- font-size:10px;
- font-weight:800;
- letter-spacing:1.5px;
- margin:12px 8px 9px;
-}
-
-.nav-button {
- width:100%;
- display:flex;
- align-items:center;
- gap:12px;
- color:#b7bdd9;
- background:transparent;
- border:0;
- padding:12px;
- border-radius:11px;
- text-align:left;
- margin:2px 0;
- font-size:13px;
- transition:.2s;
-}
-
-.nav-button:hover {
- background:var(--panel2);
- color:white;
-}
-
-.nav-button.active {
- color:white;
- background:#29254e;
- border:1px solid #514b8d;
-}
-
-.nav-icon {
- width:21px;
- text-align:center;
- font-size:17px;
-}
-
-.history-area {
- flex:1;
- min-height:0;
- overflow-y:auto;
- margin-top:5px;
-}
-
-.history-item {
- display:flex;
- align-items:center;
- gap:7px;
- padding:10px;
- border-radius:9px;
- color:#aeb5d1;
- font-size:12px;
- cursor:pointer;
- margin:2px 0;
-}
-
-.history-item:hover {
- background:var(--panel2);
- color:white;
-}
-
-.history-item.selected {
- background:#25264a;
- color:white;
-}
-
-.history-title {
- overflow:hidden;
- text-overflow:ellipsis;
- white-space:nowrap;
- flex:1;
-}
-
-.delete-history {
- background:transparent;
- color:#777e9e;
- border:0;
- padding:3px;
- opacity:0;
-}
-
-.history-item:hover .delete-history {
- opacity:1;
-}
-
-.sidebar-bottom {
- border-top:1px solid var(--border);
- padding-top:13px;
- margin-top:12px;
-}
-
-.profile {
- display:flex;
- align-items:center;
- gap:11px;
- padding:10px 5px 2px;
-}
-
-.profile-avatar {
- width:36px;
- height:36px;
- display:grid;
- place-items:center;
- border-radius:50%;
- background:linear-gradient(135deg,#7465ff,#c16cff);
- font-weight:900;
-}
-
-.profile-name {
- font-size:12px;
- font-weight:800;
-}
-
-.profile-sub {
- font-size:10px;
- color:var(--muted);
- margin-top:4px;
-}
-
-/* MAIN */
-
-.main {
- flex:1;
- min-width:0;
- height:100%;
- display:flex;
- flex-direction:column;
- position:relative;
-}
-
-.topbar {
- height:66px;
- min-height:66px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 23px;
- border-bottom:1px solid var(--border);
- background:#11152b;
-}
-
-.top-left {
- display:flex;
- align-items:center;
- gap:12px;
-}
-
-.menu-button {
- display:none;
- background:transparent;
- border:0;
- color:white;
- font-size:23px;
-}
-
-.page-heading {
- font-size:15px;
- font-weight:800;
-}
-
-.status {
- display:flex;
- align-items:center;
- gap:7px;
- color:#a6b1c9;
- font-size:11px;
-}
-
-.status-dot {
- width:8px;
- height:8px;
- border-radius:50%;
- background:var(--green);
- box-shadow:0 0 10px #42d6a4;
-}
-
-.top-actions {
- display:flex;
- align-items:center;
- gap:8px;
-}
-
-.icon-button {
- width:36px;
- height:36px;
- border:1px solid var(--border);
- border-radius:10px;
- background:var(--panel);
- color:white;
- font-size:15px;
-}
-
-.icon-button:hover {
- background:var(--panel3);
-}
-
-/* PAGES */
-
-.page {
- display:none;
- flex:1;
- min-height:0;
- overflow:auto;
-}
-
-.page.active {
- display:flex;
- flex-direction:column;
-}
-
-/* CHAT */
-
-.chat-layout {
- width:100%;
- max-width:1000px;
- margin:0 auto;
- flex:1;
- min-height:0;
- display:flex;
- flex-direction:column;
- padding:0 22px;
-}
-
-.messages {
- flex:1;
- overflow-y:auto;
- padding:27px 0 25px;
- scroll-behavior:smooth;
-}
-
-.welcome {
- min-height:100%;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- text-align:center;
- padding:25px 0;
-}
-
-.welcome-logo {
- width:75px;
- height:75px;
- border-radius:24px;
- display:grid;
- place-items:center;
- font-size:39px;
- background:linear-gradient(135deg,#6658e9,#b26cff);
- box-shadow:0 12px 45px #8065ff44;
- margin-bottom:23px;
-}
-
-.welcome h1 {
- font-size:32px;
- margin:0 0 12px;
- font-weight:900;
-}
-
-.welcome h1 span {
- background:linear-gradient(90deg,#8d80ff,#d18bff);
- color:transparent;
- background-clip:text;
-}
-
-.welcome p {
- color:var(--muted);
- font-size:13px;
- line-height:1.7;
- max-width:440px;
-}
-
-.suggestion-grid {
- width:100%;
- max-width:650px;
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:10px;
- margin-top:25px;
-}
-
-.suggestion {
- text-align:left;
- padding:15px;
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:13px;
- color:white;
- transition:.2s;
-}
-
-.suggestion:hover {
- border-color:var(--primary);
- transform:translateY(-2px);
-}
-
-.suggestion strong {
- display:block;
- font-size:12px;
- margin-bottom:6px;
-}
-
-.suggestion small {
- color:var(--muted);
- font-size:10px;
-}
-
-.message-row {
- display:flex;
- gap:12px;
- margin:0 0 24px;
- animation:fadeIn .25s ease;
-}
-
-@keyframes fadeIn {
- from {opacity:0;transform:translateY(7px)}
- to {opacity:1;transform:translateY(0)}
-}
-
-.message-avatar {
- width:34px;
- height:34px;
- min-width:34px;
- display:grid;
- place-items:center;
- border-radius:11px;
- background:#27294f;
- font-size:16px;
-}
-
-.message-row.user .message-avatar {
- background:#5146a7;
-}
-
-.message-content {
- min-width:0;
- flex:1;
-}
-
-.message-author {
- font-size:11px;
- font-weight:800;
- margin:4px 0 9px;
-}
-
-.message-text {
- color:#e1e4f4;
- font-size:13px;
- line-height:1.8;
- white-space:pre-wrap;
- overflow-wrap:anywhere;
-}
-
-.message-text pre {
- white-space:pre;
- overflow:auto;
- background:#090c19;
- padding:15px;
- border-radius:11px;
- border:1px solid var(--border);
-}
-
-.message-text code {
- font-family:Consolas,monospace;
- color:#c8baff;
-}
-
-.message-text p {
- margin:0 0 10px;
-}
-
-.message-tools {
- display:flex;
- gap:7px;
- margin-top:10px;
-}
-
-.message-tools button {
- border:1px solid var(--border);
- color:var(--muted);
- background:var(--panel);
- padding:6px 9px;
- border-radius:8px;
- font-size:10px;
-}
-
-.message-tools button:hover {
- color:white;
- border-color:var(--primary);
-}
-
-.typing {
- display:flex;
- gap:5px;
- padding:7px 0;
-}
-
-.typing span {
- width:7px;
- height:7px;
- background:#a89aff;
- border-radius:50%;
- animation:bounce .8s infinite alternate;
-}
-
-.typing span:nth-child(2) {
- animation-delay:.2s;
-}
-
-.typing span:nth-child(3) {
- animation-delay:.4s;
-}
-
-@keyframes bounce {
- to {transform:translateY(-6px);opacity:.4}
-}
-
-/* COMPOSER */
-
-.composer-wrap {
- padding:12px 0 18px;
- background:linear-gradient(transparent,var(--bg) 18%);
-}
-
-.composer {
- display:flex;
- align-items:flex-end;
- gap:10px;
- padding:11px;
- background:#1a1e39;
- border:1px solid #3b416a;
- border-radius:17px;
- box-shadow:0 10px 35px #0002;
-}
-
-.composer:focus-within {
- border-color:#8273ff;
- box-shadow:0 0 0 3px #7667ff22;
-}
-
-#message {
- flex:1;
- min-width:0;
- max-height:150px;
- resize:none;
- background:transparent;
- color:white;
- border:0;
- outline:0;
- padding:8px;
- font-size:13px;
- line-height:1.6;
-}
-
-#message::placeholder {
- color:#858ca9;
-}
-
-.primary {
- background:linear-gradient(110deg,#6d5eea,#a05ee9);
- color:white;
- border:0;
- border-radius:11px;
- padding:11px 15px;
- font-size:12px;
- font-weight:800;
-}
-
-.primary:hover {
- filter:brightness(1.12);
-}
-
-.composer-hint {
- text-align:center;
- color:#6f7696;
- font-size:9px;
- margin-top:9px;
-}
-
-/* STUDIO */
-
-.studio-container {
- max-width:1050px;
- width:100%;
- margin:0 auto;
- padding:35px 25px;
-}
-
-.studio-title {
- font-size:27px;
- font-weight:900;
- margin:0 0 10px;
-}
-
-.studio-description {
- color:var(--muted);
- font-size:12px;
- line-height:1.7;
- margin-bottom:28px;
-}
-
-.studio-grid {
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:15px;
-}
-
-.studio-card {
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:17px;
- padding:22px;
- min-height:190px;
- transition:.2s;
- cursor:pointer;
-}
-
-.studio-card:hover {
- border-color:#8273ff;
- transform:translateY(-4px);
- box-shadow:0 12px 30px #0002;
-}
-
-.studio-card-icon {
- width:48px;
- height:48px;
- display:grid;
- place-items:center;
- background:#292750;
- border-radius:14px;
- font-size:24px;
- margin-bottom:17px;
-}
-
-.studio-card h3 {
- font-size:14px;
- margin:0 0 9px;
-}
-
-.studio-card p {
- color:var(--muted);
- font-size:11px;
- line-height:1.7;
- margin:0;
-}
-
-.studio-workspace {
- margin-top:25px;
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:17px;
- padding:20px;
-}
-
-.workspace-top {
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:12px;
- margin-bottom:15px;
-}
-
-.workspace-top h3 {
- margin:0;
- font-size:14px;
-}
-
-.workspace-select {
- background:#10142b;
- color:white;
- border:1px solid var(--border);
- padding:9px;
- border-radius:9px;
- font-size:11px;
-}
-
-#studioPrompt {
- width:100%;
- min-height:120px;
- resize:vertical;
- background:#10142b;
- color:white;
- border:1px solid var(--border);
- border-radius:12px;
- padding:14px;
- outline:none;
- font-size:12px;
- line-height:1.7;
-}
-
-#studioPrompt:focus {
- border-color:var(--primary);
-}
-
-.workspace-bottom {
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:12px;
- margin-top:13px;
-}
-
-.workspace-info {
- color:var(--muted);
- font-size:10px;
-}
-
-.studio-result {
- margin-top:20px;
-}
-
-.result-files {
- display:flex;
- flex-wrap:wrap;
- gap:8px;
- margin-bottom:13px;
-}
-
-.file-chip {
- background:#29294e;
- border:1px solid #494b80;
- border-radius:8px;
- padding:8px 11px;
- color:#dcd9ff;
- font-size:10px;
- cursor:pointer;
-}
-
-.file-chip.active {
- background:#5045a6;
- color:white;
-}
-
-.code-output {
- width:100%;
- min-height:220px;
- max-height:480px;
- overflow:auto;
- background:#090c19;
- border:1px solid var(--border);
- border-radius:12px;
- padding:15px;
- color:#c8c9ff;
- font-family:Consolas,monospace;
- font-size:11px;
- line-height:1.7;
- white-space:pre;
-}
-
-/* GAME PREVIEW */
-
-.game-controls {
- display:flex;
- align-items:center;
- flex-wrap:wrap;
- gap:9px;
- margin:15px 0;
-}
-
-.secondary {
- background:#292e51;
- color:white;
- border:1px solid var(--border);
- padding:10px 13px;
- border-radius:10px;
- font-size:11px;
- font-weight:700;
-}
-
-.secondary:hover {
- background:#383d68;
-}
-
-.game-frame-wrap {
- width:100%;
- height:550px;
- border-radius:14px;
- overflow:hidden;
- border:1px solid var(--border);
- background:white;
-}
-
-#gamePreview {
- width:100%;
- height:100%;
- border:0;
- background:white;
-}
-
-.game-frame-wrap.fullscreen {
- position:fixed;
- inset:0;
- z-index:1000;
- width:100%;
- height:100%;
- border:0;
- border-radius:0;
-}
-
-/* MODALS */
-
-.modal-backdrop {
- position:fixed;
- inset:0;
- z-index:100;
- background:#000a;
- display:none;
- align-items:center;
- justify-content:center;
- padding:15px;
-}
-
-.modal-backdrop.show {
- display:flex;
-}
-
-.modal {
- width:100%;
- max-width:470px;
- max-height:85vh;
- overflow:auto;
- background:#191d38;
- border:1px solid var(--border);
- border-radius:18px;
- padding:23px;
- box-shadow:0 20px 70px #0008;
-}
-
-.modal-header {
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:20px;
-}
-
-.modal-header h2 {
- font-size:17px;
- margin:0;
-}
-
-.close-modal {
- background:transparent;
- border:0;
- color:#aab0ca;
- font-size:22px;
-}
-
-.setting-group {
- margin-bottom:17px;
-}
-
-.setting-group label {
- display:block;
- color:#c4c9e0;
- font-size:11px;
- font-weight:700;
- margin-bottom:8px;
-}
-
-.setting-group input,
-.setting-group select,
-.setting-group textarea {
- width:100%;
- background:#10142b;
- color:white;
- border:1px solid var(--border);
- border-radius:9px;
- padding:11px;
- outline:none;
- font-size:12px;
-}
-
-.setting-group textarea {
- min-height:100px;
- resize:vertical;
-}
-
-.modal-actions {
- display:flex;
- justify-content:flex-end;
- gap:8px;
- margin-top:20px;
-}
-
-/* NOTIFICATIONS */
-
-.toast-area {
- position:fixed;
- right:18px;
- bottom:18px;
- z-index:2000;
- display:flex;
- flex-direction:column;
- gap:9px;
-}
-
-.toast {
- background:#252a4b;
- border:1px solid #4b5280;
- border-radius:11px;
- padding:12px 16px;
- color:white;
- font-size:11px;
- box-shadow:0 8px 25px #0004;
- animation:fadeIn .2s ease;
- max-width:300px;
-}
-
-.toast.error {
- border-color:#a74961;
-}
-
-.toast.success {
- border-color:#398b72;
-}
-
-/* EMPTY */
-
-.empty-state {
- color:var(--muted);
- text-align:center;
- padding:35px 10px;
- font-size:12px;
- line-height:1.8;
-}
-
-/* SCROLLBAR */
-
-::-webkit-scrollbar {
- width:7px;
- height:7px;
-}
-
-::-webkit-scrollbar-thumb {
- background:#34395e;
- border-radius:20px;
-}
-
-::-webkit-scrollbar-track {
- background:transparent;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:850px) {
- .sidebar {
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  transform:translateX(-100%);
-  box-shadow:15px 0 40px #0005;
- }
- .sidebar.open {
-  transform:translateX(0);
- }
- .menu-button {
-  display:block;
- }
- .studio-grid {
-  grid-template-columns:repeat(2,1fr);
- }
-}
-
-@media(max-width:550px) {
- .topbar {
-  padding:0 13px;
- }
- .chat-layout {
-  padding:0 13px;
- }
- .welcome h1 {
-  font-size:25px;
- }
- .welcome p {
-  font-size:11px;
- }
- .suggestion-grid {
-  grid-template-columns:1fr;
- }
- .studio-container {
-  padding:24px 14px;
- }
- .studio-grid {
-  grid-template-columns:1fr;
- }
- .studio-card {
-  min-height:145px;
- }
- .workspace-bottom {
-  align-items:stretch;
-  flex-direction:column;
- }
- .game-frame-wrap {
-  height:430px;
- }
- .message-text {
-  font-size:12px;
- }
- .status {
-  display:none;
- }
-}
-
-@media(min-width:1200px) {
- .chat-layout {
-  max-width:1050px;
- }
+*{box-sizing:border-box}
+:root{
+--bg:#101329;
+--panel:#191e3a;
+--panel2:#202747;
+--border:#303858;
+--text:#f5f5ff;
+--muted:#969fbd;
+--purple:#8069f5;
+--purple2:#a36af5;
+}
+body{
+margin:0;
+background:var(--bg);
+color:var(--text);
+font-family:Arial,sans-serif;
+height:100dvh;
+overflow:hidden;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{height:100dvh;display:flex;overflow:hidden}
+.sidebar{
+width:265px;flex-shrink:0;
+background:#141932;
+border-right:1px solid var(--border);
+display:flex;flex-direction:column;
+padding:17px;transition:.25s;
+z-index:20;
+}
+.brand{
+display:flex;align-items:center;gap:11px;
+font-size:21px;font-weight:900;
+margin-bottom:27px;
+}
+.logo{
+width:43px;height:43px;border-radius:14px;
+display:grid;place-items:center;
+background:linear-gradient(135deg,#735df0,#b16af2);
+font-size:23px;
+box-shadow:0 5px 20px #8069f555;
+}
+.newchat,.navbtn,.side-bottom button{
+width:100%;padding:13px;border:1px solid var(--border);
+background:var(--panel);color:white;
+border-radius:11px;text-align:left;
+margin-bottom:9px;font-size:13px;
+}
+.newchat{background:linear-gradient(110deg,#705ee9,#a05ee9);border:0;font-weight:bold}
+.navbtn.active{background:#292650;border-color:#7669eb}
+.side-label{font-size:10px;color:var(--muted);margin:20px 5px 10px}
+.history{flex:1;overflow:auto}
+.history-item{
+padding:11px;border-radius:9px;
+font-size:12px;color:#c5c9dd;
+white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+cursor:pointer;
+}
+.history-item:hover{background:var(--panel2)}
+.side-bottom{margin-top:auto}
+.side-bottom button{margin-bottom:7px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+height:65px;flex-shrink:0;
+border-bottom:1px solid var(--border);
+display:flex;align-items:center;gap:14px;
+padding:0 20px;
+background:#101329;
+}
+.menu{
+width:39px;height:39px;border:1px solid var(--border);
+border-radius:10px;background:var(--panel);color:white;
+font-size:21px;
+}
+.top-title{font-weight:800;font-size:15px}
+.top-status{margin-left:auto;color:#8fdfa9;font-size:11px}
+.page{display:none;flex:1;min-height:0;flex-direction:column}
+.page.active{display:flex}
+.messages{
+flex:1;overflow-y:auto;padding:25px 17px;
+width:100%;max-width:850px;margin:auto;
+}
+.welcome{text-align:center;padding:65px 15px 35px}
+.welcome-logo{
+width:75px;height:75px;border-radius:25px;
+display:grid;place-items:center;margin:0 auto 20px;
+background:linear-gradient(135deg,#735df0,#b16af2);
+font-size:38px;
+}
+.welcome h1{font-size:29px;margin:10px}
+.welcome p{color:var(--muted);font-size:13px}
+.message{
+display:flex;gap:12px;margin:20px 0;
+align-items:flex-start;
+}
+.avatar{
+width:34px;height:34px;flex-shrink:0;
+border-radius:11px;display:grid;place-items:center;
+background:#302b61;font-size:16px;
+}
+.message.user .avatar{background:#244d64}
+.bubble{
+background:var(--panel);padding:13px 15px;
+border-radius:13px;max-width:85%;
+font-size:13px;line-height:1.7;
+overflow-wrap:anywhere;white-space:pre-wrap;
+}
+.message.user{flex-direction:row-reverse}
+.message.user .bubble{background:#292650}
+.composer-wrap{
+padding:12px 16px 18px;
+width:100%;max-width:850px;margin:0 auto;
+}
+.composer{
+display:flex;align-items:flex-end;gap:9px;
+background:var(--panel);border:1px solid var(--border);
+border-radius:15px;padding:10px;
+}
+#message{
+flex:1;min-width:0;max-height:130px;min-height:38px;
+resize:none;background:transparent;color:white;
+border:0;outline:0;padding:9px;font-size:14px;
+}
+.send{
+background:linear-gradient(110deg,#705ee9,#a05ee9);
+color:white;border:0;border-radius:11px;
+padding:12px 17px;font-weight:bold;
+}
+.hint{text-align:center;color:#777f9f;font-size:10px;margin-top:9px}
+.studio-container{
+width:100%;max-width:1050px;margin:auto;
+padding:25px;overflow-y:auto;
+}
+.studio-container h1{font-size:27px}
+.desc{color:var(--muted);font-size:13px;line-height:1.7}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:25px 0}
+.card{
+background:var(--panel);border:1px solid var(--border);
+border-radius:15px;padding:17px;cursor:pointer;
+}
+.card.active{border-color:var(--purple)}
+.card .emoji{font-size:27px}
+.card h3{font-size:14px}
+.card p{font-size:11px;color:var(--muted);line-height:1.6}
+.workspace{
+background:var(--panel);border:1px solid var(--border);
+border-radius:15px;padding:18px;
+}
+.workspace textarea{
+width:100%;height:130px;resize:vertical;
+background:#10152c;color:white;
+border:1px solid var(--border);
+border-radius:11px;padding:13px;outline:none;
+}
+.workspace select{
+background:#10152c;color:white;border:1px solid var(--border);
+padding:10px;border-radius:9px;margin-bottom:12px;
+}
+.action{
+background:linear-gradient(110deg,#705ee9,#a05ee9);
+border:0;color:white;border-radius:10px;
+padding:12px 17px;font-weight:bold;margin-top:12px;
+}
+.result{
+margin-top:18px;background:#10152c;
+border:1px solid var(--border);border-radius:12px;padding:14px;
+}
+.result button{margin:5px}
+#gameFrameWrap{
+height:65vh;background:#080b17;
+border:1px solid var(--border);border-radius:13px;
+margin-top:15px;overflow:hidden;
+}
+#gameFrameWrap iframe{width:100%;height:100%;border:0;background:white}
+.hidden{display:none!important}
+.overlay{
+display:none;position:fixed;inset:0;
+background:#0009;z-index:15;
+}
+.overlay.show{display:block}
+.toast{
+position:fixed;bottom:20px;left:50%;
+transform:translateX(-50%);
+background:#292e4c;color:white;
+padding:12px 18px;border-radius:12px;
+font-size:12px;z-index:100;
+}
+@media(max-width:750px){
+.sidebar{
+position:fixed;left:0;top:0;bottom:0;
+transform:translateX(-105%);
+width:270px;
+box-shadow:15px 0 40px #0005;
+}
+.sidebar.open{transform:translateX(0)}
+.cards{grid-template-columns:1fr}
+.welcome{padding-top:45px}
+.topbar{padding:0 13px}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
-<!-- SIDEBAR -->
-
 <aside class="sidebar" id="sidebar">
-
- <div class="brand">
-  <div class="brand-logo">🤖</div>
-  <div>
-   <div class="brand-name">ÖMER AI</div>
-   <div class="brand-version">NEXT GENERATION AI</div>
-  </div>
- </div>
-
- <button class="new-chat" onclick="newChat()">
-  ＋ Yeni sohbet
- </button>
-
- <div class="side-label">MENÜ</div>
-
- <button class="nav-button active" id="navChat" onclick="showPage('chat')">
-  <span class="nav-icon">💬</span>
-  Sohbet
- </button>
-
- <button class="nav-button" id="navStudio" onclick="showPage('studio')">
-  <span class="nav-icon">⚡</span>
-  Yapay Zeka Stüdyosu
- </button>
-
- <button class="nav-button" onclick="openMemory()">
-  <span class="nav-icon">🧠</span>
-  Hafızam
- </button>
-
- <button class="nav-button" onclick="openSettings()">
-  <span class="nav-icon">⚙️</span>
-  Ayarlar
- </button>
-
- <div class="side-label">SOHBET GEÇMİŞİ</div>
-
- <div class="history-area" id="historyList">
-  <div class="empty-state">Henüz sohbet yok.</div>
- </div>
-
- <div class="sidebar-bottom">
-  <div class="profile">
-   <div class="profile-avatar">Ö</div>
-   <div>
-    <div class="profile-name">ÖMER AI</div>
-    <div class="profile-sub">Kişisel yapay zekan</div>
-   </div>
-  </div>
- </div>
-
-</aside>
-
-<!-- MAIN -->
-
-<main class="main">
-
- <header class="topbar">
-  <div class="top-left">
-   <button class="menu-button" onclick="toggleSidebar()">☰</button>
-   <div class="page-heading" id="pageHeading">Yeni Sohbet</div>
-   <div class="status">
-    <span class="status-dot"></span>
-    Sistem hazır
-   </div>
-  </div>
-
-  <div class="top-actions">
-   <button class="icon-button" onclick="openMemory()" title="Hafıza">🧠</button>
-   <button class="icon-button" onclick="openSettings()" title="Ayarlar">⚙️</button>
-  </div>
- </header>
-
- <!-- CHAT PAGE -->
-
- <section class="page active" id="chatPage">
-
-  <div class="chat-layout">
-
-   <div class="messages" id="messages">
-
-    <div class="welcome" id="welcome">
-
-     <div class="welcome-logo">🤖</div>
-
-     <h1>Merhaba, <span>Ömer!</span></h1>
-
-     <p>
-      Ben ÖMER AI. Sorularını cevaplayabilir,
-      kod yazabilir, projeler geliştirebilir ve oyunlar oluşturabilirim.
-     </p>
-
-     <div class="suggestion-grid">
-
-      <button class="suggestion" onclick="useSuggestion('Bana gelişmiş bir futbol oyunu oluştur.')">
-       <strong>🎮 Oyun oluştur</strong>
-       <small>Kendi oyununu tasarla.</small>
-      </button>
-
-      <button class="suggestion" onclick="useSuggestion('Bana modern bir web sitesi kodla.')">
-       <strong>💻 Kod yaz</strong>
-       <small>Web sitesi ve uygulama geliştir.</small>
-      </button>
-
-      <button class="suggestion" onclick="useSuggestion('Yapay zekâ nasıl çalışır? Detaylı anlat.')">
-       <strong>🧠 Bir şey öğren</strong>
-       <small>Merak ettiğin konuları keşfet.</small>
-      </button>
-
-      <button class="suggestion" onclick="showPage('studio')">
-       <strong>⚡ Stüdyoyu aç</strong>
-       <small>Proje ve oyun fabrikasına geç.</small>
-      </button>
-
-     </div>
-    </div>
-
-   </div>
-
-   <div class="composer-wrap">
-
-    <div class="composer" id="composer">
-
-     <textarea
-      id="message"
-      placeholder="ÖMER AI'a bir şey sor..."
-      rows="1"
-      oninput="resizeTextarea(this)"
-      onkeydown="handleEnter(event)"
-     ></textarea>
-
-     <button class="primary" id="sendButton" onclick="sendMessage()">
-      Gönder ➤
-     </button>
-
-    </div>
-
-    <div class="composer-hint">
-     ÖMER AI hata yapabilir. Önemli bilgileri kontrol et.
-    </div>
-
-   </div>
-
-  </div>
-
- </section>
-
- <!-- STUDIO PAGE -->
-
- <section class="page" id="studioPage">
-
-  <div class="studio-container">
-
-   <h1 class="studio-title">Yapay Zeka Stüdyosu ⚡</h1>
-
-   <p class="studio-description">
-    ÖMER AI'ın üretim merkezine hoş geldin.
-    Kodlar, projeler ve oyunlar oluştur.
-   </p>
-
-   <div class="studio-grid">
-
-    <div class="studio-card" onclick="openStudio('code')">
-     <div class="studio-card-icon">💻</div>
-     <h3>Kodlama Stüdyosu</h3>
-     <p>HTML, CSS, JavaScript ve daha fazlasıyla kod üret.</p>
-    </div>
-
-    <div class="studio-card" onclick="openStudio('project')">
-     <div class="studio-card-icon">🏭</div>
-     <h3>Proje Fabrikası</h3>
-     <p>Bir fikri birden fazla dosyadan oluşan projeye dönüştür.</p>
-    </div>
-
-    <div class="studio-card" onclick="openStudio('game')">
-     <div class="studio-card-icon">🎮</div>
-     <h3>Oyun Fabrikası</h3>
-     <p>Tek HTML dosyasında çalışan oyunlar oluştur.</p>
-    </div>
-
-   </div>
-
-   <div class="studio-workspace">
-
-    <div class="workspace-top">
-     <h3 id="workspaceTitle">Üretim alanı</h3>
-
-     <select class="workspace-select" id="studioMode" onchange="changeStudioMode()">
-      <option value="code">Kodlama</option>
-      <option value="project">Proje</option>
-      <option value="game">Oyun</option>
-     </select>
-    </div>
-
-    <textarea
-     id="studioPrompt"
-     placeholder="Ne oluşturmak istiyorsun? Örneğin: Modern tasarımlı, animasyonlu bir hesap makinesi oluştur.
-         </textarea>
-
-    <div class="workspace-bottom">
-      <div class="workspace-info" id="studioInfo">
-        Kodlama motoru hazır.
-      </div>
-
-      <button class="primary" id="generateButton" onclick="generateStudio()">
-        ✨ Oluştur
-      </button>
-    </div>
-
-    <div class="studio-result hidden" id="studioResult">
-      <div class="workspace-top">
-        <h3>Oluşturulan dosyalar</h3>
-        <button class="secondary" onclick="downloadProject()">⬇️ İndir</button>
-      </div>
-
-      <div class="result-files" id="resultFiles"></div>
-      <pre class="code-output" id="codeOutput"></pre>
-
-      <div class="game-controls hidden" id="gameControls">
-        <button class="primary" onclick="showGamePreview()">▶️ OYUNU OYNA</button>
-        <button class="secondary" onclick="toggleGameFullscreen()">⛶ Tam ekran</button>
-        <button class="secondary" onclick="downloadSingleGame()">⬇️ Tek HTML indir</button>
-        <button class="secondary" onclick="closeGamePreview()">✕ Önizlemeyi kapat</button>
-      </div>
-
-      <div class="game-frame-wrap hidden" id="gameFrameWrap">
-        <iframe
-          id="gamePreview"
-          title="ÖMER AI Oyun Önizleme"
-          sandbox="allow-scripts allow-forms allow-pointer-lock"
-        ></iframe>
-      </div>
-    </div>
-
-  </div>
+<div class="brand">
+<div class="logo">Ö</div>
+<span>ÖMER AI</span>
 </div>
 
+<button class="newchat" onclick="newChat()">＋ Yeni sohbet</button>
+
+<div class="side-label">MENÜ</div>
+<button class="navbtn active" id="chatNav" onclick="showPage('chat')">💬 Sohbet</button>
+<button class="navbtn" id="studioNav" onclick="showPage('studio')">⚡ Üretim stüdyosu</button>
+
+<div class="side-label">SOHBET GEÇMİŞİ</div>
+<div class="history" id="history"></div>
+
+<div class="side-bottom">
+<button onclick="showMemory()">🧠 Hafızam</button>
+<button onclick="clearHistory()">🗑 Sohbetleri temizle</button>
+</div>
+</aside>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<main class="main">
+<header class="topbar">
+<button class="menu" onclick="toggleSidebar()" aria-label="Menüyü aç">☰</button>
+<div class="top-title">ÖMER AI</div>
+<div class="top-status">● Sistem hazır</div>
+</header>
+
+<section class="page active" id="chatPage">
+<div class="messages" id="messages">
+<div class="welcome">
+<div class="welcome-logo">Ö</div>
+<h1>Merhaba, ben ÖMER AI!</h1>
+<p>Nasıl yardımcı olabilirim?</p>
+</div>
+</div>
+<div class="composer-wrap">
+<div class="composer">
+<textarea id="message" placeholder="ÖMER AI'a bir şey sor..." rows="1"></textarea>
+<button class="send" id="sendButton" onclick="sendMessage()">➤</button>
+</div>
+<div class="hint">ÖMER AI hata yapabilir. Önemli bilgileri kontrol et.</div>
+</div>
 </section>
 
+<section class="page" id="studioPage">
+<div class="studio-container">
+<h1>⚡ Üretim Stüdyosu</h1>
+<p class="desc">ÖMER AI ile kod, proje ve oyun oluştur.</p>
+
+<div class="cards">
+<div class="card active" onclick="setMode('code',this)">
+<div class="emoji">💻</div>
+<h3>Kodlama</h3>
+<p>HTML, CSS ve JavaScript kodları oluştur.</p>
+</div>
+<div class="card" onclick="setMode('project',this)">
+<div class="emoji">🚀</div>
+<h3>Proje fabrikası</h3>
+<p>Çok dosyalı projeler geliştir.</p>
+</div>
+<div class="card" onclick="setMode('game',this)">
+<div class="emoji">🎮</div>
+<h3>Oyun oluştur</h3>
+<p>Oynanabilir mobil ve bilgisayar oyunları üret.</p>
+</div>
+</div>
+
+<div class="workspace">
+<h3>Ne oluşturmak istiyorsun?</h3>
+<select id="studioMode">
+<option value="code">Kodlama</option>
+<option value="project">Proje fabrikası</option>
+<option value="game">Oyun oluştur</option>
+</select>
+<textarea id="studioPrompt" placeholder="Örneğin: Gelişmiş bir futbol oyunu oluştur..."></textarea>
+<br>
+<button class="action" id="generateButton" onclick="generateStudio()">✨ Oluştur</button>
+
+<div id="studioInfo" class="desc"></div>
+<div class="result hidden" id="studioResult">
+<div id="resultFiles"></div>
+<button class="action" onclick="showGamePreview()">▶ OYUNU OYNA</button>
+<button class="action" onclick="downloadProject()">⬇ İndir</button>
+</div>
+
+<div id="gameFrameWrap" class="hidden">
+<iframe id="gameFrame" sandbox="allow-scripts allow-forms allow-pointer-lock"></iframe>
+</div>
+</div>
+</div>
+</section>
 </main>
 </div>
 
-<!-- MEMORY MODAL -->
-
-<div class="modal-backdrop" id="memoryModal" onclick="backdropClose(event,'memoryModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>🧠 ÖMER AI Hafızası</h2>
-      <button class="close-modal" onclick="closeModal('memoryModal')">×</button>
-    </div>
-
-    <div class="setting-group">
-      <label>ÖMER AI'ın hatırlamasını istediğin bilgiler</label>
-      <textarea id="memoryText" placeholder="Örneğin: Bana Türkçe cevap ver."></textarea>
-    </div>
-
-    <div class="modal-actions">
-      <button class="secondary" onclick="closeModal('memoryModal')">İptal</button>
-      <button class="primary" onclick="saveMemory()">Kaydet</button>
-    </div>
-  </div>
-</div>
-
-<!-- SETTINGS MODAL -->
-
-<div class="modal-backdrop" id="settingsModal" onclick="backdropClose(event,'settingsModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>⚙️ Ayarlar</h2>
-      <button class="close-modal" onclick="closeModal('settingsModal')">×</button>
-    </div>
-
-    <div class="setting-group">
-      <label>Yapay zekâ kişiliği</label>
-      <select id="personality">
-        <option value="arkadas">Arkadaş canlısı</option>
-        <option value="resmi">Profesyonel</option>
-        <option value="ogretmen">Öğretmen</option>
-        <option value="yaratici">Yaratıcı</option>
-      </select>
-    </div>
-
-    <div class="setting-group">
-      <label>Yanıt dili</label>
-      <select id="language">
-        <option value="Türkçe">Türkçe</option>
-        <option value="English">English</option>
-      </select>
-    </div>
-
-    <div class="setting-group">
-      <label>Yanıt uzunluğu</label>
-      <select id="answerLength">
-        <option value="normal">Normal</option>
-        <option value="kisa">Kısa</option>
-        <option value="detayli">Detaylı</option>
-      </select>
-    </div>
-
-    <div class="modal-actions">
-      <button class="secondary" onclick="closeModal('settingsModal')">Kapat</button>
-      <button class="primary" onclick="saveSettings()">Kaydet</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast-area" id="toastArea"></div>
-
 <script>
-"use strict";
+const API_BASE="https://omer-ai-server.onrender.com";
+const API_CHAT=API_BASE+"/api/chat";
+const API_STUDIO=API_BASE+"/api/studio";
 
-const API_BASE = "https://omer-ai-server.onrender.com";
-const API_CHAT = API_BASE + "/api/chat";
-const API_STUDIO = API_BASE + "/api/studio";
+let chats=[];
+let currentChat=null;
+let memory=localStorage.getItem("omer_memory")||"";
+let mode="code";
+let generatedFiles=[];
+let generatedGame="";
+let isGenerating=false;
+let isSending=false;
 
-const STORAGE = {
-  chats:"omer_ai_chats_v3",
-  memory:"omer_ai_memory_v3",
-  settings:"omer_ai_settings_v3"
+const $=id=>document.getElementById(id);
+
+function toast(message){
+const old=document.querySelector(".toast");
+if(old)old.remove();
+const el=document.createElement("div");
+el.className="toast";
+el.textContent=message;
+document.body.appendChild(el);
+setTimeout(()=>el.remove(),2800);
+}
+
+function toggleSidebar(){
+$("sidebar").classList.toggle("open");
+$("overlay").classList.toggle("show");
+}
+function closeSidebar(){
+$("sidebar").classList.remove("open");
+$("overlay").classList.remove("show");
+}
+
+function showPage(page){
+$("chatPage").classList.toggle("active",page==="chat");
+$("studioPage").classList.toggle("active",page==="studio");
+$("chatNav").classList.toggle("active",page==="chat");
+$("studioNav").classList.toggle("active",page==="studio");
+closeSidebar();
+}
+
+function newChat(){
+currentChat={id:Date.now(),title:"Yeni sohbet",messages:[]};
+chats.unshift(currentChat);
+renderHistory();
+renderMessages();
+showPage("chat");
+}
+
+function saveChats(){
+localStorage.setItem("omer_chats",JSON.stringify(chats));
+}
+function loadChats(){
+try{chats=JSON.parse(localStorage.getItem("omer_chats")||"[]")}catch(e){chats=[]}
+renderHistory();
+if(chats.length){
+currentChat=chats[0];
+renderMessages();
+}else newChat();
+}
+
+function renderHistory(){
+$("history").innerHTML="";
+chats.forEach(chat=>{
+const item=document.createElement("div");
+item.className="history-item";
+item.textContent=chat.title;
+item.onclick=()=>{
+currentChat=chat;
+renderMessages();
+showPage("chat");
 };
-
-let chats = [];
-let currentChatId = null;
-let generatedFiles = [];
-let generatedGame = "";
-let selectedFileIndex = 0;
-let isSending = false;
-let isGenerating = false;
-
-const defaultSettings = {
-  personality:"arkadas",
-  language:"Türkçe",
-  answerLength:"normal"
-};
-
-let settings = {...defaultSettings};
-
-function $(id) {
-  return document.getElementById(id);
-}
-
-function safeParse(value,fallback) {
-  try {
-    return JSON.parse(value) ?? fallback;
-  } catch(error) {
-    return fallback;
-  }
-}
-
-function makeId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,9);
-}
-
-function toast(message,type="normal") {
-  const element = document.createElement("div");
-  element.className = "toast " + type;
-  element.textContent = message;
-  $("toastArea").appendChild(element);
-
-  setTimeout(() => element.remove(),3500);
-}
-
-function loadStorage() {
-  chats = safeParse(localStorage.getItem(STORAGE.chats),[]);
-
-  if(!Array.isArray(chats)) chats = [];
-
-  $("memoryText").value =
-    localStorage.getItem(STORAGE.memory) || "";
-
-  settings = {
-    ...defaultSettings,
-    ...safeParse(
-      localStorage.getItem(STORAGE.settings),
-      defaultSettings
-    )
-  };
-
-  $("personality").value = settings.personality;
-  $("language").value = settings.language;
-  $("answerLength").value = settings.answerLength;
-}
-
-function saveChats() {
-  localStorage.setItem(STORAGE.chats,JSON.stringify(chats));
-}
-
-function saveMemory() {
-  localStorage.setItem(
-    STORAGE.memory,
-    $("memoryText").value.trim()
-  );
-
-  closeModal("memoryModal");
-  toast("Hafıza kaydedildi.","success");
-}
-
-function getMemory() {
-  return localStorage.getItem(STORAGE.memory) || "";
-}
-
-function createChat() {
-  return {
-    id:makeId(),
-    title:"Yeni sohbet",
-    createdAt:Date.now(),
-    updatedAt:Date.now(),
-    messages:[]
-  };
-}
-
-function getCurrentChat() {
-  return chats.find(chat => chat.id === currentChatId) || null;
-}
-
-function ensureChat() {
-  let chat = getCurrentChat();
-
-  if(!chat) {
-    chat = createChat();
-    chats.unshift(chat);
-    currentChatId = chat.id;
-  }
-
-  return chat;
-}
-
-function newChat() {
-  currentChatId = null;
-  $("messages").innerHTML = "";
-  $("messages").appendChild(createWelcome());
-  showPage("chat");
-  renderHistory();
-  $("pageHeading").textContent = "Yeni Sohbet";
-  $("message").focus();
-  closeSidebar();
-}
-
-function createWelcome() {
-  const wrapper = document.createElement("div");
-  wrapper.className = "welcome";
-  wrapper.id = "welcome";
-
-  wrapper.innerHTML = `
-    <div class="welcome-logo">🤖</div>
-    <h1>Merhaba, <span>Ömer!</span></h1>
-    <p>Ben ÖMER AI. Sorularını cevaplayabilir, kod yazabilir, projeler geliştirebilir ve oyunlar oluşturabilirim.</p>
-    <div class="suggestion-grid">
-      <button class="suggestion" onclick="useSuggestion('Bana gelişmiş bir futbol oyunu oluştur.')">
-        <strong>🎮 Oyun oluştur</strong>
-        <small>Kendi oyununu tasarla.</small>
-      </button>
-      <button class="suggestion" onclick="useSuggestion('Bana modern bir web sitesi kodla.')">
-        <strong>💻 Kod yaz</strong>
-        <small>Web sitesi ve uygulama geliştir.</small>
-      </button>
-      <button class="suggestion" onclick="useSuggestion('Yapay zekâ nasıl çalışır? Detaylı anlat.')">
-        <strong>🧠 Bir şey öğren</strong>
-        <small>Merak ettiğin konuları keşfet.</small>
-      </button>
-      <button class="suggestion" onclick="showPage('studio')">
-        <strong>⚡ Stüdyoyu aç</strong>
-        <small>Proje ve oyun fabrikasına geç.</small>
-      </button>
-    </div>
-  `;
-
-  return wrapper;
-}
-
-function openChat(id) {
-  const chat = chats.find(item => item.id === id);
-  if(!chat) return;
-
-  currentChatId = id;
-  $("messages").innerHTML = "";
-
-  chat.messages.forEach(message => {
-    renderMessage(message.role,message.content,false);
-  });
-
-  $("pageHeading").textContent = chat.title || "Sohbet";
-  showPage("chat");
-  renderHistory();
-  closeSidebar();
-}
-
-function deleteChat(id,event) {
-  if(event) event.stopPropagation();
-
-  if(!confirm("Bu sohbeti silmek istiyor musun?")) return;
-
-  chats = chats.filter(chat => chat.id !== id);
-
-  if(currentChatId === id) {
-    currentChatId = null;
-    $("messages").innerHTML = "";
-    $("messages").appendChild(createWelcome());
-  }
-
-  saveChats();
-  renderHistory();
-  toast("Sohbet silindi.","success");
-}
-
-function renderHistory() {
-  const container = $("historyList");
-  container.innerHTML = "";
-
-  if(chats.length === 0) {
-    container.innerHTML = '<div class="empty-state">Henüz sohbet yok.</div>';
-    return;
-  }
-
-  chats.forEach(chat => {
-    const item = document.createElement("div");
-    item.className = "history-item" +
-      (chat.id === currentChatId ? " selected" : "");
-
-    const title = document.createElement("span");
-    title.className = "history-title";
-    title.textContent = chat.title || "Yeni sohbet";
-
-    const remove = document.createElement("button");
-    remove.className = "delete-history";
-    remove.textContent = "×";
-    remove.onclick = event => deleteChat(chat.id,event);
-
-    item.onclick = () => openChat(chat.id);
-    item.append("💬",title,remove);
-    container.appendChild(item);
-  });
-}
-
-function showPage(name) {
-  $("chatPage").classList.toggle("active",name === "chat");
-  $("studioPage").classList.toggle("active",name === "studio");
-
-  $("navChat").classList.toggle("active",name === "chat");
-  $("navStudio").classList.toggle("active",name === "studio");
-
-  $("pageHeading").textContent =
-    name === "chat" ? "Sohbet" : "Yapay Zeka Stüdyosu";
-
-  closeSidebar();
-}
-
-function toggleSidebar() {
-  $("sidebar").classList.toggle("open");
-}
-
-function closeSidebar() {
-  $("sidebar").classList.remove("open");
-}
-
-function renderMessage(role,content) {
-  const container = $("messages");
-  const welcome = $("welcome");
-
-  if(welcome) welcome.remove();
-
-  const row = document.createElement("div");
-  row.className = "message-row " + role;
-
-  const avatar = document.createElement("div");
-  avatar.className = "message-avatar";
-  avatar.textContent = role === "user" ? "Ö" : "🤖";
-
-  const contentArea = document.createElement("div");
-  contentArea.className = "message-content";
-
-  const author = document.createElement("div");
-  author.className = "message-author";
-  author.textContent = role === "user" ? "Sen" : "ÖMER AI";
-
-  const text = document.createElement("div");
-  text.className = "message-text";
-  text.textContent = content;
-
-  contentArea.append(author,text);
-
-  if(role === "assistant") {
-    const tools = document.createElement("div");
-    tools.className = "message-tools";
-
-    const copy = document.createElement("button");
-    copy.textContent = "📋 Kopyala";
-    copy.onclick = () => copyText(content);
-
-    tools.appendChild(copy);
-    contentArea.appendChild(tools);
-  }
-
-  row.append(avatar,contentArea);
-  container.appendChild(row);
-  container.scrollTop = container.scrollHeight;
-
-  return row;
-}
-
-function addTyping() {
-  const row = document.createElement("div");
-  row.className = "message-row";
-  row.id = "typingIndicator";
-
-  row.innerHTML = `
-    <div class="message-avatar">🤖</div>
-    <div class="message-content">
-      <div class="message-author">ÖMER AI</div>
-      <div class="typing"><span></span><span></span><span></span></div>
-    </div>
-  `;
-
-  $("messages").appendChild(row);
-  $("messages").scrollTop = $("messages").scrollHeight;
-}
-
-function removeTyping() {
-  const element = $("typingIndicator");
-  if(element) element.remove();
-}
-
-function resizeTextarea(element) {
-  element.style.height = "auto";
-  element.style.height = Math.min(element.scrollHeight,150) + "px";
-}
-
-function handleEnter(event) {
-  if(event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault();
-    sendMessage();
-  }
-}
-
-function useSuggestion(text) {
-  $("message").value = text;
-  sendMessage();
-}
-
-async function apiRequest(url,data,timeout=120000) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(),timeout);
-
-  try {
-    const response = await fetch(url,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data),
-      signal:controller.signal
-    });
-
-    const raw = await response.text();
-    let result;
-
-    try {
-      result = JSON.parse(raw);
-    } catch(error) {
-      throw new Error("Sunucudan geçersiz yanıt geldi.");
-    }
-
-    if(!response.ok) {
-      throw new Error(result.error || result.message || "Sunucu hatası: " + response.status);
-    }
-
-    return result;
-
-  } catch(error) {
-    if(error.name === "AbortError") {
-      throw new Error("İstek zaman aşımına uğradı. Tekrar deneyebilirsin.");
-    }
-
-    if(error instanceof TypeError) {
-      throw new Error("Sunucuya bağlanılamadı. Biraz sonra tekrar dene.");
-    }
-
-    throw error;
-
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-async function sendMessage() {
-  if(isSending) return;
-
-  const input = $("message");
-  const text = input.value.trim();
-
-  if(!text) return;
-
-  isSending = true;
-  $("sendButton").disabled = true;
-
-  input.value = "";
-  input.style.height = "auto";
-
-  const chat = ensureChat();
-
-  chat.messages.push({
-    role:"user",
-    content:text,
-    time:Date.now()
-  });
-
-  if(chat.messages.length === 1) {
-    chat.title = text.slice(0,35);
-  }
-
-  chat.updatedAt = Date.now();
-
-  renderMessage("user",text);
-  saveChats();
-  renderHistory();
-
-  $("pageHeading").textContent = chat.title;
-  addTyping();
-
-  try {
-    const history = chat.messages.slice(-20).map(message => ({
-      role:message.role,
-      content:message.content
-    }));
-
-    const result = await apiRequest(API_CHAT,{
-      message:text,
-      gecmis:history,
-      hafiza:getMemory(),
-      dil:settings.language,
-      kisilik:settings.personality
-    });
-
-    removeTyping();
-
-    const answer =
-      result.answer ||
-      result.response ||
-      result.message ||
-      "Bir yanıt alınamadı.";
-
-    renderMessage("assistant",String(answer));
-
-    chat.messages.push({
-      role:"assistant",
-      content:String(answer),
-      time:Date.now()
-    });
-
-    chat.updatedAt = Date.now();
-    saveChats();
-    renderHistory();
-
-  } catch(error) {
-    removeTyping();
-
-    const errorMessage = "Bir hata oluştu: " + error.message;
-
-    renderMessage("assistant",errorMessage);
-
-    chat.messages.push({
-      role:"assistant",
-      content:errorMessage,
-      time:Date.now()
-    });
-
-    saveChats();
-    toast(error.message,"error");
-
-  } finally {
-    isSending = false;
-    $("sendButton").disabled = false;
-    $("message").focus();
-  }
-}
-
-async function copyText(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-    toast("Panoya kopyalandı.","success");
-  } catch(error) {
-    const area = document.createElement("textarea");
-    area.value = text;
-    document.body.appendChild(area);
-    area.select();
-    document.execCommand("copy");
-    area.remove();
-    toast("Kopyalandı.","success");
-  }
-}
-
-function openMemory() {
-  $("memoryText").value = getMemory();
-  openModal("memoryModal");
-}
-
-function openSettings() {
-  $("personality").value = settings.personality;
-  $("language").value = settings.language;
-  $("answerLength").value = settings.answerLength;
-  openModal("settingsModal");
-}
-
-function openModal(id) {
-  $(id).classList.add("show");
-}
-
-function closeModal(id) {
-  $(id).classList.remove("show");
-}
-
-function backdropClose(event,id) {
-  if(event.target.id === id) closeModal(id);
-}
-
-function saveSettings() {
-  settings.personality = $("personality").value;
-  settings.language = $("language").value;
-  settings.answerLength = $("answerLength").value;
-
-  localStorage.setItem(STORAGE.settings,JSON.stringify(settings));
-
-  closeModal("settingsModal");
-  toast("Ayarlar kaydedildi.","success");
-}
-
-function openStudio(mode) {
-  $("studioMode").value = mode;
-  changeStudioMode();
-  showPage("studio");
-  $("studioPrompt").focus();
-}
-
-function changeStudioMode() {
-  const mode = $("studioMode").value;
-
-  const titles = {
-    code:"💻 Kodlama Stüdyosu",
-    project:"🏭 Proje Fabrikası",
-    game:"🎮 Oyun Fabrikası"
-  };
-
-  const info = {
-    code:"Kodlama motoru hazır.",
-    project:"Proje üretim motoru hazır.",
-    game:"Oyun üretim motoru hazır. Tek HTML oyun hedefleniyor."
-  };
-
-  const placeholders = {
-    code:"Örneğin: Modern tasarımlı, animasyonlu bir hesap makinesi oluştur.",
-    project:"Örneğin: Kullanıcı girişli, görev listeli bir web uygulaması oluştur.",
-    game:"Örneğin: Menü, seviyeler, puan sistemi ve mobil kontrolleri olan bir futbol oyunu oluştur."
-  };
-
-  $("workspaceTitle").textContent = titles[mode];
-  $("studioInfo").textContent = info[mode];
-  $("studioPrompt").placeholder = placeholders[mode];
-
-  if(mode !== "game") {
-    $("gameControls").classList.add("hidden");
-    $("gameFrameWrap").classList.add("hidden");
-  }
-}
-
-async function generateStudio() {
-  if(isGenerating) return;
-
-  const prompt = $("studioPrompt").value.trim();
-  const mode = $("studioMode").value;
-
-  if(!prompt) {
-    toast("Önce ne oluşturmak istediğini yaz.","error");
-    $("studioPrompt").focus();
-    return;
-  }
-
-  isGenerating = true;
-  $("generateButton").disabled = true;
-  $("generateButton").textContent = "⏳ Oluşturuluyor...";
-  $("studioInfo").textContent = "ÖMER AI üretim yapıyor. Bu işlem biraz sürebilir.";
-  $("studioResult").classList.add("hidden");
-
-  try {
-    const result = await apiRequest(API_STUDIO,{
-      mode:mode,
-      prompt:prompt
-    },180000);
-
-    generatedFiles = normalizeFiles(result.files || []);
-
-    if(generatedFiles.length === 0) {
-      throw new Error(result.answer || "Üretim tamamlandı ancak dosya bulunamadı.");
-    }
-
-    if(mode === "game") {
-      const gameFile = findGameFile(generatedFiles);
-
-      if(!gameFile) {
-        throw new Error("Oyun dosyası bulunamadı. Tek HTML dosyası üretilmesini iste.");
-      }
-
-      generatedGame = gameFile.content;
-    } else {
-      generatedGame = "";
-    }
-
-    renderStudioFiles();
-    $("studioResult").classList.remove("hidden");
-    $("studioInfo").textContent = generatedFiles.length + " dosya başarıyla oluşturuldu.";
-
-    if(mode === "game") {
-      $("gameControls").classList.remove("hidden");
-      $("gameFrameWrap").classList.add("hidden");
-      toast("Oyun hazır! OYUNU OYNA butonuna bas.","success");
-    } else {
-      $("gameControls").classList.add("hidden");
-      $("gameFrameWrap").classList.add("hidden");
-      toast("Üretim tamamlandı.","success");
-    }
-
-  } catch(error) {
-    $("studioInfo").textContent = "Üretim başarısız oldu.";
-    toast(error.message,"error");
-    $("studioResult").classList.remove("hidden");
-    $("codeOutput").textContent = error.message;
-
-  } finally {
-    isGenerating = false;
-    $("generateButton").disabled = false;
-    $("generateButton").textContent = "✨ Oluştur";
-  }
-}
-
-function normalizeFiles(files) {
-  if(!Array.isArray(files)) return [];
-
-  return files
-    .filter(file => file && typeof file === "object")
-    .map((file,index) => ({
-      name:String(file.name || "dosya-" + (index + 1) + ".txt"),
-      content:String(file.content ?? "")
-    }));
-}
-
-function findGameFile(files) {
-  const htmlFiles = files.filter(file => /\.html?$/i.test(file.name));
-
-  if(htmlFiles.length === 0) return null;
-
-  const indexFile = htmlFiles.find(file =>
-    /(^|\/)index\.html?$/i.test(file.name)
-  );
-
-  return indexFile || htmlFiles[0];
-}
-
-function renderStudioFiles() {
-  const container = $("resultFiles");
-  container.innerHTML = "";
-  selectedFileIndex = 0;
-
-  generatedFiles.forEach((file,index) => {
-    const button = document.createElement("button");
-
-    button.className = "file-chip" + (index === 0 ? " active" : "");
-    button.textContent = "📄 " + file.name;
-    button.onclick = () => selectStudioFile(index);
-
-    container.appendChild(button);
-  });
-
-  selectStudioFile(0);
-}
-
-function selectStudioFile(index) {
-  if(!generatedFiles[index]) return;
-
-  selectedFileIndex = index;
-
-  document.querySelectorAll(".file-chip").forEach((button,i) => {
-    button.classList.toggle("active",i === index);
-  });
-
-  $("codeOutput").textContent = generatedFiles[index].content;
-}
-
-function showGamePreview() {
-  if(!generatedGame) {
-    toast("Oyun dosyası bulunamadı.","error");
-    return;
-  }
-
-  $("gamePreview").srcdoc = generatedGame;
-  $("gameFrameWrap").classList.remove("hidden");
-
-  $("gameFrameWrap").scrollIntoView({
-   behavior:"smooth",
-   block:"center"
-  });
-}
-
- function closeGamePreview() {
-   $
- ("gameFrameWrap").classList.add("hidden
- ");
- }
-
- function toggleGameFullscreen() {
-   const frame = $("gameFrameWrap");
-
-
-  if(frame.classList.contains("hidden"))
- {
-      showGamePreview();
-    }
-  if(!document.fullscreenElement) {
-    if(frame.requestFullscreen) {
-      frame.requestFullscreen().catch(() => {
-        frame.classList.add("fullscreen");
-      });
-    } else {
-      frame.classList.add("fullscreen");
-    }
-  } else {
-    document.exitFullscreen();
-  }
-}
-
-document.addEventListener("fullscreenchange",() => {
-  if(!document.fullscreenElement) {
-    $("gameFrameWrap").classList.remove("fullscreen");
-  }
+$("history").appendChild(item);
 });
+}
 
-function downloadSingleGame() {
-  if(!generatedGame) {
-    toast("İndirilecek oyun bulunamadı.","error");
+function renderMessages(){
+$("messages").innerHTML="";
+if(!currentChat||!currentChat.messages.length){
+const welcome=document.createElement("div");
+welcome.className="welcome";
+welcome.innerHTML='<div class="welcome-logo">Ö</div><h1>Merhaba, ben ÖMER AI!</h1><p>Nasıl yardımcı olabilirim?</p>';
+$("messages").appendChild(welcome);
 return;
-  }
-
-  const blob = new Blob(
-    [generatedGame],
-    {type:"text/html;charset=utf-8"}
-  );
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = "omer-ai-oyunum.html";
- document.body.appendChild(link);
-  link.click();
-  link.remove();
-
-  setTimeout(() => URL.revokeObjectURL(url),2000);
-
-  toast("Tek HTML oyun dosyası indiriliyor.","success");
+}
+currentChat.messages.forEach(addMessageElement);
 }
 
-async function downloadProject() {
-  if(!generatedFiles.length) {
-    toast("İndirilecek dosya yok.","error");
-    return;
-  }
-
-  if(generatedFiles.length === 1 &&
-     /\.html?$/i.test(generatedFiles[0].name)) {
-    downloadSingleGame();
-    return;
-  }
-
-  if(typeof JSZip === "undefined") {
-    toast("ZIP kütüphanesi yüklenemedi.","error");
-    return;
-  }
-
-  const zip = new JSZip();
-
-  generatedFiles.forEach(file => {
-    zip.file(file.name.replace(/^\/+/,""),file.content);
-  });
- try {
-    const blob = await zip.generateAsync({
-      type:"blob",
-      compression:"DEFLATE",
-      compressionOptions:{level:6}
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "omer-ai-proje.zip";
-
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url),3000);
-
-    toast("Proje ZIP olarak indiriliyor.","success");
-
-  } catch(error) {
-    toast("ZIP oluşturulamadı: " + error.message,"error");
-  }
+function addMessageElement(message){
+const row=document.createElement("div");
+row.className="message "+message.role;
+const avatar=document.createElement("div");
+avatar.className="avatar";
+avatar.textContent=message.role==="user"?"👤":"Ö";
+const bubble=document.createElement("div");
+bubble.className="bubble";
+bubble.textContent=message.content;
+row.append(avatar,bubble);
+$("messages").appendChild(row);
+$("messages").scrollTop=$("messages").scrollHeight;
 }
 
-document.addEventListener("keydown",event => {
-  if(event.key === "Escape") {
-    closeSidebar();
-   document.querySelectorAll(".modal-backdrop.show").forEach(modal => {
-      modal.classList.remove("show");
-    });
-  }
+async function apiRequest(url,data,timeout=120000){
+const controller=new AbortController();
+const timer=setTimeout(()=>controller.abort(),timeout);
+try{
+const response=await fetch(url,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data),
+signal:controller.signal
+});
+const result=await response.json();
+if(!response.ok)throw new Error(result.error||"Sunucu hatası.");
+return result;
+}finally{clearTimeout(timer)}
+}
 
-  if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-    event.preventDefault();
-    $("message").focus();
-  }
+async function sendMessage(){
+if(isSending)return;
+const input=$("message");
+const text=input.value.trim();
+if(!text)return;
+if(!currentChat)newChat();
 
-  if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "n") {
-    event.preventDefault();
-    newChat();
-  }
+isSending=true;
+$("sendButton").disabled=true;
+input.value="";
+const userMessage={role:"user",content:text};
+currentChat.messages.push(userMessage);
+if(currentChat.messages.length===1)currentChat.title=text.slice(0,35);
+addMessageElement(userMessage);
+saveChats();
+renderHistory();
+
+const loading={role:"assistant",content:"ÖMER AI düşünüyor..."};
+addMessageElement(loading);
+
+try{
+const history=currentChat.messages.slice(0,-1).map(m=>({
+role:m.role==="assistant"?"model":"user",
+parts:[{text:m.content}]
+}));
+const result=await apiRequest(API_CHAT,{
+message:text,
+gecmis:history,
+hafiza:memory,
+dil:"Türkçe",
+kisilik:"Samimi, yardımcı ve açıklayıcı"
+});
+const answer=result.answer||"Yanıt alınamadı.";
+currentChat.messages.push({role:"assistant",content:answer});
+}catch(error){
+currentChat.messages.push({
+role:"assistant",
+content:"Bağlantı hatası: "+error.message
+});
+}finally{
+isSending=false;
+$("sendButton").disabled=false;
+renderMessages();
+saveChats();
+}
+}
+
+$("message").addEventListener("keydown",e=>{
+if(e.key==="Enter"&&!e.shiftKey){
+e.preventDefault();
+sendMessage();
+}
 });
 
-function initializeApp() {
-  loadStorage();
-  renderHistory();
-
-  $("messages").innerHTML = "";
-  $("messages").appendChild(createWelcome());
-
-  changeStudioMode();
-
-  console.log("ÖMER AI hazır!");
+function clearHistory(){
+if(!confirm("Bütün sohbet geçmişi silinsin mi?"))return;
+chats=[];
+localStorage.removeItem("omer_chats");
+newChat();
+toast("Sohbet geçmişi temizlendi.");
 }
 
-initializeApp();
-
-function clearAllChats() {
- if(!confirm("Bütün sohbet geçmişini silmek istiyor musun?")) return;
-
-  chats = [];
-  currentChatId = null;
-
-  saveChats();
-  renderHistory();
-
-  $("messages").innerHTML = "";
-  $("messages").appendChild(createWelcome());
-
-  toast("Sohbet geçmişi temizlendi.","success");
+function showMemory(){
+const value=prompt("ÖMER AI hafızası:",memory);
+if(value===null)return;
+memory=value;
+localStorage.setItem("omer_memory",memory);
+toast("Hafıza kaydedildi.");
 }
 
-function clearMemory() {
- if(!confirm("ÖMER AI hafızasını temizlemek istiyor musun?")) return;
-
-  localStorage.removeItem(STORAGE.memory);
-  $("memoryText").value = "";
-
-  toast("Hafıza temizlendi.","success");
+function setMode(value,element){
+mode=value;
+$("studioMode").value=value;
+document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+if(element)element.classList.add("active");
 }
 
-function getChatCount() {
-  return chats.length;
+$("studioMode").addEventListener("change",()=>{
+mode=$("studioMode").value;
+document.querySelectorAll(".card").forEach(c=>{
+c.classList.toggle("active",c.onclick&&c.textContent.toLowerCase().includes(
+mode==="code"?"kodlama":mode==="game"?"oyun":"proje"
+));
+});
+});
+
+async function generateStudio(){
+if(isGenerating)return;
+const prompt=$("studioPrompt").value.trim();
+mode=$("studioMode").value;
+if(!prompt){toast("Önce bir istek yaz.");return}
+
+isGenerating=true;
+$("generateButton").disabled=true;
+$("generateButton").textContent="⏳ Oluşturuluyor...";
+$("studioInfo").textContent="ÖMER AI üretim yapıyor...";
+$("studioResult").classList.add("hidden");
+
+try{
+const result=await apiRequest(API_STUDIO,{mode,prompt},180000);
+generatedFiles=Array.isArray(result.files)?result.files:[];
+if(!generatedFiles.length)throw new Error("Dosya oluşturulamadı.");
+
+const gameFile=generatedFiles.find(f=>/\.html?$/i.test(f.name));
+generatedGame=mode==="game"&&gameFile?gameFile.content:"";
+
+$("resultFiles").textContent=generatedFiles.map(f=>"📄 "+f.name).join("\n");
+$("studioResult").classList.remove("hidden");
+$("studioInfo").textContent="Üretim tamamlandı.";
+
+if(mode==="game"&&!generatedGame){
+toast("Oyun HTML dosyası bulunamadı.");
+}else toast("ÖMER AI üretimi tamamladı!");
+}catch(error){
+$("studioInfo").textContent="Hata: "+error.message;
+toast(error.message);
+}finally{
+isGenerating=false;
+$("generateButton").disabled=false;
+$("generateButton").textContent="✨ Oluştur";
+}
 }
 
-function getMessageCount() {
-  return chats.reduce((total,chat) => {
-    return total + chat.messages.length;
-  },0);
+function showGamePreview(){
+if(!generatedGame){toast("Önizlenecek oyun bulunamadı.");return}
+$("gameFrame").srcdoc=generatedGame;
+$("gameFrameWrap").classList.remove("hidden");
+$("gameFrameWrap").scrollIntoView({behavior:"smooth"});
 }
 
-function getStudioFileCount() {
-  return generatedFiles.length;
+function downloadProject(){
+if(!generatedFiles.length){toast("İndirilecek dosya yok.");return}
+if(generatedFiles.length===1){
+const file=generatedFiles[0];
+downloadFile(file.content,file.name);
+return;
+}
+if(typeof JSZip==="undefined"){
+toast("Çok dosyalı projeler için ZIP kütüphanesi gerekli.");
+return;
+}
+const zip=new JSZip();
+generatedFiles.forEach(f=>zip.file(f.name,f.content));
+zip.generateAsync({type:"blob"}).then(blob=>{
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url;a.download="omer-ai-proje.zip";a.click();
+URL.revokeObjectURL(url);
+});
 }
 
-function hasGeneratedGame() {
-  return generatedGame.length > 0;
+function downloadFile(content,name){
+const blob=new Blob([content],{type:"text/html;charset=utf-8"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url;a.download=name;
+document.body.appendChild(a);a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 
-function getCurrentMode() {
-  return $("studioMode").value;
-}
-
-function getCurrentPersonality() {
- return settings.personality;
-}
-
-function getCurrentLanguage() {
-  return settings.language;
-}
-
-function isMobileDevice() {
-  return window.matchMedia("(max-width: 850px)").matches;
-}
-
-function scrollMessagesToBottom() {
-  const container = $("messages");
-  container.scrollTop = container.scrollHeight;
-}
-
-function clearStudioOutput() {
-  generatedFiles = [];
-  generatedGame = "";
-
-  $("studioResult").classList.add("hidden");
-  $("gameFrameWrap").classList.add("hidden");
-  $("gameControls").classList.add("hidden");
-
-  $("resultFiles").innerHTML = "";
-  $("codeOutput").textContent = "";
-}
- function resetStudio() {
-  $("studioPrompt").value = "";
-  clearStudioOutput();
-
-  $("studioInfo").textContent = "Yapay zekâ üretim motoru hazır.";
-
-  toast("Üretim alanı sıfırlandı.");
-}
-
-function exportChatHistory() {
-  const chat = getCurrentChat();
-
-  if(!chat) {
-    toast("Dışa aktarılacak sohbet yok.","error");
-    return;
-  }
-
-  const content = chat.messages.map(message => {
-    const author = message.role === "user" ? "Sen" : "ÖMER AI";
-    return author + ":\n" + message.content;
-  }).join("\n\n--------------------\n\n");
-
-  const blob = new Blob(
-    [content],
-    {type:"text/plain;charset=utf-8"}
-  );
-
-  const url = URL.createObjectURL(blob);
-  const link =
-   document.createElement("a");
-
-  link.href = url;
-  link.download = "omer-ai-sohbet.txt";
-
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-
-  setTimeout(() => URL.revokeObjectURL(url),2000);
-
-  toast("Sohbet dışa aktarıldı.","success");
-}
-
-function getAppInformation() {
-  return {
-    name:"ÖMER AI",
-    version:"3.0",
-    api:API_BASE,
-    chatCount:getChatCount(),
-    messageCount:getMessageCount(),
-    studioFiles:getStudioFileCount(),
-    hasGame:hasGeneratedGame()
-  };
-}
-
-window.OmerAI = {
-  newChat,
-  sendMessage,
-  showPage,
-  openStudio,
-  generateStudio,
-  showGamePreview,
-  downloadSingleGame,
-  downloadProject,
- exportChatHistory,
-  clearAllChats,
-  clearMemory,
-  getAppInformation
-};
-
+loadChats();
+console.log("ÖMER AI hazır!");
 </script>
-
 </body>
 </html>
- 
