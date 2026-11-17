@@ -93,18 +93,30 @@ function getAnswer(result) {
     .trim() || "";
 }
 
+
 function cleanHistory(history) {
   if (!Array.isArray(history)) return [];
 
-  return history.slice(-20).map(item => ({
-    role: item.role === "assistant" || item.role === "model"
-      ? "model"
-      : "user",
-    parts: [{
-      text: String(item.text || "").slice(0, 12000)
-    }]
-  })).filter(item => item.parts[0].text.trim());
+  return history.slice(-20).map(item => {
+    const text =
+      item.parts?.[0]?.text ??
+      item.text ??
+      item.content ??
+      "";
+
+    return {
+      role:
+        item.role === "assistant" ||
+        item.role === "model"
+          ? "model"
+          : "user",
+      parts: [{
+        text: String(text).slice(0, 12000)
+      }]
+    };
+  }).filter(item => item.parts[0].text.trim());
 }
+
 
 // NORMAL SOHBET
 async function askChat(data) {
