@@ -120,7 +120,6 @@ async function askChat(data) {
 
   const history = cleanHistory(data.gecmis);
 
-  // Son mesajı ayrıca ekleyeceğimiz için geçmişten çıkar.
   if (history.length && history[history.length - 1].role === "user") {
     history.pop();
   }
@@ -241,6 +240,105 @@ function parseProjectJSON(text) {
   return JSON.parse(cleaned.slice(first, last + 1));
 }
 
+// OYUN DOSYALARINI TEK HTML DOSYASINA BİRLEŞTİR
+function makeSingleFileGame(files) {
+  const htmlFile = files.find(
+    file => file.name.toLowerCase() === "index.html"
+  );
+
+  if (!htmlFile) {
+    throw new Error("Oyun için index.html oluşturulamadı.");
+  }
+
+  if (files.some(file =>
+    !["index.html", "style.css", "game.js"].includes(file.name)
+  )) {
+    throw new Error(
+      "Oyun yalnızca index.html, style.css ve game.js kullanabilir."
+    );
+  }
+
+  let html = htmlFile.content;
+
+  const cssFiles = files.filter(file => file.name === "style.css");
+  const jsFiles = files.filter(file => file.name === "game.js");
+
+  const usedCSS = new Set();
+  const usedJS = new Set();
+
+  function matchesFile(path, fileName) {
+    const cleanPath = path.split("?")[0].split("#")[0];
+    return cleanPath === fileName ||
+      cleanPath.endsWith("/" + fileName);
+  }
+
+  html = html.replace(/<link\b[^>]*>/gi, tag => {
+    const match = tag.match(/\bhref\s*=\s*["']([^"']+)["']/i);
+
+    if (!match) return tag;
+
+    const file = cssFiles.find(item =>
+      matchesFile(match[1], item.name)
+    );
+
+    if (!file) return tag;
+
+    usedCSS.add(file.name);
+
+    return `<style>\n${file.content.replace(/<\/style/gi, "<\\/style")}\n</style>`;
+  });
+
+  html = html.replace(
+    /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>\s*<\/script>/gi,
+    (tag, path) => {
+      const file = jsFiles.find(item =>
+        matchesFile(path, item.name)
+      );
+
+      if (!file) return tag;
+
+      usedJS.add(file.name);
+
+      return `<script>\n${file.content.replace(/<\/script/gi, "<\\/script")}\n<\/script>`;
+    }
+  );
+
+  const extraCSS = cssFiles
+    .filter(file => !usedCSS.has(file.name))
+    .map(file =>
+      `<style>\n${file.content.replace(/<\/style/gi, "<\\/style")}\n</style>`
+    )
+    .join("\n");
+
+  const extraJS = jsFiles
+    .filter(file => !usedJS.has(file.name))
+    .map(file =>
+      `<script>\n${file.content.replace(/<\/script/gi, "<\\/script")}\n<\/script>`
+    )
+    .join("\n");
+
+  if (extraCSS) {
+    if (/<\/head>/i.test(html)) {
+      html = html.replace(/<\/head>/i, extraCSS + "\n</head>");
+    } else {
+      html = extraCSS + "\n" + html;
+    }
+  }
+
+  if (extraJS) {
+    if (/<\/body>/i.test(html)) {
+      html = html.replace(/<\/body>/i, extraJS + "\n</body>");
+    } else {
+      html += "\n" + extraJS;
+    }
+  }
+
+  return [{
+    name: "index.html",
+    content: html
+  }];
+}
+
 // KODLAMA / PROJE / OYUN STÜDYOSU
 async function askStudio(data) {
   const mode = String(data.mode || "");
@@ -279,9 +377,8 @@ GENEL KURALLAR:
 9. Gereksiz dosya oluşturma.
 10. Dosya içeriklerinde Markdown kod çitleri kullanma.
 
-ÇIKTI FORMATI ÇOK ÖNEMLİ:
+ÇIKTI FORMATI:
 Sadece geçerli JSON döndür.
-JSON dışında açıklama veya Markdown yazma.
 
 Şu yapıyı kullan:
 {
@@ -330,13 +427,31 @@ README.md dosyası ekle.
     task = `
 GÖREV: PROFESYONEL OYUN FABRİKASI.
 
-Gerçekten oynanabilir bir oyun oluştur.
-index.html, style.css ve game.js dosyalarını ayrı üret.
-Gerekiyorsa başka yerel dosyalar da ekle.
-Harici kütüphane kullanmadan çalışmaya öncelik ver.
-Mobil dokunmatik ve bilgisayar klavye kontrollerini destekle.
-Menü, başlatma, duraklatma, yeniden başlatma, skor ve oyun sonu sistemi ekle.
-Dosyalar birbirine doğru bağlansın.
+Kullanıcının istediği oyunu profesyonel kalitede ve tamamen oynanabilir şekilde oluştur.
+
+TEK DOSYA ZORUNLULUĞU:
+- Oyunun tamamı tek index.html dosyasında bulunmalı.
+- CSS kodlarını HTML içindeki <style> etiketine yaz.
+- JavaScript kodlarını HTML içindeki <script> etiketine yaz.
+- Ayrı CSS, JS, JSON veya başka dosya oluşturma.
+- Harici kütüphane, CDN, internet bağlantısı veya import kullanma.
+- Görselleri Canvas, CSS veya HTML içine gömülü SVG ile oluştur.
+- Oyun doğrudan index.html açılarak çalışmalı.
+- Oyun iframe önizlemesinde çalışabilmeli.
+
+OYUN KALİTESİ:
+- Profesyonel arayüz ve animasyonlar oluştur.
+- Mobil dokunmatik ve bilgisayar klavye kontrollerini destekle.
+- Başlangıç menüsü, duraklatma, yeniden başlatma ve oyun sonu ekranı ekle.
+- Skor ve oyun mekaniklerini gerçekten çalıştır.
+- Boş ekran, çalışmayan buton ve eksik kod bırakma.
+- Oyunu oluşturmadan önce mantığını kontrol et.
+
+ÇIKTI:
+files listesinde SADECE bir dosya bulunmalı:
+index.html
+
+Bu dosyanın içinde oyunun bütün kaynak kodları bulunmalı.
 `;
   }
 
@@ -371,18 +486,16 @@ Dosyalar birbirine doğru bağlansın.
     );
   }
 
-  const files = validateFiles(project.files);
+  let files = validateFiles(project.files);
 
   if (mode === "game") {
-    const html = files.find(file => file.name === "index.html");
-
-    if (!html) {
-      throw new Error("Oyun projesinde index.html dosyası bulunamadı.");
-    }
+    files = makeSingleFileGame(files);
   }
 
   return {
-    answer: String(project.description || project.projectName || "Projen hazır!"),
+    answer: String(
+      project.description || project.projectName || "Projen hazır!"
+    ),
     projectName: String(project.projectName || "omer-ai-proje"),
     files
   };
@@ -395,10 +508,14 @@ const server = http.createServer(async (req, res) => {
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type"
     });
+
     return res.end();
   }
 
-  if (req.method === "GET" && (req.url === "/" || req.url === "/health")) {
+  if (
+    req.method === "GET" &&
+    (req.url === "/" || req.url === "/health")
+  ) {
     return send(res, 200, {
       ok: true,
       service: "omer-ai-server",
@@ -438,4 +555,4 @@ server.listen(PORT, () => {
   console.log("ÖMER AI server çalışıyor: " + PORT);
   console.log("Sohbet modeli: " + CHAT_MODEL);
 });
-        
+      
