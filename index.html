@@ -8,15 +8,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="application-name" content="ÖMER AI" />
 <title>ÖMER AI — Yapay Zekâ Platformu (3D & Görsel Analiz)</title>
-<!-- Dinamik 192x192 PNG İkonlar JS tarafından oluşturulup enjekte edilir -->
 <link id="favicon-link" rel="icon" type="image/png" sizes="192x192" href="" />
 <link id="apple-icon-link" rel="apple-touch-icon" sizes="192x192" href="" />
 <link id="manifest-link" rel="manifest" href="" />
-<!-- Google Fonts: Inter & JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -29,27 +26,14 @@ mono: ['JetBrains Mono', 'monospace']
 },
 colors: {
 void: '#03050a',
-navy: {
-950: '#060913',
-900: '#0a0f1f',
-850: '#0e152b',
-800: '#131d3a',
-700: '#1c2a52'
-},
-brand: {
-400: '#a855f7',
-500: '#9333ea',
-600: '#7c3aed',
-700: '#6d28d9'
-}
+navy: { 950: '#060913', 900: '#0a0f1f', 850: '#0e152b', 800: '#131d3a', 700: '#1c2a52' },
+brand: { 400: '#a855f7', 500: '#9333ea', 600: '#7c3aed', 700: '#6d28d9' }
 }
 }
 }
 };
 </script>
-<!-- JSZip (Çok dosyalı projeleri ZIP olarak indirmek için) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<!-- Three.js (Üç Boyutlu 3D Oyun ve Sahne Motoru için) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 :root {
@@ -59,36 +43,16 @@ brand: {
 --accent-purple: #7c3aed;
 --accent-violet: #a855f7;
 }
-* {
-box-sizing: border-box;
--webkit-tap-highlight-color: transparent;
-}
+{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
-margin: 0;
-padding: 0;
-height: 100%;
-height: 100dvh;
-background-color: var(--bg-void);
-color: #f1f5f9;
-font-family: 'Inter', system-ui, sans-serif;
-overflow: hidden;
+margin: 0; padding: 0; height: 100%; height: 100dvh;
+background-color: var(--bg-void); color: #f1f5f9;
+font-family: 'Inter', system-ui, sans-serif; overflow: hidden;
 }
-/* Özel Kaydırma Çubukları */
-::-webkit-scrollbar {
-width: 6px;
-height: 6px;
-}
-::-webkit-scrollbar-track {
-background: rgba(6, 9, 19, 0.4);
-}
-::-webkit-scrollbar-thumb {
-background: rgba(124, 58, 237, 0.35);
-border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-background: rgba(168, 85, 247, 0.65);
-}
-/* Glassmorphism & Arka Plan Efektleri */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(6, 9, 19, 0.4); }
+::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.35); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.65); }
 .glass-panel {
 background: rgba(10, 15, 31, 0.86);
 backdrop-filter: blur(16px);
@@ -112,27 +76,16 @@ radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.14) 0%, transparent 42%)
 radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 45%),
 #050811;
 }
-/* Animasyonlar */
 @keyframes fadeSlideUp {
-from {
-opacity: 0;
-transform: translateY(10px);
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
 }
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-msg {
-animation: fadeSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+.animate-msg { animation: fadeSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @keyframes pulseDot {
 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
 40% { transform: scale(1); opacity: 1; }
 }
-.typing-dot {
-animation: pulseDot 1.3s infinite ease-in-out both;
-}
+.typing-dot { animation: pulseDot 1.3s infinite ease-in-out both; }
 .typing-dot:nth-child(1) { animation-delay: -0.32s; }
 .typing-dot:nth-child(2) { animation-delay: -0.16s; }
 @keyframes micPulse {
@@ -145,32 +98,16 @@ animation: micPulse 1.4s infinite;
 background-color: #dc2626 !important;
 color: #ffffff !important;
 }
-/* Markdown İçerik Biçimlendirme */
-.md-content p {
-margin-bottom: 0.65rem;
-line-height: 1.65;
-}
-.md-content p:last-child {
-margin-bottom: 0;
-}
-.md-content h1, .md-content h2, .md-content h3 {
-font-weight: 700;
-color: #f8fafc;
-margin-top: 1rem;
-margin-bottom: 0.5rem;
-}
+.md-content p { margin-bottom: 0.65rem; line-height: 1.65; }
+.md-content p:last-child { margin-bottom: 0; }
+.md-content h1, .md-content h2, .md-content h3 { font-weight: 700; color: #f8fafc; margin-top: 1rem; margin-bottom: 0.5rem; }
 .md-content h1 { font-size: 1.25rem; }
 .md-content h2 { font-size: 1.125rem; }
 .md-content h3 { font-size: 1rem; }
-.md-content ul, .md-content ol {
-margin: 0.5rem 0 0.75rem 1.25rem;
-}
+.md-content ul, .md-content ol { margin: 0.5rem 0 0.75rem 1.25rem; }
 .md-content ul { list-style-type: disc; }
 .md-content ol { list-style-type: decimal; }
-.md-content li {
-margin-bottom: 0.3rem;
-line-height: 1.6;
-}
+.md-content li { margin-bottom: 0.3rem; line-height: 1.6; }
 .md-content code.inline-code {
 background: rgba(124, 58, 237, 0.2);
 border: 1px solid rgba(168, 85, 247, 0.28);
@@ -180,41 +117,22 @@ border-radius: 0.375rem;
 font-family: 'JetBrains Mono', monospace;
 font-size: 0.85em;
 }
-.md-content blockquote {
-border-left: 3px solid #9333ea;
-padding-left: 0.85rem;
-color: #cbd5e1;
-margin: 0.6rem 0;
-font-style: italic;
-}
-/* Mobil Kenar Çekmecesi Geçişleri */
-.sidebar-transition {
-transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-/* Güvenli Alan Desteği */
-.safe-bottom {
-padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-}
+.sidebar-transition { transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
 </style>
 </head>
 <body class="ambient-glow text-slate-100 antialiased selection:bg-purple-600 selection:text-white">
-<!-- Çevrimdışı Bildirim Şeridi -->
 <div id="offline-banner" class="hidden fixed top-0 inset-x-0 z-50 bg-amber-600/95 text-white text-xs sm:text-sm font-medium py-2 px-4 text-center shadow-lg backdrop-blur">
-<span id="offline-text">İnternet bağlantınız kesildi. Bağlantı yeniden kurulduğunda ÖMER AI devam edecektir.</span>
+<span>İnternet bağlantınız kesildi. Bağlantı yeniden kurulduğunda ÖMER AI devam edecektir.</span>
 </div>
-<!-- Ana Uygulama Konteyneri -->
 <div id="app-shell" class="flex h-full w-full overflow-hidden relative">
-<!-- Mobil / Tablet Arka Plan Karartması (Sidebar açıkken) -->
 <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-30 hidden lg:hidden transition-opacity"></div>
-<!-- SOL KENAR MENÜSÜ (SIDEBAR) -->
 <aside id="sidebar" class="sidebar-transition fixed lg:static inset-y-0 left-0 z-40 w-72 sm:w-80 bg-[#060913]/95 border-r border-purple-500/20 flex flex-col h-full transform -translate-x-full lg:translate-x-0 shrink-0 shadow-2xl lg:shadow-none">
-<!-- Sidebar Üst Başlık ve Logo -->
 <div class="p-4 border-b border-purple-500/15 flex items-center justify-between gap-2">
 <div class="flex items-center gap-3 min-w-0">
-  <!-- ÖMER AI Özel Vektör Logo -->
 <div class="w-10 h-10 rounded-xl brand-gradient p-0.5 shadow-lg shadow-purple-900/40 shrink-0">
 <div class="w-full h-full bg-[#060913] rounded-[10px] flex items-center justify-center">
-<svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="ÖMER AI Logo">
+<svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <linearGradient id="omerGrad1" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
 <stop offset="0%" stop-color="#c084fc"/>
@@ -235,52 +153,36 @@ padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 <span class="font-extrabold text-base tracking-wide bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent">ÖMER AI</span>
 <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">PRO</span>
 </div>
-<p id="sidebar-subtitle" class="text-[11px] text-slate-400 truncate">Akıllı Yapay Zekâ Platformu</p>
+<p class="text-[11px] text-slate-400 truncate">Akıllı Yapay Zekâ Platformu</p>
 </div>
 </div>
-<!-- Mobil Kapatma Butonu -->
-<button onclick="toggleSidebar(false)" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition" aria-label="Menüyü Kapat">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-</svg>
+<button onclick="toggleSidebar(false)" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 </div>
-<!-- Yeni Sohbet Butonu -->
 <div class="p-3">
 <button id="btn-new-chat" onclick="createNewChat()" class="w-full py-2.5 px-4 rounded-xl brand-gradient brand-gradient-hover text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-purple-950/60 active:scale-[0.98] transition">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-</svg>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
 <span data-i18n="newChat">Yeni Sohbet</span>
 </button>
 </div>
-<!-- Çalışma Alanı Modları -->
 <div class="px-3 pb-2">
 <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 px-2 mb-1.5" data-i18n="workspaces">Çalışma Alanları</div>
-<nav class="grid grid-cols-1 gap-1" aria-label="Mod Seçimi">
+<nav class="grid grid-cols-1 gap-1">
 <button onclick="switchMode('chat')" id="nav-mode-chat" class="mode-nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left bg-purple-600/20 text-purple-200 border border-purple-500/35">
-<svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-</svg>
+<svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
 <span data-i18n="modeChat">Yapay Zekâ Sohbet</span>
 </button>
 <button onclick="switchMode('code')" id="nav-mode-code" class="mode-nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left text-slate-300 hover:bg-white/5 border border-transparent">
-<svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-</svg>
+<svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
 <span data-i18n="modeCode">Kodlama Stüdyosu</span>
 </button>
 <button onclick="switchMode('project')" id="nav-mode-project" class="mode-nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left text-slate-300 hover:bg-white/5 border border-transparent">
-<svg class="w-4 h-4 text-fuchsia-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-</svg>
+<svg class="w-4 h-4 text-fuchsia-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
 <span data-i18n="modeProject">Proje Oluşturucu</span>
 </button>
 <button onclick="switchMode('game')" id="nav-mode-game" class="mode-nav-btn w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left text-slate-300 hover:bg-white/5 border border-transparent">
-<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-<path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-</svg>
+<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 <span class="flex items-center justify-between w-full">
 <span data-i18n="modeGame">Oyun Oluşturucu</span>
 <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">3D / HTML5</span>
@@ -288,40 +190,30 @@ padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 </button>
 </nav>
 </div>
-<!-- Sohbet Geçmişi Listesi -->
 <div class="flex-1 flex flex-col min-h-0 px-3 pt-2 border-t border-purple-500/15">
 <div class="flex items-center justify-between px-2 mb-2">
 <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500" data-i18n="chatHistory">Sohbet Geçmişi</span>
 <span id="chat-count-badge" class="text-[11px] text-slate-500">0</span>
 </div>
-<div id="chat-history-list" class="flex-1 overflow-y-auto space-y-1 pr-1 pb-2">
-<!-- Geçmiş sohbetler JS ile buraya doldurulur -->
+<div id="chat-history-list" class="flex-1 overflow-y-auto space-y-1 pr-1 pb-2"></div>
 </div>
-</div>
-<!-- Sidebar Alt Durum Paneli -->
 <div class="p-3 border-t border-purple-500/15 bg-[#04070f] flex items-center justify-between gap-2 text-xs">
 <button onclick="openModal('memory-modal')" class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-purple-950/50 hover:bg-purple-900/50 border border-purple-500/25 text-purple-200 transition truncate">
 <span id="sidebar-memory-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
 <span data-i18n="memoryStatus" class="truncate">Hafıza Aktif</span>
 </button>
-<div class="flex items-center gap-1.5 text-slate-400 shrink-0" title="Sunucu Durumu">
+<div class="flex items-center gap-1.5 text-slate-400 shrink-0">
 <span id="connection-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
 <span id="connection-label" class="text-[11px]">Çevrimiçi</span>
 </div>
 </div>
 </aside>
-<!-- SAĞ ANA İÇERİK ALANI -->
 <div class="flex-1 flex flex-col min-w-0 h-full relative">
-<!-- ÜST HEADER BAR -->
 <header class="h-14 sm:h-16 px-3 sm:px-5 border-b border-purple-500/20 bg-[#060913]/85 backdrop-blur-md flex items-center justify-between gap-2 shrink-0 z-20">
 <div class="flex items-center gap-2.5 min-w-0">
-<!-- Menü Aç/Kapat Butonu -->
-<button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition" aria-label="Menüyü Aç/Kapat">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-</svg>
+<button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
 </button>
-<!-- Mobil/Header Logo & İsim -->
 <div class="flex items-center gap-2 min-w-0">
 <div class="w-8 h-8 rounded-lg brand-gradient p-0.5 lg:hidden shrink-0">
 <div class="w-full h-full bg-[#060913] rounded-[6px] flex items-center justify-center">
@@ -332,94 +224,61 @@ padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 </div>
 </div>
 <h1 class="font-bold text-base sm:text-lg tracking-tight text-white truncate">ÖMER AI</h1>
-<span id="header-mode-badge" class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30">
-Sohbet
-</span>
 </div>
 </div>
-<!-- Sağ Header Kontrolleri -->
 <div class="flex items-center gap-1.5 sm:gap-2">
-<!-- Seslendirmeyi Durdur Butonu (Konuşurken görünür) -->
 <button id="btn-stop-speech" onclick="stopSpeaking()" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/35 border border-rose-500/40 text-rose-200 text-xs font-medium transition">
-<svg class="w-3.5 h-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-<rect x="6" y="6" width="12" height="12" rx="2"/>
-</svg>
+<svg class="w-3.5 h-3.5 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
 <span data-i18n="stopVoice">Sesi Durdur</span>
 </button>
-<!-- Aktif Kişilik Rozeti (Tıklanınca Ayarları Açar) -->
-<button onclick="openModal('settings-modal')" id="header-personality-pill" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-navy-850/90 hover:bg-navy-800 border border-purple-500/25 text-xs text-slate-300 transition" title="Kişilik ve Dil Ayarları">
+<button onclick="openModal('settings-modal')" id="header-personality-pill" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-navy-850/90 hover:bg-navy-800 border border-purple-500/25 text-xs text-slate-300 transition">
 <span class="w-2 h-2 rounded-full bg-purple-400"></span>
 <span id="active-personality-label">Arkadaş canlısı</span>
 <span class="text-slate-500">•</span>
 <span id="active-lang-label" class="text-purple-300 font-medium">TR</span>
 </button>
-<!-- Yeni Sohbet Hızlı İkon Butonu -->
 <button onclick="createNewChat()" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition" title="Yeni Sohbet">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-</svg>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
 </button>
-<!-- ÜÇ NOKTA MENÜSÜ -->
 <div class="relative" id="three-dot-wrapper">
-<button id="three-dot-btn" onclick="toggleThreeDotMenu(event)" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition" aria-label="Diğer Seçenekler" aria-expanded="false">
-<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-<circle cx="12" cy="5" r="2"/>
-<circle cx="12" cy="12" r="2"/>
-<circle cx="12" cy="19" r="2"/>
-</svg>
+<button id="three-dot-btn" onclick="toggleThreeDotMenu(event)" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 active:scale-95 transition">
+<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
 </button>
-<!-- Açılır Üç Nokta Menüsü -->
 <div id="three-dot-menu" class="hidden absolute right-0 mt-2 w-60 rounded-2xl glass-panel shadow-2xl shadow-black/80 py-1.5 z-50 border border-purple-500/30">
 <button onclick="handleMenuAction('settings')" class="w-full px-4 py-2.5 text-left text-sm text-slate-200 hover:bg-purple-600/20 flex items-center gap-3 transition">
-<svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-</svg>
+<svg class="w-4 h-4 text-purple-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
 <span data-i18n="menuSettings">Ayarlar</span>
 </button>
 <button onclick="handleMenuAction('memory')" class="w-full px-4 py-2.5 text-left text-sm text-slate-200 hover:bg-purple-600/20 flex items-center gap-3 transition">
-<svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-</svg>
+<svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
 <span data-i18n="menuMemory">Hafıza</span>
 </button>
 <button onclick="handleMenuAction('export')" class="w-full px-4 py-2.5 text-left text-sm text-slate-200 hover:bg-purple-600/20 flex items-center gap-3 transition">
-<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-</svg>
+<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
 <span data-i18n="menuExport">Sohbetleri Dışa Aktar</span>
 </button>
 <div class="my-1 border-t border-purple-500/15"></div>
 <button onclick="handleMenuAction('clear')" class="w-full px-4 py-2.5 text-left text-sm text-rose-300 hover:bg-rose-500/15 flex items-center gap-3 transition">
-<svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-</svg>
+<svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
 <span data-i18n="menuClear">Sohbetleri Temizle</span>
 </button>
 <button onclick="handleMenuAction('about')" class="w-full px-4 py-2.5 text-left text-sm text-slate-200 hover:bg-purple-600/20 flex items-center gap-3 transition">
-<svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-</svg>
+<svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 <span data-i18n="menuAbout">Uygulama Hakkında</span>
 </button>
 </div>
 </div>
 </div>
 </header>
-<!-- MOBİL HIZLI MOD GEÇİŞ ÇUBUĞU -->
-<div class="flex lg:hidden items-center gap-1.5 px-3 py-2 bg-[#070b17] border-b border-purple-500/15 overflow-x-auto shrink-0">
+
+  <div class="flex lg:hidden items-center gap-1.5 px-3 py-2 bg-[#070b17] border-b border-purple-500/15 overflow-x-auto shrink-0">
 <button onclick="switchMode('chat')" id="mob-mode-chat" class="mob-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-purple-600 text-white">Sohbet</button>
 <button onclick="switchMode('code')" id="mob-mode-code" class="mob-mode-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white/5 text-slate-300">Kodlama</button>
 <button onclick="switchMode('project')" id="mob-mode-project" class="mob-mode-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white/5 text-slate-300">Proje</button>
 <button onclick="switchMode('game')" id="mob-mode-game" class="mob-mode-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap bg-white/5 text-slate-300">Oyun Oluşturucu</button>
 </div>
-<!-- ============================================================== -->
-<!-- 1. BÖLÜM: ANA SOHBET EKRANI (Görsel Ekleme & Analiz Entegreli)  -->
-<!-- ============================================================== -->
 <main id="view-chat" class="flex-1 flex flex-col min-h-0 overflow-hidden">
-<!-- Mesaj Akış Alanı -->
 <div id="chat-messages-container" class="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4 scroll-smooth">
-<!-- Karşılama Ekranı (Yeni sohbet açıldığında görünür) -->
 <div id="welcome-screen" class="max-w-3xl mx-auto my-auto py-6 sm:py-10 flex flex-col items-center text-center animate-msg">
 <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl brand-gradient p-1 shadow-2xl shadow-purple-700/35 mb-5">
 <div class="w-full h-full bg-[#060913] rounded-[21px] flex items-center justify-center">
@@ -432,13 +291,8 @@ Sohbet
 </svg>
 </div>
 </div>
-<h2 id="welcome-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent mb-2">
-ÖMER AI'ye Hoş Geldiniz
-</h2>
-<p id="welcome-desc" class="text-sm sm:text-base text-slate-400 max-w-xl mb-7 px-2">
-Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselleştirilmiş yanıtlar alın, sesli iletişim kurun veya 3D oyunlar üretin.
-</p>
-<!-- Hızlı Başlangıç Kartları -->
+<h2 id="welcome-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent mb-2">ÖMER AI'ye Hoş Geldiniz</h2>
+<p id="welcome-desc" class="text-sm sm:text-base text-slate-400 max-w-xl mb-7 px-2">Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselleştirilmiş yanıtlar alın veya 3D oyunlar üretin.</p>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
 <button onclick="quickStartPrompt('Bana yapay zekâ ve modern web teknolojileri hakkında ilham verici kısa bir özet hazırla.')" class="glass-card p-4 rounded-2xl hover:border-purple-400/50 transition group">
 <div class="flex items-center gap-2.5 mb-1.5">
@@ -470,16 +324,12 @@ Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselle
 </button>
 </div>
 </div>
-<!-- Mesaj Listesi -->
 <div id="messages-list" class="max-w-4xl mx-auto w-full space-y-4"></div>
-<!-- Yükleniyor Göstergesi -->
 <div id="chat-loading" class="hidden max-w-4xl mx-auto w-full animate-msg">
 <div class="flex items-start gap-3">
 <div class="w-8 h-8 rounded-xl brand-gradient p-0.5 shrink-0 mt-0.5">
 <div class="w-full h-full bg-[#060913] rounded-[10px] flex items-center justify-center">
-<svg class="w-4 h-4" viewBox="0 0 64 64" fill="none">
-<polygon points="32,4 56,18 56,46 32,60 8,46 8,18" stroke="#c084fc" stroke-width="5"/>
-</svg>
+<svg class="w-4 h-4" viewBox="0 0 64 64" fill="none"><polygon points="32,4 56,18 56,46 32,60 8,46 8,18" stroke="#c084fc" stroke-width="5"/></svg>
 </div>
 </div>
 <div class="glass-card px-4 py-3 rounded-2xl rounded-tl-sm inline-flex items-center gap-2">
@@ -491,7 +341,6 @@ Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselle
 </div>
 </div>
 </div>
-<!-- Görsel Ekleme & Analiz Önizleme Şeridi -->
 <div id="chat-image-preview-bar" class="hidden px-3 sm:px-6 pt-2 bg-[#050812]/95 shrink-0">
 <div class="max-w-4xl mx-auto flex items-center gap-3 p-2.5 rounded-2xl bg-purple-950/40 border border-purple-500/40 shadow-xl">
 <img id="chat-selected-img-preview" src="" alt="Seçilen Görsel" class="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl border border-purple-400/60 shrink-0" />
@@ -502,56 +351,37 @@ Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselle
 </div>
 <p class="text-[11px] text-slate-400 truncate mt-0.5">Görselle ilgili sorunuzu yazıp gönderin veya hemen analiz edin.</p>
 </div>
-<button type="button" onclick="analyzeAttachedImageNow()" class="px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 text-purple-100 text-xs font-semibold shrink-0 transition" title="Hemen Görsel Analizi Yap">
-🔍 Analiz Et
-</button>
-<button type="button" onclick="removeAttachedImage()" class="p-1.5 rounded-xl text-rose-400 hover:bg-rose-500/20 transition shrink-0" title="Görseli Kaldır">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-</svg>
+<button type="button" onclick="analyzeAttachedImageNow()" class="px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 text-purple-100 text-xs font-semibold shrink-0 transition">🔍 Analiz Et</button>
+<button type="button" onclick="removeAttachedImage()" class="p-1.5 rounded-xl text-rose-400 hover:bg-rose-500/20 transition shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 </div>
 </div>
-<!-- Alt Mesaj Yazma Kutusu -->
 <div class="px-3 sm:px-6 pt-2 safe-bottom bg-gradient-to-t from-[#03050a] via-[#050812] to-transparent shrink-0">
 <div class="max-w-4xl mx-auto">
 <div class="glass-panel rounded-2xl p-2 flex items-end gap-2 shadow-xl shadow-black/60 focus-within:border-purple-500/60 transition">
-<!-- Görsel Ekleme & Analiz Butonu (Ataç İkonu) -->
 <button id="btn-attach-image" onclick="document.getElementById('chat-image-file-input').click()" type="button" class="p-2.5 rounded-xl bg-white/5 hover:bg-purple-600/25 text-slate-300 hover:text-purple-200 transition shrink-0" title="Görsel Ekle ve Analiz Et">
-<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-</svg>
+<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
 </button>
 <input type="file" id="chat-image-file-input" accept="image/*" class="hidden" onchange="handleChatImageAttach(event)" />
-<!-- Sesli Mesaj (Mikrofon) Butonu -->
 <button id="btn-mic" onclick="toggleVoiceInput('chat-input', 'btn-mic')" type="button" class="p-2.5 rounded-xl bg-white/5 hover:bg-purple-600/25 text-slate-300 hover:text-purple-200 transition shrink-0" title="Sesli Mesaj">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-</svg>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
 </button>
-<!-- Otomatik Genişleyen Metin Kutusu -->
 <textarea id="chat-input" rows="1" placeholder="ÖMER AI'ye bir mesaj yazın veya görsel ekleyin..." class="flex-1 bg-transparent border-0 focus:ring-0 focus:outline-none text-sm sm:text-base text-slate-100 placeholder-slate-500 resize-none max-h-36 py-2 px-1 leading-relaxed"></textarea>
-<!-- Gönder Butonu -->
 <button id="btn-send-chat" onclick="sendChatMessage()" type="button" class="p-2.5 sm:px-4 sm:py-2.5 rounded-xl brand-gradient brand-gradient-hover text-white font-semibold text-sm flex items-center gap-1.5 shadow-lg shadow-purple-900/50 active:scale-95 disabled:opacity-40 disabled:pointer-events-none transition shrink-0">
 <span class="hidden sm:inline" data-i18n="sendBtn">Gönder</span>
-<svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-</svg>
+<svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
 </button>
 </div>
 <div class="flex items-center justify-between text-[11px] text-slate-500 px-2 pt-1.5">
 <span id="input-hint">Enter: Gönder • Shift+Enter: Alt satır</span>
-<span>ÖMER AI v2.5 + Vision & 3D</span>
+<span>ÖMER AI v2.6 + Vision & 3D</span>
 </div>
 </div>
 </div>
 </main>
-<!-- ============================================================== -->
-<!-- 2. BÖLÜM: KODLAMA STÜDYOSU                                     -->
-<!-- ============================================================== -->
 <section id="view-code" class="hidden flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6">
 <div class="max-w-5xl mx-auto space-y-5">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 <div>
 <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
 <span class="p-2 rounded-xl bg-indigo-600/20 text-indigo-400">⚡</span>
@@ -559,8 +389,6 @@ Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselle
 </h2>
 <p class="text-xs sm:text-sm text-slate-400 mt-1">Kod yazın, mevcut kodunuzdaki hataları bulun, optimize edin veya çok dosyalı modüller üretin.</p>
 </div>
-</div>
-<!-- Kodlama Kontrol Paneli -->
 <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 <div>
@@ -570,7 +398,6 @@ Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselle
 <option value="Bu kodu satır satır anlaşılır şekilde açıkla">Kod Açıkla</option>
 <option value="Bu koddaki hataları bul, nedenini açıkla ve düzeltilmiş tam kodu ver">Hata Bul & Düzelt</option>
 <option value="Bu kodu performans, güvenlik ve okunabilirlik açısından geliştir">Kod Geliştir & Optimize Et</option>
-<option value="Birden fazla dosyadan oluşan düzenli bir proje yapısı oluştur">Çok Dosyalı Kod Projesi</option>
 </select>
 </div>
 <div>
@@ -580,52 +407,32 @@ Sohbet edin, görsel ekleyerek analiz yaptırın, akıllı hafızayla kişiselle
 <option value="JavaScript / TypeScript">JavaScript / TypeScript</option>
 <option value="Python">Python</option>
 <option value="React / Tailwind CSS">React / Tailwind CSS</option>
-<option value="Node.js / Express">Node.js / Express</option>
 <option value="C# / .NET">C# / .NET</option>
-<option value="C++">C++</option>
-<option value="Java">Java</option>
-<option value="PHP / SQL">PHP / SQL</option>
 </select>
 </div>
 </div>
 <div>
 <label class="block text-xs font-semibold text-slate-300 mb-1.5">İsteğiniz / Ne Yapmak İstiyorsunuz?</label>
-<div class="relative">
-<textarea id="code-prompt-input" rows="3" placeholder="Örn: Kullanıcı giriş formu doğrulaması yapan modern bir JavaScript modülü yaz veya aşağıdaki kodun hatasını düzelt..." class="w-full rounded-xl bg-[#070b18] border border-purple-500/30 p-3 pr-12 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-400"></textarea>
-<button id="btn-mic-code" onclick="toggleVoiceInput('code-prompt-input', 'btn-mic-code')" type="button" class="absolute right-2.5 top-2.5 p-2 rounded-lg bg-white/5 hover:bg-purple-600/25 text-slate-300" title="Sesle Tarif Et">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-</svg>
-</button>
-</div>
+<textarea id="code-prompt-input" rows="3" placeholder="Örn: Kullanıcı giriş formu doğrulaması yapan modern bir JavaScript modülü yaz..." class="w-full rounded-xl bg-[#070b18] border border-purple-500/30 p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-400"></textarea>
 </div>
 <div>
-<label class="block text-xs font-semibold text-slate-300 mb-1.5">Mevcut Kodunuz (İsteğe Bağlı — Hata bulma veya geliştirme için yapıştırın)</label>
-<textarea id="code-existing-input" rows="4" placeholder="// Mevcut kodunuzu buraya yapıştırabilirsiniz..." class="w-full rounded-xl bg-[#040710] border border-slate-700/70 p-3 font-mono text-xs sm:text-sm text-emerald-300 placeholder-slate-600 focus:outline-none focus:border-purple-400"></textarea>
+<label class="block text-xs font-semibold text-slate-300 mb-1.5">Mevcut Kodunuz (İsteğe Bağlı)</label>
+<textarea id="code-existing-input" rows="4" placeholder="// Mevcut kodunuzu buraya yapıştırabilirsiniz..." class="w-full rounded-xl bg-[#040710] border border-slate-700/70 p-3 font-mono text-xs text-emerald-300 placeholder-slate-600 focus:outline-none focus:border-purple-400"></textarea>
 </div>
-<div class="flex flex-wrap items-center justify-between gap-3">
-<button onclick="document.getElementById('code-prompt-input').value=''; document.getElementById('code-existing-input').value='';" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-slate-300 transition">
-Alanları Temizle
-</button>
+<div class="flex justify-end">
 <button id="btn-run-code-studio" onclick="runCodeStudio()" class="px-6 py-2.5 rounded-xl brand-gradient brand-gradient-hover text-white font-semibold text-sm flex items-center gap-2 shadow-lg shadow-purple-900/50 active:scale-95 transition">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-</svg>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
 <span>Kodu Oluştur / Analiz Et</span>
 </button>
 </div>
 </div>
-<!-- Kod Stüdyosu Durum & Sonuç Alanı -->
 <div id="code-studio-status" class="hidden glass-card rounded-2xl p-4 flex items-center gap-3 text-sm text-purple-200">
 <div class="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin shrink-0"></div>
-<span id="code-studio-status-text">ÖMER AI kodunuzu hazırlıyor...</span>
+<span>ÖMER AI kodunuzu hazırlıyor...</span>
 </div>
 <div id="code-studio-output" class="hidden space-y-4"></div>
 </div>
 </section>
-<!-- ============================================================== -->
-<!-- 3. BÖLÜM: PROJE OLUŞTURUCU                                     -->
-<!-- ============================================================== -->
 <section id="view-project" class="hidden flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6">
 <div class="max-w-5xl mx-auto space-y-5">
 <div>
@@ -633,335 +440,153 @@ Alanları Temizle
 <span class="p-2 rounded-xl bg-fuchsia-600/20 text-fuchsia-400">🚀</span>
 <span data-i18n="modeProject">Proje Oluşturucu</span>
 </h2>
-<p class="text-xs sm:text-sm text-slate-400 mt-1">İstediğiniz web uygulamasını tarif edin; ÖMER AI tüm dosyalarını oluştursun, canlı önizlesin ve tek tıkla ZIP olarak indirmenizi sağlasın.</p>
+<p class="text-xs sm:text-sm text-slate-400 mt-1">İstediğiniz web uygulamasını tarif edin; ÖMER AI tüm dosyalarını oluştursun ve ZIP olarak indirmenizi sağlasın.</p>
 </div>
-<!-- Hazır Proje Şablonları -->
 <div class="flex flex-wrap gap-2">
 <button onclick="setProjectPreset('Modern, koyu temalı, kategorili ve localStorage kayıtlı gelişmiş bir Not Alma Uygulaması')" class="px-3 py-1.5 rounded-xl bg-navy-850 hover:bg-purple-600/25 border border-purple-500/25 text-xs text-slate-200 transition">📝 Not Alma Uygulaması</button>
 <button onclick="setProjectPreset('Bilimsel fonksiyonlu, geçmiş kayıtlı ve şık tasarımlı bir Hesap Makinesi Uygulaması')" class="px-3 py-1.5 rounded-xl bg-navy-850 hover:bg-purple-600/25 border border-purple-500/25 text-xs text-slate-200 transition">🧮 Hesap Makinesi</button>
 <button onclick="setProjectPreset('Şehir arama özellikli, 5 günlük tahmin kartlı modern bir Hava Durumu Uygulaması')" class="px-3 py-1.5 rounded-xl bg-navy-850 hover:bg-purple-600/25 border border-purple-500/25 text-xs text-slate-200 transition">🌤️ Hava Durumu</button>
-<button onclick="setProjectPreset('Canlı puan durumu, fikstür ve takım kadrosu kurma özellikli Futbol Uygulaması')" class="px-3 py-1.5 rounded-xl bg-navy-850 hover:bg-purple-600/25 border border-purple-500/25 text-xs text-slate-200 transition">⚽ Futbol Uygulaması</button>
-<button onclick="setProjectPreset('Etkileşimli testler, bilgi kartları ve ilerleme takipçisi içeren Eğitim Uygulaması')" class="px-3 py-1.5 rounded-xl bg-navy-850 hover:bg-purple-600/25 border border-purple-500/25 text-xs text-slate-200 transition">🎓 Eğitim Uygulaması</button>
-<button onclick="setProjectPreset('Çalma listesi, ses dalgası animasyonu ve oynatma kontrolleri olan Müzik Çalar Arayüzü')" class="px-3 py-1.5 rounded-xl bg-navy-850 hover:bg-purple-600/25 border border-purple-500/25 text-xs text-slate-200 transition">🎵 Müzik Çalar</button>
 </div>
-<!-- Proje Tarif Kutusu -->
 <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
 <div>
 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Proje Açıklaması</label>
-<div class="relative">
-<textarea id="project-prompt-input" rows="3" placeholder="Oluşturmak istediğiniz uygulamayı detaylıca tarif edin..." class="w-full rounded-xl bg-[#070b18] border border-purple-500/30 p-3 pr-12 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-400"></textarea>
-<button id="btn-mic-project" onclick="toggleVoiceInput('project-prompt-input', 'btn-mic-project')" type="button" class="absolute right-2.5 top-2.5 p-2 rounded-lg bg-white/5 hover:bg-purple-600/25 text-slate-300" title="Sesle Tarif Et">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-</svg>
-</button>
-</div>
+<textarea id="project-prompt-input" rows="3" placeholder="Oluşturmak istediğiniz uygulamayı detaylıca tarif edin..." class="w-full rounded-xl bg-[#070b18] border border-purple-500/30 p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-400"></textarea>
 </div>
 <div class="flex justify-end">
 <button id="btn-run-project" onclick="runProjectBuilder()" class="px-6 py-2.5 rounded-xl brand-gradient brand-gradient-hover text-white font-semibold text-sm flex items-center gap-2 shadow-lg shadow-purple-900/50 active:scale-95 transition">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-</svg>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
 <span>Projeyi Oluştur</span>
 </button>
 </div>
 </div>
-<!-- Proje Durum Bilgisi -->
 <div id="project-status" class="hidden glass-card rounded-2xl p-4 space-y-2">
 <div class="flex items-center gap-3 text-sm font-medium text-purple-200">
 <div class="w-5 h-5 border-2 border-fuchsia-400 border-t-transparent rounded-full animate-spin shrink-0"></div>
 <span id="project-status-text">Proje mimarisi planlanıyor...</span>
 </div>
-<div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-<div id="project-progress-bar" class="h-full brand-gradient transition-all duration-500" style="width: 25%"></div>
 </div>
-</div>
-<!-- Oluşturulan Proje Sonucu -->
 <div id="project-result-container" class="hidden space-y-4"></div>
 </div>
 </section>
-<!-- ============================================================== -->
-<!-- 4. BÖLÜM: OYUN OLUŞTURUCU (3D & 2D Şablonlar ile)               -->
-<!-- ============================================================== -->
 <section id="view-game" class="hidden flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6">
 <div class="max-w-5xl mx-auto space-y-5">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
 <div>
 <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
 <span class="p-2 rounded-xl bg-emerald-600/20 text-emerald-400">🎮</span>
 <span data-i18n="modeGame">Oyun Oluşturucu (3D & 2D)</span>
 </h2>
-<p class="text-xs sm:text-sm text-slate-400 mt-1">Three.js ile gerçek 3D oyunlar veya HTML5 2D oyunlar üretin. Klavyeden veya dokunmatik mobil butonlarla anında oynayın.</p>
+<p class="text-xs sm:text-sm text-slate-400 mt-1">Three.js ile gerçek 3D oyunlar veya HTML5 2D oyunlar üretin. Anında tam ekran oynayın.</p>
 </div>
-</div>
-<!-- Oyun Şablonları (3D ve 2D) -->
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-<button onclick="setGamePreset('Three.js ile Üç Boyutlu (3D) Parkur ve Engel Koşusu Oyunu: Gerçek 3D perspektif kamera, gölgelendirme, hareketli 3D platformlar, zıplama fiziği, altın küreler, skor sayacı, klavye ve mobil dokunmatik 3D kontrol butonları olsun.')" class="glass-card p-3 rounded-xl border-emerald-500/40 hover:border-emerald-300 text-left transition">
-<div class="text-base mb-1 flex items-center justify-between">
-<span>🧊 3D Parkur</span>
-<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">3D</span>
-</div>
+<button onclick="setGamePreset('Three.js ile Üç Boyutlu (3D) Parkur ve Engel Koşusu Oyunu: Gerçek 3D perspektif kamera, gölgelendirme, hareketli platformlar, zıplama fiziği.')" class="glass-card p-3 rounded-xl border-emerald-500/40 hover:border-emerald-300 text-left transition">
+<div class="text-base mb-1 flex items-center justify-between"><span>🧊 3D Parkur</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">3D</span></div>
 <div class="text-[11px] text-slate-400">Three.js platform ve zıplama</div>
 </button>
-<button onclick="setGamePreset('Three.js ile Üç Boyutlu (3D) Uzay Savaşı Oyunu: 3D uzay gemisi kontrolü, derin uzay yıldız alanı, yaklaşan 3D asteroidler ve düşman gemileri, 3D lazer atışları, kalkan ve skor sistemi, klavye ve dokunmatik kontroller olsun.')" class="glass-card p-3 rounded-xl border-emerald-500/40 hover:border-emerald-300 text-left transition">
-<div class="text-base mb-1 flex items-center justify-between">
-<span>🚀 3D Uzay Savaşı</span>
-<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">3D</span>
-</div>
+<button onclick="setGamePreset('Three.js ile Üç Boyutlu (3D) Uzay Savaşı Oyunu: 3D uzay gemisi kontrolü, asteroidler ve düşman gemileri, lazer atışları.')" class="glass-card p-3 rounded-xl border-emerald-500/40 hover:border-emerald-300 text-left transition">
+<div class="text-base mb-1 flex items-center justify-between"><span>🚀 3D Uzay</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">3D</span></div>
 <div class="text-[11px] text-slate-400">3D Gemi, lazer ve asteroidler</div>
 </button>
-<button onclick="setGamePreset('2 Oyunculu ve Yapay Zekâ Modlu 2D Futbol Oyunu: Yeşil çim saha çizgileri, kaleler, kırmızı ve mavi formalı futbolcular, gerçekçi top fiziği, bağımsız oyuncu kontrolleri ve skor tabelası.')" class="glass-card p-3 rounded-xl hover:border-purple-500/30 text-left transition">
-<div class="text-base mb-1">⚽ Futbol Oyunu</div>
-<div class="text-[11px] text-slate-400">Formalı oyuncular ve saha fiziği</div>
-</button>
-<button onclick="setGamePreset('Engellerden kaçmalı, hızlanan şeritli, nitro özellikli ve yüksek skor tablosu olan 2D Araba Yarışı Oyunu.')" class="glass-card p-3 rounded-xl hover:border-purple-500/30 text-left transition">
-<div class="text-base mb-1">🏎️ Araba Yarışı</div>
-<div class="text-[11px] text-slate-400">Şerit değiştirme, nitro sistemi</div>
-</button>
 </div>
-<!-- Oyun Tarif Alanı -->
 <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
 <div>
 <label class="block text-xs font-semibold text-slate-300 mb-1.5">Oyun Tarifi</label>
-<div class="relative">
-<textarea id="game-prompt-input" rows="3" placeholder="Örn: Three.js ile birinci şahıs 3D labirent bulmaca oyunu yap..." class="w-full rounded-xl bg-[#070b18] border border-purple-500/30 p-3 pr-12 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"></textarea>
-<button id="btn-mic-game" onclick="toggleVoiceInput('game-prompt-input', 'btn-mic-game')" type="button" class="absolute right-2.5 top-2.5 p-2 rounded-lg bg-white/5 hover:bg-emerald-600/25 text-slate-300" title="Oyunu Sesle Tarif Et">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-</svg>
-</button>
+<textarea id="game-prompt-input" rows="3" placeholder="Örn: Three.js ile birinci şahıs 3D labirent bulmaca oyunu yap..." class="w-full rounded-xl bg-[#070b18] border border-purple-500/30 p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"></textarea>
 </div>
-</div>
-<div class="flex flex-wrap items-center justify-between gap-3">
-<span class="text-xs text-slate-400">3D oyunlar <code class="text-emerald-300">Three.js</code> kütüphanesiyle tek parça HTML dosyası olarak üretilir.</span>
-<button id="btn-run-game" onclick="runGameGenerator()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-emerald-950/60 active:scale-95 transition">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-<path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-</svg>
+<div class="flex justify-end">
+<button id="btn-run-game" onclick="runGameGenerator()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-emerald-950/60 active:scale-95 transition">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 <span>Oyunu Oluştur</span>
 </button>
 </div>
 </div>
-<!-- Oyun Üretim Durumu -->
 <div id="game-status" class="hidden glass-card rounded-2xl p-4 space-y-2 border-emerald-500/30">
 <div class="flex items-center gap-3 text-sm font-medium text-emerald-200">
 <div class="w-5 h-5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin shrink-0"></div>
-<span id="game-status-text">3D Three.js motoru ve oyun mantığı kodlanıyor...</span>
-</div>
-<div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-<div id="game-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 to-purple-500 transition-all duration-500" style="width: 30%"></div>
+<span>3D Three.js motoru ve oyun mantığı kodlanıyor...</span>
 </div>
 </div>
-<!-- Oyun Önizleme Kartı (Büyük OYUNU OYNA butonuyla) -->
 <div id="game-preview-card" class="hidden"></div>
 </div>
 </section>
 </div>
 </div>
-<!-- ================================================================== -->
-<!-- TAM EKRAN İZOLE OYUN OYNATICI (SANDBOX IFRAME MODAL)               -->
-<!-- ================================================================== -->
-<div id="game-player-overlay" class="hidden fixed inset-0 z-50 bg-[#02040a] flex flex-col">
+
+  <div id="game-player-overlay" class="hidden fixed inset-0 z-50 bg-[#02040a] flex flex-col">
 <div class="h-14 px-3 sm:px-5 bg-[#070b17] border-b border-purple-500/25 flex items-center justify-between gap-2 shrink-0">
 <div class="flex items-center gap-2.5 min-w-0">
 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
 <h3 id="game-player-title" class="font-bold text-sm sm:text-base text-white truncate">ÖMER AI Oyun Alanı</h3>
 </div>
 <div class="flex items-center gap-1.5 sm:gap-2">
-<button onclick="restartActiveGame()" class="px-3 py-1.5 rounded-xl bg-purple-600/25 hover:bg-purple-600/40 border border-purple-500/40 text-purple-200 text-xs font-semibold flex items-center gap-1.5 transition">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-</svg>
-<span class="hidden sm:inline">Yeniden Başlat</span>
-</button>
-<button onclick="downloadActiveGame()" class="px-3 py-1.5 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center gap-1.5 transition">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-</svg>
-<span class="hidden sm:inline">.HTML İndir</span>
-</button>
-<button onclick="closeGamePlayer()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center gap-1.5 transition">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-</svg>
-<span>Oyundan Çık</span>
-</button>
+<button onclick="restartActiveGame()" class="px-3 py-1.5 rounded-xl bg-purple-600/25 text-purple-200 text-xs font-semibold">Yeniden Başlat</button>
+<button onclick="downloadActiveGame()" class="px-3 py-1.5 rounded-xl bg-emerald-600/25 text-emerald-200 text-xs font-semibold">.HTML İndir</button>
+<button onclick="closeGamePlayer()" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold">Oyundan Çık</button>
 </div>
 </div>
-<!-- İzole Sandboxed Iframe -->
-<div id="game-iframe-wrapper" class="flex-1 w-full h-full bg-black relative">
+<div class="flex-1 w-full h-full bg-black relative">
 <iframe id="game-sandbox-iframe" sandbox="allow-scripts allow-pointer-lock" class="w-full h-full border-0 block" title="ÖMER AI Oyun Alanı"></iframe>
 </div>
 </div>
-<!-- ================================================================== -->
-<!-- MODAL 1: AYARLAR PENCERESİ                                         -->
-<!-- ================================================================== -->
 <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
 <div class="glass-panel w-full max-w-lg rounded-3xl border border-purple-500/30 shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]">
 <div class="px-5 py-4 border-b border-purple-500/20 flex items-center justify-between">
-<h3 class="font-bold text-lg text-white flex items-center gap-2">
-<span class="text-purple-400">⚙️</span>
-<span data-i18n="settingsTitle">ÖMER AI Ayarları</span>
-</h3>
-<button onclick="closeModal('settings-modal')" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-</svg>
-</button>
+<h3 class="font-bold text-lg text-white">⚙️ ÖMER AI Ayarları</h3>
+<button onclick="closeModal('settings-modal')" class="p-1.5 rounded-xl text-slate-400 hover:text-white">✕</button>
 </div>
 <div class="p-5 overflow-y-auto space-y-5">
 <div>
-<label for="setting-language" class="block text-xs font-semibold uppercase tracking-wider text-purple-300 mb-2" data-i18n="settingLangLabel">Arayüz ve Yapay Zekâ Dili</label>
-<select id="setting-language" onchange="updateSettingsFromUI()" class="w-full rounded-xl bg-[#070b18] border border-purple-500/35 px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-400">
+<label class="block text-xs font-semibold uppercase tracking-wider text-purple-300 mb-2">Dil</label>
+<select id="setting-language" onchange="updateSettingsFromUI()" class="w-full rounded-xl bg-[#070b18] border border-purple-500/35 px-3.5 py-2.5 text-sm text-white">
 <option value="Türkçe">🇹🇷 Türkçe</option>
 <option value="İngilizce">🇬🇧 İngilizce (English)</option>
-<option value="Almanca">🇩🇪 Almanca (Deutsch)</option>
-<option value="Fransızca">🇫🇷 Fransızca (Français)</option>
-<option value="İspanyolca">🇪🇸 İspanyolca (Español)</option>
-<option value="Arapça">🇸🇦 Arapça (العربية)</option>
 </select>
 </div>
 <div>
-<label for="setting-personality" class="block text-xs font-semibold uppercase tracking-wider text-purple-300 mb-2" data-i18n="settingPersLabel">Yapay Zekâ Kişiliği</label>
-<select id="setting-personality" onchange="updateSettingsFromUI()" class="w-full rounded-xl bg-[#070b18] border border-purple-500/35 px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-400">
+<label class="block text-xs font-semibold uppercase tracking-wider text-purple-300 mb-2">Kişilik</label>
+<select id="setting-personality" onchange="updateSettingsFromUI()" class="w-full rounded-xl bg-[#070b18] border border-purple-500/35 px-3.5 py-2.5 text-sm text-white">
 <option value="Arkadaş canlısı">😊 Arkadaş canlısı</option>
 <option value="Profesyonel">💼 Profesyonel</option>
-<option value="Öğretmen">🎓 Öğretmen</option>
-<option value="Yaratıcı">🎨 Yaratıcı</option>
-<option value="Kısa ve öz">⚡ Kısa ve öz</option>
-<option value="Teknik uzman">🛠️ Teknik uzman</option>
 </select>
 </div>
-<div>
-<label for="setting-length" class="block text-xs font-semibold uppercase tracking-wider text-purple-300 mb-2" data-i18n="settingLenLabel">Cevap Uzunluğu</label>
-<select id="setting-length" onchange="updateSettingsFromUI()" class="w-full rounded-xl bg-[#070b18] border border-purple-500/35 px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-400">
-<option value="Kısa">Kısa ve Öz</option>
-<option value="Orta">Orta (Dengeli)</option>
-<option value="Detaylı">Detaylı ve Kapsamlı</option>
-</select>
 </div>
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#070b18] border border-purple-500/20">
-<div>
-<div class="text-sm font-semibold text-white" data-i18n="settingVoiceLabel">Sesli Cevaplar (TTS)</div>
-<div class="text-xs text-slate-400" data-i18n="settingVoiceDesc">Yeni cevaplar geldiğinde otomatik seslendir</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" id="setting-tts" onchange="updateSettingsFromUI()" class="sr-only peer" />
-<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-</label>
-</div>
-<div class="p-3.5 rounded-2xl bg-[#070b18] border border-purple-500/20 space-y-2">
-<div class="flex items-center justify-between">
-<label for="setting-rate" class="text-sm font-semibold text-white" data-i18n="settingRateLabel">Ses Hızı</label>
-<div class="flex items-center gap-2">
-<span id="speech-rate-value" class="text-xs font-mono px-2 py-0.5 rounded bg-purple-600/25 text-purple-300">1.0x</span>
-<button type="button" onclick="testVoicePreview()" class="text-xs px-2.5 py-1 rounded-lg bg-white/10 hover:bg-purple-600/30 text-slate-200 transition">Test Et</button>
-</div>
-</div>
-<input id="setting-rate" type="range" min="0.6" max="1.8" step="0.1" value="1.0" oninput="updateSettingsFromUI()" class="w-full accent-purple-500 cursor-pointer" />
-</div>
-<div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#070b18] border border-purple-500/20">
-<div>
-<div class="text-sm font-semibold text-white" data-i18n="settingMemLabel">Akıllı Hafıza Sistemi</div>
-<div class="text-xs text-slate-400" data-i18n="settingMemDesc">ÖMER AI tercihlerinizi ve önemli bilgileri hatırlar</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" id="setting-memory" onchange="updateSettingsFromUI()" class="sr-only peer" />
-<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-</label>
-</div>
-</div>
-<div class="px-5 py-3.5 border-t border-purple-500/20 bg-[#050812] flex items-center justify-between gap-2">
-<button onclick="resetSettingsToDefault()" class="px-4 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-semibold transition" data-i18n="resetDefaults">
-Varsayılana Döndür
-</button>
-<button onclick="closeModal('settings-modal')" class="px-5 py-2 rounded-xl brand-gradient text-white text-xs font-semibold transition" data-i18n="saveClose">
-Kaydet ve Kapat
-</button>
+<div class="px-5 py-3.5 border-t border-purple-500/20 bg-[#050812] flex justify-end">
+<button onclick="closeModal('settings-modal')" class="px-5 py-2 rounded-xl brand-gradient text-white text-xs font-semibold">Kaydet ve Kapat</button>
 </div>
 </div>
 </div>
-<!-- ================================================================== -->
-<!-- MODAL 2: HAFIZA YÖNETİMİ PENCERESİ                                 -->
-<!-- ================================================================== -->
 <div id="memory-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
 <div class="glass-panel w-full max-w-lg rounded-3xl border border-purple-500/30 shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]">
 <div class="px-5 py-4 border-b border-purple-500/20 flex items-center justify-between">
-<h3 class="font-bold text-lg text-white flex items-center gap-2">
-<span class="text-indigo-400">🧠</span>
-<span>ÖMER AI Hafıza Yönetimi</span>
-</h3>
-<button onclick="closeModal('memory-modal')" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-</svg>
-</button>
+<h3 class="font-bold text-lg text-white">🧠 Hafıza Yönetimi</h3>
+<button onclick="closeModal('memory-modal')" class="p-1.5 rounded-xl text-slate-400 hover:text-white">✕</button>
 </div>
 <div class="p-5 overflow-y-auto space-y-4">
-<p class="text-xs text-slate-400 leading-relaxed">
-ÖMER AI sohbetlerinizde paylaştığınız önemli bilgileri otomatik kaydeder. Buradan yeni bilgi ekleyebilir, istemediğiniz kayıtları kapatabilir veya tamamen silebilirsiniz.
-</p>
 <div class="flex gap-2">
-<input id="new-memory-input" type="text" placeholder="Örn: Adım Ömer, koyu temalı arayüzleri severim..." class="flex-1 rounded-xl bg-[#070b18] border border-purple-500/30 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-400" onkeydown="if(event.key==='Enter') addManualMemory()" />
-<button onclick="addManualMemory()" class="px-4 py-2.5 rounded-xl brand-gradient text-white text-xs font-semibold shrink-0 active:scale-95 transition">Ekle</button>
+<input id="new-memory-input" type="text" placeholder="Örn: Adım Ömer..." class="flex-1 rounded-xl bg-[#070b18] border border-purple-500/30 px-3.5 py-2.5 text-sm text-white" />
+<button onclick="addManualMemory()" class="px-4 py-2.5 rounded-xl brand-gradient text-white text-xs font-semibold">Ekle</button>
 </div>
 <div id="memory-items-list" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
 </div>
-<div class="px-5 py-3.5 border-t border-purple-500/20 bg-[#050812] flex items-center justify-between">
-<button onclick="clearAllMemories()" class="px-4 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-semibold transition">
-Hafızayı Temizle
-</button>
-<button onclick="closeModal('memory-modal')" class="px-5 py-2 rounded-xl brand-gradient text-white text-xs font-semibold transition">
-Tamam
-</button>
 </div>
 </div>
-</div>
-<!-- ================================================================== -->
-<!-- MODAL 3: UYGULAMA HAKKINDA PENCERESİ                               -->
-<!-- ================================================================== -->
 <div id="about-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-<div class="glass-panel w-full max-w-md rounded-3xl border border-purple-500/30 shadow-2xl overflow-hidden">
-<div class="p-6 text-center space-y-4">
-<div class="w-16 h-16 mx-auto rounded-2xl brand-gradient p-0.5 shadow-xl shadow-purple-800/40">
-<div class="w-full h-full bg-[#060913] rounded-[14px] flex items-center justify-center">
-<svg class="w-10 h-10" viewBox="0 0 64 64" fill="none">
-<polygon points="32,4 56,18 56,46 32,60 8,46 8,18" stroke="#c084fc" stroke-width="4"/>
-<circle cx="32" cy="34" r="11" stroke="#9333ea" stroke-width="4"/>
-</svg>
+<div class="glass-panel w-full max-w-md rounded-3xl border border-purple-500/30 shadow-2xl p-6 text-center space-y-4">
+<h3 class="text-xl font-extrabold text-white">ÖMER AI v2.6 Pro</h3>
+<p class="text-xs text-slate-300">Gelişmiş Web Tabanlı Yapay Zekâ Platformu</p>
+<button onclick="closeModal('about-modal')" class="w-full py-2.5 rounded-xl brand-gradient text-white text-sm font-semibold">Kapat</button>
 </div>
 </div>
-<div>
-<h3 class="text-xl font-extrabold text-white">ÖMER AI</h3>
-<p class="text-xs text-purple-300 font-medium mt-0.5">Yeni Nesil Yapay Zekâ Asistanı ve Üretim Platformu</p>
-</div>
-<div class="text-left bg-[#070b18] rounded-2xl p-4 border border-purple-500/20 space-y-2 text-xs text-slate-300">
-<div class="flex justify-between"><span class="text-slate-500">Sürüm:</span><span class="font-mono text-purple-300">2.6.0 Pro+3D</span></div>
-<div class="flex justify-between"><span class="text-slate-500">Modüller:</span><span>Sohbet, Görsel Analiz, Ses, Kod, Proje, 3D Oyun</span></div>
-<div class="flex justify-between"><span class="text-slate-500">3D Motor:</span><span>Three.js / WebGL Sandbox</span></div>
-<div class="flex justify-between"><span class="text-slate-500">Durum:</span><span class="text-emerald-400">Aktif & Güvenli</span></div>
-</div>
-<button onclick="closeModal('about-modal')" class="w-full py-2.5 rounded-xl brand-gradient text-white text-sm font-semibold transition">
-Kapat
-</button>
-</div>
-</div>
-</div>
-<!-- ÖZEL ONAY PENCERESİ -->
 <div id="confirm-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
 <div class="glass-panel w-full max-w-sm rounded-2xl border border-purple-500/35 p-5 space-y-4 shadow-2xl">
 <h4 id="confirm-title" class="font-bold text-base text-white">Emin misiniz?</h4>
-<p id="confirm-message" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+<p id="confirm-message" class="text-xs sm:text-sm text-slate-300"></p>
 <div class="flex justify-end gap-2 pt-2">
-<button onclick="closeConfirmModal(false)" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-slate-200 transition">İptal</button>
-<button onclick="closeConfirmModal(true)" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white transition">Onayla</button>
+<button onclick="closeConfirmModal(false)" class="px-4 py-2 rounded-xl bg-white/10 text-xs text-slate-200">İptal</button>
+<button onclick="closeConfirmModal(true)" class="px-4 py-2 rounded-xl bg-rose-600 text-xs text-white">Onayla</button>
 </div>
 </div>
 </div>
-<!-- TOAST KONTEYNERİ -->
 <div id="toast-container" class="fixed bottom-20 sm:bottom-6 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-xs sm:max-w-sm"></div>
-<!-- JAVASCRIPT ÇEKİRDEĞİ -->
 <script>
 const API_BASE_URL = 'https://omer-ai-server.onrender.com';
 const STORAGE_KEYS = {
@@ -979,294 +604,8 @@ speechRate: 1.0,
 memoryEnabled: true
 };
 const TRANSLATIONS = {
-'Türkçe': {
-dir: 'ltr',
-langCode: 'tr-TR',
-shortCode: 'TR',
-newChat: 'Yeni Sohbet',
-workspaces: 'Çalışma Alanları',
-modeChat: 'Yapay Zekâ Sohbet',
-modeCode: 'Kodlama Stüdyosu',
-modeProject: 'Proje Oluşturucu',
-modeGame: 'Oyun Oluşturucu',
-chatHistory: 'Sohbet Geçmişi',
-memoryStatus: 'Hafıza Aktif',
-memoryOff: 'Hafıza Kapalı',
-online: 'Çevrimiçi',
-offline: 'Çevrimdışı',
-stopVoice: 'Sesi Durdur',
-menuSettings: 'Ayarlar',
-menuMemory: 'Hafıza',
-menuExport: 'Sohbetleri Dışa Aktar',
-menuClear: 'Sohbetleri Temizle',
-menuAbout: 'Uygulama Hakkında',
-welcomeTitle: "ÖMER AI'ye Hoş Geldiniz",
-welcomeDesc: 'Sohbet edin, akıllı hafızayla kişiselleştirilmiş yanıtlar alın, sesli iletişim kurun veya Stüdyo modlarıyla saniyeler içinde projeler ve oynanabilir oyunlar üretin.',
-cardChatTitle: 'Akıllı Sohbet & Analiz',
-cardChatDesc: 'Sorular sorun, fikir geliştirin ve hafızalı asistanla sohbet edin.',
-cardCodeTitle: 'Kodlama Stüdyosu',
-cardCodeDesc: 'HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.',
-cardProjectTitle: 'Proje Oluşturucu',
-cardProjectDesc: 'Tam kapsamlı web uygulamaları oluşturun ve ZIP olarak indirin.',
-cardGameTitle: 'Oyun Oluşturucu',
-cardGameDesc: 'Futbol, yarış ve macera oyunları üretin, anında tam ekran oynayın.',
-chatPlaceholder: "ÖMER AI'ye bir mesaj yazın... (Gönder: Enter, Alt satır: Shift+Enter)",
-sendBtn: 'Gönder',
-inputHint: 'Enter: Gönder • Shift+Enter: Alt satır',
-thinking: 'ÖMER AI düşünüyor...',
-settingsTitle: 'ÖMER AI Ayarları',
-settingLangLabel: 'Arayüz ve Yapay Zekâ Dili',
-settingPersLabel: 'Yapay Zekâ Kişiliği',
-settingLenLabel: 'Cevap Uzunluğu',
-settingVoiceLabel: 'Sesli Cevaplar (TTS)',
-settingVoiceDesc: 'Yeni cevaplar geldiğinde otomatik seslendir',
-settingRateLabel: 'Ses Hızı',
-settingMemLabel: 'Akıllı Hafıza Sistemi',
-settingMemDesc: 'ÖMER AI tercihlerinizi ve önemli bilgileri hatırlar',
-resetDefaults: 'Varsayılana Döndür',
-saveClose: 'Kaydet ve Kapat',
-noChats: 'Henüz kaydedilmiş sohbet yok.'
-},
-'İngilizce': {
-dir: 'ltr',
-langCode: 'en-US',
-shortCode: 'EN',
-newChat: 'New Chat',
-workspaces: 'Workspaces',
-modeChat: 'AI Chat',
-modeCode: 'Coding Studio',
-modeProject: 'Project Builder',
-modeGame: 'Game Generator',
-chatHistory: 'Chat History',
-memoryStatus: 'Memory Active',
-memoryOff: 'Memory Off',
-online: 'Online',
-offline: 'Offline',
-stopVoice: 'Stop Voice',
-menuSettings: 'Settings',
-menuMemory: 'Memory',
-menuExport: 'Export Chats',
-menuClear: 'Clear All Chats',
-menuAbout: 'About App',
-welcomeTitle: 'Welcome to ÖMER AI',
-welcomeDesc: 'Chat naturally, get personalized responses with smart memory, use voice controls, or build full projects and playable HTML5 games in seconds.',
-cardChatTitle: 'Smart Chat & Analysis',
-cardChatDesc: 'Ask questions, brainstorm ideas, and chat with memory context.',
-cardCodeTitle: 'Coding Studio',
-cardCodeDesc: 'Write, explain, debug, and optimize HTML, JS, Python, and more.',
-cardProjectTitle: 'Project Builder',
-cardProjectDesc: 'Generate complete web apps and download them as ZIP archives.',
-cardGameTitle: 'Game Generator',
-cardGameDesc: 'Create football, racing, and adventure games and play instantly.',
-chatPlaceholder: 'Message ÖMER AI... (Send: Enter, New line: Shift+Enter)',
-sendBtn: 'Send',
-inputHint: 'Enter: Send • Shift+Enter: New line',
-thinking: 'ÖMER AI is thinking...',
-settingsTitle: 'ÖMER AI Settings',
-settingLangLabel: 'Interface & AI Language',
-settingPersLabel: 'AI Personality',
-settingLenLabel: 'Response Length',
-settingVoiceLabel: 'Voice Responses (TTS)',
-settingVoiceDesc: 'Automatically speak new AI answers aloud',
-settingRateLabel: 'Speech Speed',
-settingMemLabel: 'Smart Memory System',
-settingMemDesc: 'ÖMER AI remembers your preferences and key facts',
-resetDefaults: 'Reset to Defaults',
-saveClose: 'Save & Close',
-noChats: 'No saved chats yet.'
-},
-'Almanca': {
-dir: 'ltr',
-langCode: 'de-DE',
-shortCode: 'DE',
-newChat: 'Neuer Chat',
-workspaces: 'Arbeitsbereiche',
-modeChat: 'KI-Chat',
-modeCode: 'Coding-Studio',
-modeProject: 'Projekt-Generator',
-modeGame: 'Spiele-Generator',
-chatHistory: 'Chat-Verlauf',
-memoryStatus: 'Speicher Aktiv',
-memoryOff: 'Speicher Aus',
-online: 'Online',
-offline: 'Offline',
-stopVoice: 'Stimme Stoppen',
-menuSettings: 'Einstellungen',
-menuMemory: 'Gedächtnis',
-menuExport: 'Chats Exportieren',
-menuClear: 'Alle Chats Löschen',
-menuAbout: 'Über die App',
-welcomeTitle: 'Willkommen bei ÖMER AI',
-welcomeDesc: 'Chatten Sie intelligent, nutzen Sie Sprachfunktionen oder erstellen Sie vollständige Projekte und spielbare Spiele in Sekunden.',
-cardChatTitle: 'Intelligenter Chat',
-cardChatDesc: 'Stellen Sie Fragen und nutzen Sie kontextbezogenes Gedächtnis.',
-cardCodeTitle: 'Coding-Studio',
-cardCodeDesc: 'Code schreiben, erklären und Fehler beheben.',
-cardProjectTitle: 'Projekt-Generator',
-cardProjectDesc: 'Komplette Web-Apps erstellen und als ZIP herunterladen.',
-cardGameTitle: 'Spiele-Generator',
-cardGameDesc: 'Fußball-, Renn- und Abenteuerspiele generieren und sofort spielen.',
-chatPlaceholder: 'Nachricht an ÖMER AI senden... (Enter: Senden)',
-sendBtn: 'Senden',
-inputHint: 'Enter: Senden • Shift+Enter: Neue Zeile',
-thinking: 'ÖMER AI denkt nach...',
-settingsTitle: 'ÖMER AI Einstellungen',
-settingLangLabel: 'Sprache der Oberfläche & KI',
-settingPersLabel: 'KI-Persönlichkeit',
-settingLenLabel: 'Antwortlänge',
-settingVoiceLabel: 'Sprachausgabe (TTS)',
-settingVoiceDesc: 'Neue Antworten automatisch vorlesen',
-settingRateLabel: 'Sprechgeschwindigkeit',
-settingMemLabel: 'Intelligentes Gedächtnis',
-settingMemDesc: 'ÖMER AI merkt sich wichtige Informationen',
-resetDefaults: 'Zurücksetzen',
-saveClose: 'Speichern & Schließen',
-noChats: 'Noch keine gespeicherten Chats.'
-},
-'Fransızca': {
-dir: 'ltr',
-langCode: 'fr-FR',
-shortCode: 'FR',
-newChat: 'Nouveau Chat',
-workspaces: 'Espaces de Travail',
-modeChat: 'Discussion IA',
-modeCode: 'Studio de Code',
-modeProject: 'Créateur de Projets',
-modeGame: 'Créateur de Jeux',
-chatHistory: 'Historique',
-memoryStatus: 'Mémoire Active',
-memoryOff: 'Mémoire Inactive',
-online: 'En ligne',
-offline: 'Hors ligne',
-stopVoice: 'Arrêter la Voix',
-menuSettings: 'Paramètres',
-menuMemory: 'Mémoire',
-menuExport: 'Exporter les Chats',
-menuClear: 'Effacer les Chats',
-menuAbout: "À propos de l'application",
-welcomeTitle: 'Bienvenue sur ÖMER AI',
-welcomeDesc: 'Discutez avec mémoire intelligente, utilisez la voix ou générez des projets complets et des jeux jouables instantanément.',
-cardChatTitle: 'Discussion Intelligente',
-cardChatDesc: 'Posez vos questions et échangez avec un assistant personnalisé.',
-cardCodeTitle: 'Studio de Code',
-cardCodeDesc: 'Écrivez, expliquez et corrigez votre code facilement.',
-cardProjectTitle: 'Créateur de Projets',
-cardProjectDesc: 'Créez des applications web et téléchargez-les en ZIP.',
-cardGameTitle: 'Créateur de Jeux',
-cardGameDesc: 'Générez des jeux jouables et lancez-les en plein écran.',
-chatPlaceholder: 'Écrivez un message à ÖMER AI...',
-sendBtn: 'Envoyer',
-inputHint: 'Entrée: Envoyer • Maj+Entrée: Nouvelle ligne',
-thinking: 'ÖMER AI réfléchit...',
-settingsTitle: 'Paramètres ÖMER AI',
-settingLangLabel: "Langue de l'interface et de l'IA",
-settingPersLabel: "Personnalité de l'IA",
-settingLenLabel: 'Longueur des réponses',
-settingVoiceLabel: 'Réponses Vocales (TTS)',
-settingVoiceDesc: 'Lire automatiquement les nouvelles réponses',
-settingRateLabel: 'Vitesse Vocale',
-settingMemLabel: 'Système de Mémoire',
-settingMemDesc: 'ÖMER AI mémorise vos préférences importantes',
-resetDefaults: 'Réinitialiser',
-saveClose: 'Enregistrer et Fermer',
-noChats: 'Aucune conversation enregistrée.'
-},
-'İspanyolca': {
-dir: 'ltr',
-langCode: 'es-ES',
-shortCode: 'ES',
-newChat: 'Nuevo Chat',
-workspaces: 'Espacios de Trabajo',
-modeChat: 'Chat IA',
-modeCode: 'Estudio de Código',
-modeProject: 'Creador de Proyectos',
-modeGame: 'Creador de Juegos',
-chatHistory: 'Historial de Chats',
-memoryStatus: 'Memoria Activa',
-memoryOff: 'Memoria Apagada',
-online: 'En línea',
-offline: 'Sin conexión',
-stopVoice: 'Detener Voz',
-menuSettings: 'Configuración',
-menuMemory: 'Memoria',
-menuExport: 'Exportar Chats',
-menuClear: 'Borrar Chats',
-menuAbout: 'Acerca de la App',
-welcomeTitle: 'Bienvenido a ÖMER AI',
-welcomeDesc: 'Chatea con memoria inteligente, usa comandos de voz o crea proyectos completos y juegos jugables en segundos.',
-cardChatTitle: 'Chat Inteligente',
-cardChatDesc: 'Haz preguntas y obtén respuestas personalizadas.',
-cardCodeTitle: 'Estudio de Código',
-cardCodeDesc: 'Escribe, explica y depura código en múltiples lenguajes.',
-cardProjectTitle: 'Creador de Proyectos',
-cardProjectDesc: 'Genera aplicaciones web completas y descárgalas en ZIP.',
-cardGameTitle: 'Creador de Juegos',
-cardGameDesc: 'Crea juegos de fútbol, carreras y aventuras y juega al instante.',
-chatPlaceholder: 'Escribe un mensaje a ÖMER AI...',
-sendBtn: 'Enviar',
-inputHint: 'Enter: Enviar • Shift+Enter: Nueva línea',
-thinking: 'ÖMER AI está pensando...',
-settingsTitle: 'Configuración de ÖMER AI',
-settingLangLabel: 'Idioma de la Interfaz e IA',
-settingPersLabel: 'Personalidad de la IA',
-settingLenLabel: 'Longitud de Respuesta',
-settingVoiceLabel: 'Respuestas de Voz (TTS)',
-settingVoiceDesc: 'Leer automáticamente las nuevas respuestas',
-settingRateLabel: 'Velocidad de Voz',
-settingMemLabel: 'Sistema de Memoria',
-settingMemDesc: 'ÖMER AI recuerda tus preferencias importantes',
-resetDefaults: 'Restaurar Valores',
-saveClose: 'Guardar y Cerrar',
-noChats: 'Aún no hay chats guardados.'
-},
-'Arapça': {
-dir: 'rtl',
-langCode: 'ar-SA',
-shortCode: 'AR',
-newChat: 'محادثة جديدة',
-workspaces: 'مساحات العمل',
-modeChat: 'محادثة الذكاء الاصطناعي',
-modeCode: 'استوديو البرمجة',
-modeProject: 'منشئ المشاريع',
-modeGame: 'منشئ الألعاب',
-chatHistory: 'سجل المحادثات',
-memoryStatus: 'الذاكرة نشطة',
-memoryOff: 'الذاكرة متوقفة',
-online: 'متصل',
-offline: 'غير متصل',
-stopVoice: 'إيقاف الصوت',
-menuSettings: 'الإعدادات',
-menuMemory: 'الذاكرة',
-menuExport: 'تصدير المحادثات',
-menuClear: 'مسح المحادثات',
-menuAbout: 'حول التطبيق',
-welcomeTitle: 'مرحباً بك في ÖMER AI',
-welcomeDesc: 'تحدث بذكاء، واستفد من الذاكرة الذكية والمحادثة الصوتية، أو أنشئ مشاريع متكاملة وألعاباً قابلة للعب في ثوانٍ.',
-cardChatTitle: 'محادثة ذكية وتحليل',
-cardChatDesc: 'اطرح الأسئلة واحصل على إجابات مخصصة مع الذاكرة.',
-cardCodeTitle: 'استوديو البرمجة',
-cardCodeDesc: 'اكتب الأكواد واشرحها واكتشف الأخطاء وأصلحها.',
-cardProjectTitle: 'منشئ المشاريع',
-cardProjectDesc: 'أنشئ تطبيقات ويب متكاملة وحمّلها كملف ZIP.',
-cardGameTitle: 'منشئ الألعاب',
-cardGameDesc: 'أنشئ ألعاب كرة قدم وسباقات والعبها فوراً.',
-chatPlaceholder: 'اكتب رسالة إلى ÖMER AI...',
-sendBtn: 'إرسال',
-inputHint: 'Enter: إرسال • Shift+Enter: سطر جديد',
-thinking: 'ÖMER AI يفكر...',
-settingsTitle: 'إعدادات ÖMER AI',
-settingLangLabel: 'لغة الواجهة والذكاء الاصطناعي',
-settingPersLabel: 'شخصية الذكاء الاصطناعي',
-settingLenLabel: 'طول الإجابة',
-settingVoiceLabel: 'الردود الصوتية (TTS)',
-settingVoiceDesc: 'قراءة الردود الجديدة صوتياً تلقائياً',
-settingRateLabel: 'سرعة الصوت',
-settingMemLabel: 'نظام الذاكرة الذكية',
-settingMemDesc: 'يتذكر ÖMER AI تفضيلاتك ومعلوماتك المهمة',
-resetDefaults: 'إعادة الضبط',
-saveClose: 'حفظ وإغلاق',
-noChats: 'لا توجد محادثات محفوظة بعد.'
-}
+'Türkçe': { dir: 'ltr', langCode: 'tr-TR', shortCode: 'TR', newChat: 'Yeni Sohbet', workspaces: 'Çalışma Alanları', modeChat: 'Yapay Zekâ Sohbet', modeCode: 'Kodlama Stüdyosu', modeProject: 'Proje Oluşturucu', modeGame: 'Oyun Oluşturucu', chatHistory: 'Sohbet Geçmişi', memoryStatus: 'Hafıza Aktif', memoryOff: 'Hafıza Kapalı', stopVoice: 'Sesi Durdur', menuSettings: 'Ayarlar', menuMemory: 'Hafıza', menuExport: 'Sohbetleri Dışa Aktar', menuClear: 'Sohbetleri Temizle', menuAbout: 'Uygulama Hakkında', sendBtn: 'Gönder', inputHint: 'Enter: Gönder • Shift+Enter: Alt satır', thinking: 'ÖMER AI düşünüyor...', noChats: 'Henüz kaydedilmiş sohbet yok.' },
+'İngilizce': { dir: 'ltr', langCode: 'en-US', shortCode: 'EN', newChat: 'New Chat', workspaces: 'Workspaces', modeChat: 'AI Chat', modeCode: 'Coding Studio', modeProject: 'Project Builder', modeGame: 'Game Generator', chatHistory: 'Chat History', memoryStatus: 'Memory Active', memoryOff: 'Memory Off', stopVoice: 'Stop Voice', menuSettings: 'Settings', menuMemory: 'Memory', menuExport: 'Export Chats', menuClear: 'Clear All Chats', menuAbout: 'About App', sendBtn: 'Send', inputHint: 'Enter: Send • Shift+Enter: New line', thinking: 'ÖMER AI is thinking...', noChats: 'No saved chats yet.' }
 };
 let state = {
 chats: [],
@@ -1277,66 +616,22 @@ currentMode: 'chat',
 isSending: false,
 attachedImageBase64: null,
 attachedImageName: '',
-attachedImageMime: '',
 activeGameHtml: '',
-activeGameTitle: 'omer-ai-oyun',
 activeProjectFiles: [],
 confirmCallback: null
 };
 function generateOmerAiIcon192() {
 try {
 const canvas = document.createElement('canvas');
-canvas.width = 192;
-canvas.height = 192;
+canvas.width = 192; canvas.height = 192;
 const ctx = canvas.getContext('2d');
 const bgGrad = ctx.createLinearGradient(0, 0, 192, 192);
-bgGrad.addColorStop(0, '#090d1e');
-bgGrad.addColorStop(1, '#1e1038');
-ctx.fillStyle = bgGrad;
-ctx.beginPath();
-ctx.roundRect(0, 0, 192, 192, 42);
-ctx.fill();
-const strokeGrad = ctx.createLinearGradient(24, 24, 168, 168);
-strokeGrad.addColorStop(0, '#c084fc');
-strokeGrad.addColorStop(0.5, '#9333ea');
-strokeGrad.addColorStop(1, '#4f46e5');
-ctx.strokeStyle = strokeGrad;
-ctx.lineWidth = 10;
-ctx.beginPath();
-const cx = 96, cy = 96, r = 68;
-for (let i = 0; i < 6; i++) {
-const angle = (Math.PI / 3) * i - Math.PI / 2;
-const x = cx + r * Math.cos(angle);
-const y = cy + r * Math.sin(angle);
-if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-}
-ctx.closePath();
-ctx.stroke();
-ctx.beginPath();
-ctx.arc(96, 104, 32, 0, Math.PI * 2);
-ctx.stroke();
-ctx.fillStyle = '#e9d5ff';
-ctx.beginPath();
-ctx.arc(80, 56, 7.5, 0, Math.PI * 2);
-ctx.arc(112, 56, 7.5, 0, Math.PI * 2);
-ctx.fill();
+bgGrad.addColorStop(0, '#090d1e'); bgGrad.addColorStop(1, '#1e1038');
+ctx.fillStyle = bgGrad; ctx.beginPath(); ctx.roundRect(0, 0, 192, 192, 42); ctx.fill();
 const pngDataUrl = canvas.toDataURL('image/png');
 document.getElementById('favicon-link').href = pngDataUrl;
 document.getElementById('apple-icon-link').href = pngDataUrl;
-const manifest = {
-name: 'ÖMER AI',
-short_name: 'ÖMER AI',
-start_url: '.',
-display: 'standalone',
-background_color: '#03050a',
-theme_color: '#060913',
-icons: [{ src: pngDataUrl, sizes: '192x192', type: 'image/png' }]
-};
-const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
-} catch (err) {
-console.warn('İkon oluşturma uyarısı:', err);
-}
+} catch(e) {}
 }
 function loadPersistedData() {
 try {
@@ -1354,27 +649,23 @@ state.activeChatId = state.chats[0].id;
 } else {
 createNewChat(false);
 }
-} catch (e) {
-createNewChat(false);
-}
+} catch(e) { createNewChat(false); }
 }
 function saveChats() {
 try {
 localStorage.setItem(STORAGE_KEYS.CHATS, JSON.stringify(state.chats));
 if (state.activeChatId) localStorage.setItem(STORAGE_KEYS.ACTIVE_CHAT_ID, state.activeChatId);
-} catch (e) {
-showToast('Sohbet geçmişi kaydedilirken depolama alanı doldu.', 'error');
-}
+} catch(e) { showToast('Depolama alanı dolu.', 'error'); }
 }
 function saveSettings() {
-try { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(state.settings)); } catch (e) {}
+try { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(state.settings)); } catch(e) {}
 }
 function saveMemories() {
 try {
 localStorage.setItem(STORAGE_KEYS.MEMORIES, JSON.stringify(state.memories));
 renderMemoryList();
 updateSidebarMemoryIndicator();
-} catch (e) {}
+} catch(e) {}
 }
 function applyTranslations() {
 const lang = state.settings.language || 'Türkçe';
@@ -1385,59 +676,16 @@ document.querySelectorAll('[data-i18n]').forEach(el => {
 const key = el.getAttribute('data-i18n');
 if (dict[key]) el.textContent = dict[key];
 });
-const chatInput = document.getElementById('chat-input');
-if (chatInput) chatInput.placeholder = dict.chatPlaceholder;
-const welcomeTitle = document.getElementById('welcome-title');
-if (welcomeTitle) welcomeTitle.textContent = dict.welcomeTitle;
-const welcomeDesc = document.getElementById('welcome-desc');
-if (welcomeDesc) welcomeDesc.textContent = dict.welcomeDesc;
-const inputHint = document.getElementById('input-hint');
-if (inputHint) inputHint.textContent = dict.inputHint;
-const loadingLabel = document.getElementById('loading-label');
-if (loadingLabel) loadingLabel.textContent = dict.thinking;
 document.getElementById('active-personality-label').textContent = state.settings.personality;
 document.getElementById('active-lang-label').textContent = dict.shortCode;
 updateSidebarMemoryIndicator();
-updateOnlineStatus();
-}
-function syncSettingsModalUI() {
-document.getElementById('setting-language').value = state.settings.language;
-document.getElementById('setting-personality').value = state.settings.personality;
-document.getElementById('setting-length').value = state.settings.responseLength;
-document.getElementById('setting-tts').checked = state.settings.ttsEnabled;
-document.getElementById('setting-rate').value = state.settings.speechRate;
-document.getElementById('speech-rate-value').textContent = Number(state.settings.speechRate).toFixed(1) + 'x';
-document.getElementById('setting-memory').checked = state.settings.memoryEnabled;
-}
-function updateSettingsFromUI() {
-state.settings.language = document.getElementById('setting-language').value;
-state.settings.personality = document.getElementById('setting-personality').value;
-state.settings.responseLength = document.getElementById('setting-length').value;
-state.settings.ttsEnabled = document.getElementById('setting-tts').checked;
-state.settings.speechRate = parseFloat(document.getElementById('setting-rate').value) || 1.0;
-state.settings.memoryEnabled = document.getElementById('setting-memory').checked;
-document.getElementById('speech-rate-value').textContent = state.settings.speechRate.toFixed(1) + 'x';
-saveSettings();
-applyTranslations();
-}
-function resetSettingsToDefault() {
-state.settings = { ...DEFAULT_SETTINGS };
-saveSettings();
-syncSettingsModalUI();
-applyTranslations();
-showToast('Ayarlar varsayılan değerlere döndürüldü.', 'success');
 }
 function updateSidebarMemoryIndicator() {
-const dict = TRANSLATIONS[state.settings.language] || TRANSLATIONS['Türkçe'];
 const dot = document.getElementById('sidebar-memory-dot');
-const label = document.querySelector('[data-i18n="memoryStatus"]');
-const activeCount = state.memories.filter(m => m.active).length;
 if (state.settings.memoryEnabled) {
 dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-if (label) label.textContent = `$DIL0 ($DIL1)`;
 } else {
 dot.className = 'w-2 h-2 rounded-full bg-slate-500 shrink-0';
-if (label) label.textContent = dict.memoryOff;
 }
 }
 function extractMemoriesFromMessage(text) {
@@ -1445,8 +693,6 @@ if (!state.settings.memoryEnabled || !text) return;
 const patterns = [
 /(?:benim adım|adım|ismim)\s+([a-zA-ZçğıöşüÇĞİÖŞÜ\s]{2,25})/i,
 /(?:ben)\s+(\d{1,2})\s+(?:yaşındayım)/i,
-/(?:mesleğim|iş[iı]m)\s+([a-zA-ZçğıöşüÇĞİÖŞÜ\s]{2,35})/i,
-/(?:sevdiğim|en sevdiğim)\s+([a-zA-ZçğıöşüÇĞİÖŞÜ0-9\s]{2,40})/i,
 /(?:unutma|hatırla|bunu kaydet)[:\s]+(.{4,90})/i
 ];
 for (const regex of patterns) {
@@ -1455,27 +701,22 @@ if (match && match[0]) {
 const cleanFact = match[0].trim().replace(/[.!?]+$/, '');
 const exists = state.memories.some(m => m.text.toLowerCase() === cleanFact.toLowerCase());
 if (!exists && cleanFact.length >= 4) {
-state.memories.unshift({
-id: 'mem_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-text: cleanFact,
-active: true,
-createdAt: new Date().toLocaleDateString('tr-TR')
-});
+state.memories.unshift({ id: 'mem_' + Date.now(), text: cleanFact, active: true, createdAt: new Date().toLocaleDateString('tr-TR') });
 saveMemories();
-showToast('Yeni bilgi ÖMER AI hafızasına kaydedildi.', 'info');
+showToast('Yeni bilgi hafızaya kaydedildi.', 'info');
 break;
 }
 }
 }
 }
-  function addManualMemory() {
+function addManualMemory() {
 const input = document.getElementById('new-memory-input');
 const val = input.value.trim();
-if (!val) { showToast('Lütfen hafızaya eklenecek bir bilgi yazın.', 'warning'); return; }
+if (!val) return;
 state.memories.unshift({ id: 'mem_' + Date.now(), text: val, active: true, createdAt: new Date().toLocaleDateString('tr-TR') });
 input.value = '';
 saveMemories();
-showToast('Bilgi hafızaya eklendi.', 'success');
+showToast('Bilgi eklendi.', 'success');
 }
 function toggleMemoryItem(id) {
 const item = state.memories.find(m => m.id === id);
@@ -1484,40 +725,21 @@ if (item) { item.active = !item.active; saveMemories(); }
 function deleteMemoryItem(id) {
 state.memories = state.memories.filter(m => m.id !== id);
 saveMemories();
-showToast('Hafıza kaydı silindi.', 'info');
-}
-function clearAllMemories() {
-openConfirmModal('Hafızayı Temizle', 'Tüm hafıza kayıtları silinecek. Onaylıyor musunuz?', () => {
-state.memories = [];
-saveMemories();
-showToast('Tüm hafıza temizlendi.', 'success');
-});
 }
 function renderMemoryList() {
 const container = document.getElementById('memory-items-list');
 if (!container) return;
 if (state.memories.length === 0) {
-container.innerHTML = `<div class="text-center py-6 text-xs text-slate-500 border border-dashed border-slate-700 rounded-2xl">Henüz kayıtlı hafıza yok.</div>`;
+container.innerHTML = <div class="text-center py-4 text-xs text-slate-500">Henüz kayıtlı hafıza yok.</div>;
 return;
 }
-  container.innerHTML = state.memories.map(item => `
-<div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#070b18] border ${item.active ? 'border-purple-500/30' : 'border-slate-800 opacity-60'}">
-  <div class="min-w-0 flex-1">
-    <p class="text-xs sm:text-sm text-slate-200 break-words">${escapeHtml(item.text)}</p>
-    <span class="text-[10px] text-slate-500">${item.createdAt || ''}</span>
-  </div>
-  <div class="flex items-center gap-1.5 shrink-0">
-    <button onclick="toggleMemoryItem('${item.id}')" class="px-2 py-1 rounded-lg text-[11px] font-medium ${item.active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-300'}">${item.active ? 'Açık' : 'Kapalı'}</button>
-    <button onclick="deleteMemoryItem('${item.id}')" class="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/20">Sil</button>
-  </div>
-</div>
-`).join('');
-  }
+container.innerHTML = state.memories.map(item => <div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#070b18] border border-purple-500/30"> <p class="text-xs text-slate-200 break-words flex-1">${escapeHtml(item.text)}</p> <button onclick="deleteMemoryItem('${item.id}')" class="text-rose-400 text-xs">Sil</button> </div>).join('');
+}
 function buildCompiledMemoryString() {
 if (!state.settings.memoryEnabled) return '';
-const activeItems = state.memories.filter(m => m.active).map(m => `- ${m.text}`);
+const activeItems = state.memories.filter(m => m.active).map(m => - ${m.text});
 if (activeItems.length === 0) return '';
-return `Kullanıcı Hakkında Hatırlanan Bilgiler:\n${activeItems.join('\n')}`;
+return Kullanıcı Hakkında Bilgiler:\n${activeItems.join('\n')};
 }
 function getActiveChat() { return state.chats.find(c => c.id === state.activeChatId) || null; }
 function createNewChat(shouldSwitch = true) {
@@ -1527,7 +749,7 @@ state.activeChatId = newChat.id;
 saveChats();
 renderChatHistory();
 renderActiveChatMessages();
-if (shouldSwitch) { switchMode('chat'); toggleSidebar(false); setTimeout(() => document.getElementById('chat-input')?.focus(), 100); }
+if (shouldSwitch) { switchMode('chat'); toggleSidebar(false); }
 }
 function selectChat(chatId) {
 state.activeChatId = chatId;
@@ -1547,42 +769,26 @@ else { createNewChat(false); return; }
 saveChats();
 renderChatHistory();
 renderActiveChatMessages();
-showToast('Sohbet silindi.', 'info');
-}
-function clearAllChats() {
-openConfirmModal('Tüm Sohbetleri Temizle', 'Tüm sohbet geçmişi silinecek. Onaylıyor musunuz?', () => {
-state.chats = [];
-createNewChat(false);
-saveChats();
-renderChatHistory();
-renderActiveChatMessages();
-showToast('Sohbetler temizlendi.', 'success');
-});
-}
-function exportAllChats() {
-if (state.chats.length === 0) { showToast('Dışa aktarılacak sohbet yok.', 'warning'); return; }
-const exportPayload = { platform: 'ÖMER AI', exportedAt: new Date().toISOString(), chats: state.chats };
-triggerFileDownload(`omer-ai-sohbetler-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(exportPayload, null, 2), 'application/json');
 }
 function renderChatHistory() {
 const listEl = document.getElementById('chat-history-list');
 const countBadge = document.getElementById('chat-count-badge');
-const dict = TRANSLATIONS[state.settings.language] || TRANSLATIONS['Türkçe'];
 countBadge.textContent = state.chats.length;
-if (state.chats.length === 0) { listEl.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">${dict.noChats}</div>`; return; }
+if (state.chats.length === 0) { listEl.innerHTML = <div class="text-xs text-slate-500 text-center py-4">Sohbet yok.</div>; return; }
 listEl.innerHTML = state.chats.map(chat => {
 const isActive = chat.id === state.activeChatId;
-return `<div onclick="selectChat('${chat.id}')"</div>';
+return <div onclick="selectChat('${chat.id}')" class="group flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition ${isActive ? 'bg-purple-600/25 border border-purple-500/40 text-white' : 'hover:bg-white/5 text-slate-300'}"> <span class="text-xs font-medium truncate flex-1">${escapeHtml(chat.title)}</span> <button onclick="deleteChat(event, '${chat.id}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-400 text-xs">Sil</button> </div>;
 }).join('');
 }
-function renderActiveChatMessages() {
+
+  function renderActiveChatMessages() {
 const chat = getActiveChat();
 const welcome = document.getElementById('welcome-screen');
 const list = document.getElementById('messages-list');
 if (!chat || chat.messages.length === 0) { welcome.classList.remove('hidden'); list.innerHTML = ''; return; }
 welcome.classList.add('hidden');
 list.innerHTML = '';
-chat.messages.forEach((msg, idx) => { appendMessageElement(msg.role, msg.content, idx, false, msg.image || null); });
+chat.messages.forEach((msg, idx) => appendMessageElement(msg.role, msg.content, idx, false, msg.image || null));
 scrollChatToBottom(true);
 }
 function appendMessageElement(role, content, msgIndex, animateTypewriter = false, imageDataUrl = null) {
@@ -1590,14 +796,14 @@ const list = document.getElementById('messages-list');
 const wrapper = document.createElement('div');
 wrapper.className = 'animate-msg w-full';
 if (role === 'user') {
-const imageHtml = imageDataUrl ? `<div class="mb-2"><img src="${imageDataUrl}" alt="Eklenen Görsel" class="max-h-60 rounded-xl border border-purple-300/40 object-contain shadow-md" /></div>` : '';
-wrapper.innerHTML = `<div class="flex justify-end"> <div class="max-w-[88%] sm:max-w-[76%] rounded-2xl rounded-tr-sm brand-gradient px-4 py-3 text-sm sm:text-base text-white shadow-lg break-words leading-relaxed"> ${imageHtml} ${escapeHtml(content).replace(/\n/g, '<br>')} </div> </div>`;
+const imgTag = imageDataUrl ? <div class="mb-2"><img src="${imageDataUrl}" class="max-h-60 rounded-xl object-contain" /></div> : '';
+wrapper.innerHTML = <div class="flex justify-end"><div class="max-w-[85%] rounded-2xl brand-gradient px-4 py-3 text-sm text-white shadow-lg">${imgTag}${escapeHtml(content).replace(/\n/g, '<br>')}</div></div>;
 list.appendChild(wrapper);
 scrollChatToBottom(true);
 return null;
 } else {
 const bubbleId = 'ai-msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
-wrapper.innerHTML = `<div class="flex items-start gap-2.5 sm:gap-3"> </div>';
+wrapper.innerHTML = <div class="flex items-start gap-3"> <div class="w-8 h-8 rounded-xl brand-gradient p-0.5 shrink-0 mt-0.5"> <div class="w-full h-full bg-[#060913] rounded-[10px] flex items-center justify-center text-xs text-purple-300 font-bold">AI</div> </div> <div class="flex-1 min-w-0 max-w-[90%]"> <div id="${bubbleId}" data-raw="${encodeURIComponent(content)}" class="glass-card rounded-2xl px-4 py-3.5 text-sm text-slate-100 md-content">${animateTypewriter ? '' : parseMarkdownSafe(content)}</div> </div> </div>;
 list.appendChild(wrapper);
 scrollChatToBottom(true);
 return document.getElementById(bubbleId);
@@ -1606,16 +812,9 @@ return document.getElementById(bubbleId);
 function typewriterRender(targetEl, fullText) {
 return new Promise(resolve => {
 if (!targetEl) return resolve();
-const words = fullText.split(/(\s+)/);
-let idx = 0;
-let current = '';
-const step = words.length > 250 ? 4 : (words.length > 100 ? 2 : 1);
-const interval = setInterval(() => {
-for (let s = 0; s < step && idx < words.length; s++, idx++) current += words[idx];
-targetEl.innerHTML = parseMarkdownSafe(current);
-scrollChatToBottom(false);
-if (idx >= words.length) { clearInterval(interval); targetEl.innerHTML = parseMarkdownSafe(fullText); scrollChatToBottom(true); resolve(); }
-}, 22);
+targetEl.innerHTML = parseMarkdownSafe(fullText);
+scrollChatToBottom(true);
+resolve();
 });
 }
 function scrollChatToBottom(force = false) {
@@ -1629,54 +828,28 @@ function quickStartPrompt(text) {
 document.getElementById('chat-input').value = text;
 sendChatMessage();
 }
-// =========================================================================
-// GÖRSEL EKLEME VE ANALİZİ İŞLEVLERİ
-// =========================================================================
 function handleChatImageAttach(event) {
 const file = event.target.files && event.target.files[0];
 if (!file) return;
-if (!file.type.startsWith('image/')) { showToast('Lütfen geçerli bir görsel seçin.', 'error'); return; }
-if (file.size > 8 * 1024 * 1024) { showToast('Görsel boyutu 8 MB sınırını aşıyor.', 'warning'); return; }
 const reader = new FileReader();
 reader.onload = (e) => {
-const img = new Image();
-img.onload = () => {
-const maxDim = 1280;
-let w = img.width, h = img.height;
-if (w > maxDim || h > maxDim) {
-if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-else { w = Math.round((w * maxDim) / h); h = maxDim; }
-}
-const canvas = document.createElement('canvas');
-canvas.width = w; canvas.height = h;
-const ctx = canvas.getContext('2d');
-ctx.drawImage(img, 0, 0, w, h);
-const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.86);
-state.attachedImageBase64 = optimizedDataUrl;
+state.attachedImageBase64 = e.target.result;
 state.attachedImageName = file.name;
-state.attachedImageMime = 'image/jpeg';
-document.getElementById('chat-selected-img-preview').src = optimizedDataUrl;
-document.getElementById('chat-selected-img-name').textContent = `${file.name} (${w}x${h})`;
+document.getElementById('chat-selected-img-preview').src = e.target.result;
+document.getElementById('chat-selected-img-name').textContent = file.name;
 document.getElementById('chat-image-preview-bar').classList.remove('hidden');
-showToast('Görsel eklendi. Mesajınızı yazıp analiz isteyebilirsiniz.', 'success');
-};
-img.src = e.target.result;
+showToast('Görsel eklendi.', 'success');
 };
 reader.readAsDataURL(file);
 }
 function removeAttachedImage() {
 state.attachedImageBase64 = null;
 state.attachedImageName = '';
-state.attachedImageMime = '';
 document.getElementById('chat-image-preview-bar').classList.add('hidden');
-document.getElementById('chat-image-file-input').value = '';
 }
 function analyzeAttachedImageNow() {
-if (!state.attachedImageBase64) { showToast('Önce bir görsel seçmelisiniz.', 'warning'); return; }
-const input = document.getElementById('chat-input');
-if (!input.value.trim()) {
-input.value = 'Bu görseli detaylıca analiz et: içerisindeki nesneleri, yazıları, renkleri ve temayı açıkla.';
-}
+if (!state.attachedImageBase64) return;
+document.getElementById('chat-input').value = 'Bu görseli analiz et.';
 sendChatMessage();
 }
 async function sendChatMessage() {
@@ -1685,12 +858,11 @@ const input = document.getElementById('chat-input');
 const rawMessage = input.value.trim();
 const attachedImage = state.attachedImageBase64;
 if (!rawMessage && !attachedImage) return;
-if (!navigator.onLine) { showToast('İnternet bağlantınız yok.', 'error'); return; }
 const chat = getActiveChat();
 if (!chat) return;
-const displayMessage = rawMessage || '🖼️ [Görsel Analizi İsteği] Bu görseli detaylı analiz et.';
+const displayMessage = rawMessage || '🖼️ [Görsel Analizi İsteği]';
 if (chat.messages.length === 0) {
-chat.title = displayMessage.length > 36 ? displayMessage.slice(0, 36) + '...' : displayMessage;
+chat.title = displayMessage.slice(0, 36);
 renderChatHistory();
 }
 chat.messages.push({ role: 'user', content: displayMessage, image: attachedImage || null });
@@ -1699,104 +871,35 @@ document.getElementById('welcome-screen').classList.add('hidden');
 appendMessageElement('user', displayMessage, chat.messages.length - 1, false, attachedImage || null);
 if (rawMessage) extractMemoriesFromMessage(rawMessage);
 input.value = '';
-input.style.height = 'auto';
 removeAttachedImage();
 state.isSending = true;
-document.getElementById('btn-send-chat').disabled = true;
 document.getElementById('chat-loading').classList.remove('hidden');
-scrollChatToBottom(true);
 try {
-let messageWithHint = displayMessage;
-if (attachedImage) messageWithHint += '\n[Sistem Notu: Kullanıcı görsel yükledi. Lütfen görseli detaylıca analiz et.]';
-const recentHistory = chat.messages.slice(-13, -1).map(m => ({ role: m.role, content: m.content }));
-const payload = {
-message: messageWithHint,
-gecmis: recentHistory,
-hafiza: buildCompiledMemoryString(),
-dil: state.settings.language,
-kisilik: state.settings.personality
-};
-if (attachedImage) {
-payload.gorsel = attachedImage;
-payload.image = attachedImage;
-payload.imageBase64 = attachedImage.split(',')[1];
-payload.mimeType = 'image/jpeg';
-}
 const response = await fetch(${API_BASE_URL}/api/chat, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
+body: JSON.stringify({ message: displayMessage, hafiza: buildCompiledMemoryString(), dil: state.settings.language, kisilik: state.settings.personality })
 });
-if (!response.ok) throw new Error(Sunucu hatası (${response.status}));
 const data = await response.json();
-const aiAnswer = (data && data.answer) ? String(data.answer) : 'Yanıt alınamadı.';
+const aiAnswer = data?.answer || 'Yanıt alındı.';
 document.getElementById('chat-loading').classList.add('hidden');
 chat.messages.push({ role: 'assistant', content: aiAnswer });
 saveChats();
 const targetEl = appendMessageElement('assistant', aiAnswer, chat.messages.length - 1, true);
 await typewriterRender(targetEl, aiAnswer);
-if (state.settings.ttsEnabled) speakText(aiAnswer);
-} catch (error) {
+} catch(e) {
 document.getElementById('chat-loading').classList.add('hidden');
-const errMsg = ⚠️ Bağlantı hatası: ${error.message};
-chat.messages.push({ role: 'assistant', content: errMsg });
-saveChats();
-appendMessageElement('assistant', errMsg, chat.messages.length - 1, false);
+showToast('Sunucu bağlantı hatası.', 'error');
 } finally {
 state.isSending = false;
-document.getElementById('btn-send-chat').disabled = false;
-input.focus();
 }
-}
-function cleanTextForSpeech(rawText) {
-return rawText.replace(/[\s\S]*?/g, ' Kod bloğu oluşturuldu. ').replace(/([^]+)`/g, '$1').replace(/[#*_~>[]()]/g, ' ').replace(/\s+/g, ' ').trim();
-}
-function speakText(rawText) {
-if (!('speechSynthesis' in window)) return;
-window.speechSynthesis.cancel();
-const clean = cleanTextForSpeech(rawText);
-if (!clean) return;
-const utterance = new SpeechSynthesisUtterance(clean);
-utterance.lang = (TRANSLATIONS[state.settings.language] || TRANSLATIONS['Türkçe']).langCode;
-utterance.rate = state.settings.speechRate || 1.0;
-const stopBtn = document.getElementById('btn-stop-speech');
-utterance.onstart = () => { stopBtn.classList.remove('hidden'); stopBtn.classList.add('inline-flex'); };
-utterance.onend = () => { stopBtn.classList.add('hidden'); stopBtn.classList.remove('inline-flex'); };
-window.speechSynthesis.speak(utterance);
-}
-function speakBubbleText(bubbleId) {
-const el = document.getElementById(bubbleId);
-if (el) speakText(decodeURIComponent(el.getAttribute('data-raw') || ''));
-}
-function stopSpeaking() {
-if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-const stopBtn = document.getElementById('btn-stop-speech');
-stopBtn.classList.add('hidden'); stopBtn.classList.remove('inline-flex');
-}
-function testVoicePreview() { speakText('Merhaba, ses hızı ayarınız test ediliyor.'); }
-let activeRecognition = null;
-function toggleVoiceInput(targetInputId, btnId) {
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if (!SpeechRecognition) { showToast('Sesli giriş desteklenmiyor.', 'warning'); return; }
-if (activeRecognition) { activeRecognition.stop(); return; }
-const targetInput = document.getElementById(targetInputId);
-const micBtn = document.getElementById(btnId);
-try {
-const recognition = new SpeechRecognition();
-recognition.lang = (TRANSLATIONS[state.settings.language] || TRANSLATIONS['Türkçe']).langCode;
-recognition.onstart = () => { activeRecognition = recognition; micBtn.classList.add('mic-recording'); };
-recognition.onresult = (e) => { targetInput.value += e.results[0][0].transcript; targetInput.dispatchEvent(new Event('input')); };
-recognition.onend = () => { micBtn.classList.remove('mic-recording'); activeRecognition = null; };
-recognition.start();
-} catch (err) { showToast('Mikrofon hatası', 'error'); }
 }
 async function runCodeStudio() {
 const action = document.getElementById('code-action-select').value;
 const lang = document.getElementById('code-lang-select').value;
 const prompt = document.getElementById('code-prompt-input').value.trim();
-if (!prompt) { showToast('Lütfen istek yazın.', 'warning'); return; }
+if (!prompt) { showToast('İstek yazın.', 'warning'); return; }
 document.getElementById('code-studio-status').classList.remove('hidden');
-document.getElementById('code-studio-output').classList.add('hidden');
 try {
 const res = await fetch(${API_BASE_URL}/api/studio, {
 method: 'POST',
@@ -1806,13 +909,13 @@ body: JSON.stringify({ mode: 'code', prompt: ${action} (${lang}): ${prompt} })
 const data = await res.json();
 document.getElementById('code-studio-output').innerHTML = <div class="glass-card p-4 rounded-2xl md-content">${parseMarkdownSafe(data.answer)}</div>;
 document.getElementById('code-studio-output').classList.remove('hidden');
-} catch (e) { showToast('Kodlama stüdyosu hatası.', 'error'); }
+} catch(e) { showToast('Kodlama stüdyosu hatası.', 'error'); }
 finally { document.getElementById('code-studio-status').classList.add('hidden'); }
 }
 function setProjectPreset(text) { document.getElementById('project-prompt-input').value = text; }
 async function runProjectBuilder() {
 const prompt = document.getElementById('project-prompt-input').value.trim();
-if (!prompt) { showToast('Proje tarifi yazın.', 'warning'); return; }
+if (!prompt) return;
 document.getElementById('project-status').classList.remove('hidden');
 try {
 const res = await fetch(${API_BASE_URL}/api/studio, {
@@ -1821,42 +924,30 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ mode: 'project', prompt })
 });
 const data = await res.json();
-state.activeProjectFiles = normalizeStudioFiles(data.files, data.answer, 'proje');
 document.getElementById('project-result-container').innerHTML = <div class="glass-card p-4 rounded-2xl md-content">${parseMarkdownSafe(data.answer)}</div>;
 document.getElementById('project-result-container').classList.remove('hidden');
-} catch (e) { showToast('Proje hatası.', 'error'); }
+} catch(e) { showToast('Proje hatası.', 'error'); }
 finally { document.getElementById('project-status').classList.add('hidden'); }
 }
-// =========================================================================
-// 3D & 2D OYUN OLUŞTURUCU (Three.js Entegrasyonlu)
-// =========================================================================
 function setGamePreset(text) { document.getElementById('game-prompt-input').value = text; }
 async function runGameGenerator() {
 const prompt = document.getElementById('game-prompt-input').value.trim();
-if (!prompt) { showToast('Oyun tarifi yazın.', 'warning'); return; }
-const statusBox = document.getElementById('game-status');
-const previewCard = document.getElementById('game-preview-card');
-statusBox.classList.remove('hidden');
-previewCard.classList.add('hidden');
-const is3D = /3d|üç boyut|uc boyut|three.js|threejs|perspektif/i.test(prompt);
-const engineeredPrompt = Oyun İsteği: ${prompt} Kurallar: Oyunu tek bir HTML dosyası olarak üret. ${is3D ? 'Mutlaka <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script> kütüphanesini dahil et. Three.js ile 3D sahne, kamera, ışık, mesh nesneleri, 60 FPS oyun döngüsü ve ekranda mobil dokunmatik kontrol butonları oluştur.' : 'Canvas 2D veya CSS tabanlı eğlenceli oyun yap.'} Klavye ve dokunmatik mobil kontroller eksiksiz olsun..trim();
+if (!prompt) return;
+document.getElementById('game-status').classList.remove('hidden');
 try {
 const res = await fetch(${API_BASE_URL}/api/studio, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ mode: 'game', prompt: engineeredPrompt })
+body: JSON.stringify({ mode: 'game', prompt: Three.js kullanarak tek dosyalık oynanabilir 3D oyun yap: ${prompt} })
 });
 const data = await res.json();
-const html = bundleFilesIntoSingleHtml(normalizeStudioFiles(data.files, data.answer, 'oyun'), 'ÖMER AI Oyun');
+const html = bundleFilesIntoSingleHtml(data.files, data.answer);
 state.activeGameHtml = html;
-previewCard.innerHTML = <div class="glass-card rounded-3xl p-6 border border-emerald-500/40 space-y-4 animate-msg"> <h3 class="text-xl font-bold text-white">🎮 Oyununuz Hazır!</h3> <p class="text-xs text-slate-300">İzole oyun alanında anında oynayabilir veya indirebilirsiniz.</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <button onclick="launchSandboxedGame(state.activeGameHtml, 'ÖMER AI Oyun')" class="py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-extrabold text-base flex items-center justify-center gap-2 shadow-xl cursor-pointer"> ▶️ OYUNU OYNA </button> <button onclick="downloadActiveGame()" class="py-4 px-6 rounded-2xl bg-navy-800 border border-purple-500/40 text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer"> 📥 .HTML İndir </button> </div> </div>;
-previewCard.classList.remove('hidden');
-showToast('Oyun üretildi!', 'success');
-} catch (e) {
-showToast('Oyun oluşturma hatası.', 'error');
-} finally {
-statusBox.classList.add('hidden');
-}
+document.getElementById('game-preview-card').innerHTML = <div class="glass-card rounded-3xl p-6 border border-emerald-500/45 space-y-4"> <h3 class="text-xl font-bold text-white">🎮 Oyununuz Hazır!</h3> <button onclick="launchSandboxedGame(state.activeGameHtml, 'ÖMER AI Oyun')" class="py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold">▶️ OYUNU OYNA</button> </div>;
+document.getElementById('game-preview-card').classList.remove('hidden');
+showToast('Oyun hazır!', 'success');
+} catch(e) { showToast('Oyun hatası.', 'error'); }
+finally { document.getElementById('game-status').classList.add('hidden'); }
 }
 function launchSandboxedGame(html, title) {
 document.getElementById('game-player-title').textContent = title;
@@ -1873,22 +964,19 @@ document.getElementById('game-sandbox-iframe').srcdoc = '';
 }
 function downloadActiveGame() {
 if (!state.activeGameHtml) return;
-triggerFileDownload('omer-ai-oyun.html', state.activeGameHtml, 'text/html');
+const blob = new Blob([state.activeGameHtml], { type: 'text/html' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url; a.download = 'omer-ai-oyun.html';
+document.body.appendChild(a); a.click();
+document.body.removeChild(a);
 }
-function normalizeStudioFiles(apiFiles, fallback, def) {
-if (Array.isArray(apiFiles) && apiFiles.length > 0) return apiFiles;
-return [{ name: ${def}.html, content: fallback }];
-}
-function bundleFilesIntoSingleHtml(files, title) {
+function bundleFilesIntoSingleHtml(files, fallback) {
+if (Array.isArray(files) && files.length > 0) {
 const htmlFile = files.find(f => f.name.endsWith('.html')) || files[0];
-let html = htmlFile ? htmlFile.content : '';
-const needsThree = /\bTHREE\b/.test(html) && !html.includes('three.min.js');
-const threeTag = needsThree ? '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>' : '';
-if (!html.includes('<html')) {
-return <!DOCTYPE html><html><head><meta charset="UTF-8">${threeTag}<title>${title}</title></head><body>${html}</body></html>;
+return htmlFile.content;
 }
-if (threeTag && html.includes('</head>')) html = html.replace('</head>', ${threeTag}</head>);
-return html;
+return fallback;
 }
 function escapeHtml(str) {
 return String(str).replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
@@ -1914,53 +1002,23 @@ toggleSidebar(false);
 }
 function toggleThreeDotMenu(e) {
 e.stopPropagation();
-const menu = document.getElementById('three-dot-menu');
-menu.classList.toggle('hidden');
+document.getElementById('three-dot-menu').classList.toggle('hidden');
 }
 function handleMenuAction(action) {
 document.getElementById('three-dot-menu').classList.add('hidden');
-if (action === 'settings') { syncSettingsModalUI(); openModal('settings-modal'); }
+if (action === 'settings') openModal('settings-modal');
 else if (action === 'memory') { renderMemoryList(); openModal('memory-modal'); }
-else if (action === 'export') exportAllChats();
-else if (action === 'clear') clearAllChats();
 else if (action === 'about') openModal('about-modal');
 }
 function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
 function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
-function openConfirmModal(title, msg, onConfirm) {
-document.getElementById('confirm-title').textContent = title;
-document.getElementById('confirm-message').textContent = msg;
-state.confirmCallback = onConfirm;
-openModal('confirm-modal');
-}
-function closeConfirmModal(confirmed) {
-closeModal('confirm-modal');
-if (confirmed && typeof state.confirmCallback === 'function') state.confirmCallback();
-state.confirmCallback = null;
-}
 function showToast(msg, type = 'info') {
 const c = document.getElementById('toast-container');
 const t = document.createElement('div');
-t.className = pointer-events-auto px-4 py-3 rounded-2xl border shadow-xl text-xs font-medium bg-[#0e152b] border-purple-500/50 text-purple-100 animate-msg;
+t.className = 'pointer-events-auto px-4 py-3 rounded-2xl border shadow-xl text-xs font-medium bg-[#0e152b] border-purple-500/50 text-purple-100 animate-msg';
 t.textContent = msg;
 c.appendChild(t);
 setTimeout(() => t.remove(), 3200);
-}
-function updateOnlineStatus() {
-const dot = document.getElementById('connection-dot');
-const label = document.getElementById('connection-label');
-if (navigator.onLine) { dot.className = 'w-2 h-2 rounded-full bg-emerald-400'; label.textContent = 'Çevrimiçi'; }
-else { dot.className = 'w-2 h-2 rounded-full bg-amber-400'; label.textContent = 'Çevrimdışı'; }
-}
-function triggerFileDownload(filename, content, mime) {
-const blob = new Blob([content], { type: mime });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url; a.download = filename;
-document.body.appendChild(a); a.click();
-document.body.removeChild(a);
-setTimeout(() => URL.revokeObjectURL(url), 1000);
-showToast("${filename}" indiriliyor., 'success');
 }
 document.addEventListener('DOMContentLoaded', () => {
 generateOmerAiIcon192();
@@ -1973,13 +1031,7 @@ const chatInput = document.getElementById('chat-input');
 chatInput.addEventListener('keydown', (e) => {
 if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
 });
-chatInput.addEventListener('input', () => {
-chatInput.style.height = 'auto';
-chatInput.style.height = Math.min(chatInput.scrollHeight, 144) + 'px';
-});
 document.addEventListener('click', () => document.getElementById('three-dot-menu').classList.add('hidden'));
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
 });
 </script>
 </body>
