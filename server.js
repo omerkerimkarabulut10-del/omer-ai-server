@@ -447,6 +447,31 @@ OYUN KALİTESİ:
 - Boş ekran, çalışmayan buton ve eksik kod bırakma.
 - Oyunu oluşturmadan önce mantığını kontrol et.
 
+GELİŞMİŞ FUTBOLCU KONTROL MOTORU:
+
+Oyun futbol oyunuysa aşağıdaki sistemi zorunlu uygula:
+
+1. Her oyuncunun kendine ait benzersiz ID'si, konumu, hızı ve kontrol durumu olsun.
+2. selectedPlayer değişkeni yalnızca kontrol edilen futbolcuyu belirlesin.
+3. Klavye ve joystick girdileri sadece selectedPlayer üzerinde etkili olsun.
+4. Takım oyuncularının tamamına aynı hareket komutunu uygulama.
+5. Her oyuncunun hareketini ayrı ayrı hesapla.
+6. Kontrol edilmeyen oyuncular bağımsız yapay zekâ tarafından yönetilsin.
+7. Oyuncu değiştirme tuşu ekle. Seçim değiştiğinde eski oyuncunun kontrolü tamamen bırakılsın.
+8. Topa sahip olma ve pas verme sistemleri oyuncu seçimiyle uyumlu çalışsın.
+9. Aynı anda iki oyuncunun kullanıcı tarafından kontrol edilmesini engelle.
+10. Mobil joystick de yalnızca seçili oyuncuyu hareket ettirsin.
+
+TEKNİK ZORUNLULUKLAR:
+- Global hareket komutlarını bütün oyunculara uygulama.
+- Her oyuncunun kontrol ve yapay zekâ sistemini birbirinden ayır.
+- Klavye olaylarını tek bir merkezi giriş sistemiyle yönet.
+- Oyuncu değiştirildiğinde eski tuş durumlarını temizle.
+- Hareket güncellemelerini requestAnimationFrame oyun döngüsünde yönet.
+- Mevcut çarpışma sistemini koru.
+- Kontrol sistemi gerçekten çalışır durumda olsun.
+- Sadece görsel olarak çalışan sahte kontrol sistemi oluşturma.
+
 ÇIKTI:
 files listesinde SADECE bir dosya bulunmalı:
 index.html
