@@ -1515,9 +1515,9 @@ return;
   }
 function buildCompiledMemoryString() {
 if (!state.settings.memoryEnabled) return '';
-const activeItems = state.memories.filter(m => m.active).map(m => - ${m.text});
+const activeItems = state.memories.filter(m => m.active).map(m => `- ${m.text}`);
 if (activeItems.length === 0) return '';
-return Kullanıcı Hakkında Hatırlanan Bilgiler:\n${activeItems.join('\n')};
+return `Kullanıcı Hakkında Hatırlanan Bilgiler:\n${activeItems.join('\n')}`;
 }
 function getActiveChat() { return state.chats.find(c => c.id === state.activeChatId) || null; }
 function createNewChat(shouldSwitch = true) {
@@ -1562,17 +1562,17 @@ showToast('Sohbetler temizlendi.', 'success');
 function exportAllChats() {
 if (state.chats.length === 0) { showToast('Dışa aktarılacak sohbet yok.', 'warning'); return; }
 const exportPayload = { platform: 'ÖMER AI', exportedAt: new Date().toISOString(), chats: state.chats };
-triggerFileDownload(omer-ai-sohbetler-${new Date().toISOString().slice(0, 10)}.json, JSON.stringify(exportPayload, null, 2), 'application/json');
+triggerFileDownload(`omer-ai-sohbetler-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(exportPayload, null, 2), 'application/json');
 }
 function renderChatHistory() {
 const listEl = document.getElementById('chat-history-list');
 const countBadge = document.getElementById('chat-count-badge');
 const dict = TRANSLATIONS[state.settings.language] || TRANSLATIONS['Türkçe'];
 countBadge.textContent = state.chats.length;
-if (state.chats.length === 0) { listEl.innerHTML = <div class="text-xs text-slate-500 text-center py-4">${dict.noChats}</div>; return; }
+if (state.chats.length === 0) { listEl.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">${dict.noChats}</div>`; return; }
 listEl.innerHTML = state.chats.map(chat => {
 const isActive = chat.id === state.activeChatId;
-return <div onclick="selectChat('${chat.id}')" class="group flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition ${isActive ? 'bg-purple-600/25 border border-purple-500/40 text-white' : 'hover:bg-white/5 text-slate-300 border border-transparent'}"> <div class="flex items-center gap-2.5 min-w-0 flex-1"> <span class="text-xs font-medium truncate">${escapeHtml(chat.title)}</span> </div> <button onclick="deleteChat(event, '${chat.id}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-400 transition">Sil</button> </div>;
+return `<div onclick="selectChat('${chat.id}')"</div>';
 }).join('');
 }
 function renderActiveChatMessages() {
@@ -1590,14 +1590,14 @@ const list = document.getElementById('messages-list');
 const wrapper = document.createElement('div');
 wrapper.className = 'animate-msg w-full';
 if (role === 'user') {
-const imageHtml = imageDataUrl ? <div class="mb-2"><img src="${imageDataUrl}" alt="Eklenen Görsel" class="max-h-60 rounded-xl border border-purple-300/40 object-contain shadow-md" /></div> : '';
-wrapper.innerHTML = <div class="flex justify-end"> <div class="max-w-[88%] sm:max-w-[76%] rounded-2xl rounded-tr-sm brand-gradient px-4 py-3 text-sm sm:text-base text-white shadow-lg break-words leading-relaxed"> ${imageHtml} ${escapeHtml(content).replace(/\n/g, '<br>')} </div> </div>;
+const imageHtml = imageDataUrl ? `<div class="mb-2"><img src="${imageDataUrl}" alt="Eklenen Görsel" class="max-h-60 rounded-xl border border-purple-300/40 object-contain shadow-md" /></div>` : '';
+wrapper.innerHTML = `<div class="flex justify-end"> <div class="max-w-[88%] sm:max-w-[76%] rounded-2xl rounded-tr-sm brand-gradient px-4 py-3 text-sm sm:text-base text-white shadow-lg break-words leading-relaxed"> ${imageHtml} ${escapeHtml(content).replace(/\n/g, '<br>')} </div> </div>`;
 list.appendChild(wrapper);
 scrollChatToBottom(true);
 return null;
 } else {
 const bubbleId = 'ai-msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
-wrapper.innerHTML = <div class="flex items-start gap-2.5 sm:gap-3"> <div class="w-8 h-8 rounded-xl brand-gradient p-0.5 shrink-0 mt-0.5 shadow-md"> <div class="w-full h-full bg-[#060913] rounded-[10px] flex items-center justify-center font-bold text-xs text-purple-300">AI</div> </div> <div class="flex-1 min-w-0 max-w-[92%] sm:max-w-[84%]"> <div class="flex items-center gap-2 mb-1"> <span class="text-xs font-bold text-purple-300">ÖMER AI</span> <button onclick="speakBubbleText('${bubbleId}')" class="text-[11px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-purple-600/25 text-slate-400 hover:text-purple-200 transition">Dinle</button> </div> <div id="${bubbleId}" data-raw="${encodeURIComponent(content)}" class="glass-card rounded-2xl rounded-tl-sm px-4 py-3.5 text-sm sm:text-base text-slate-100 md-content break-words"> ${animateTypewriter ? '' : parseMarkdownSafe(content)} </div> </div> </div>;
+wrapper.innerHTML = `<div class="flex items-start gap-2.5 sm:gap-3"> </div>';
 list.appendChild(wrapper);
 scrollChatToBottom(true);
 return document.getElementById(bubbleId);
