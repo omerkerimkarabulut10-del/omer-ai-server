@@ -1434,7 +1434,7 @@ const label = document.querySelector('[data-i18n="memoryStatus"]');
 const activeCount = state.memories.filter(m => m.active).length;
 if (state.settings.memoryEnabled) {
 dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-if (label) label.textContent = ${dict.memoryStatus} (${activeCount});
+if (label) label.textContent = `$DIL0 ($DIL1)`;
 } else {
 dot.className = 'w-2 h-2 rounded-full bg-slate-500 shrink-0';
 if (label) label.textContent = dict.memoryOff;
@@ -1497,11 +1497,22 @@ function renderMemoryList() {
 const container = document.getElementById('memory-items-list');
 if (!container) return;
 if (state.memories.length === 0) {
-container.innerHTML = <div class="text-center py-6 text-xs text-slate-500 border border-dashed border-slate-700 rounded-2xl">Henüz kayıtlı hafıza yok.</div>;
+container.innerHTML = `<div class="text-center py-6 text-xs text-slate-500 border border-dashed border-slate-700 rounded-2xl">Henüz kayıtlı hafıza yok.</div>`;
 return;
 }
-container.innerHTML = state.memories.map(item => <div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#070b18] border ${item.active ? 'border-purple-500/30' : 'border-slate-800 opacity-60'}"> <div class="min-w-0 flex-1"> <p class="text-xs sm:text-sm text-slate-200 break-words">${escapeHtml(item.text)}</p> <span class="text-[10px] text-slate-500">${item.createdAt || ''}</span> </div> <div class="flex items-center gap-1.5 shrink-0"> <button onclick="toggleMemoryItem('${item.id}')" class="px-2 py-1 rounded-lg text-[11px] font-medium ${item.active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-300'}">${item.active ? 'Açık' : 'Kapalı'}</button> <button onclick="deleteMemoryItem('${item.id}')" class="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/20">Sil</button> </div> </div>).join('');
-}
+  container.innerHTML = state.memories.map(item => `
+<div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#070b18] border ${item.active ? 'border-purple-500/30' : 'border-slate-800 opacity-60'}">
+  <div class="min-w-0 flex-1">
+    <p class="text-xs sm:text-sm text-slate-200 break-words">${escapeHtml(item.text)}</p>
+    <span class="text-[10px] text-slate-500">${item.createdAt || ''}</span>
+  </div>
+  <div class="flex items-center gap-1.5 shrink-0">
+    <button onclick="toggleMemoryItem('${item.id}')" class="px-2 py-1 rounded-lg text-[11px] font-medium ${item.active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-300'}">${item.active ? 'Açık' : 'Kapalı'}</button>
+    <button onclick="deleteMemoryItem('${item.id}')" class="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/20">Sil</button>
+  </div>
+</div>
+`).join('');
+  }
 function buildCompiledMemoryString() {
 if (!state.settings.memoryEnabled) return '';
 const activeItems = state.memories.filter(m => m.active).map(m => - ${m.text});
@@ -1645,7 +1656,7 @@ state.attachedImageBase64 = optimizedDataUrl;
 state.attachedImageName = file.name;
 state.attachedImageMime = 'image/jpeg';
 document.getElementById('chat-selected-img-preview').src = optimizedDataUrl;
-document.getElementById('chat-selected-img-name').textContent = ${file.name} (${w}x${h});
+document.getElementById('chat-selected-img-name').textContent = `${file.name} (${w}x${h})`;
 document.getElementById('chat-image-preview-bar').classList.remove('hidden');
 showToast('Görsel eklendi. Mesajınızı yazıp analiz isteyebilirsiniz.', 'success');
 };
