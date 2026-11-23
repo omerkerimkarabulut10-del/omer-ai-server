@@ -6,11 +6,11 @@
 <style>
 *{box-sizing:border-box;margin:0}
 :root{--bg:#05050f;--sb:#080716;--card:#0c1124;--bd:#26214d;--tx:#e8e6f5;--mu:#8f8ca8;--p:#a855f7;--g:linear-gradient(90deg,#9333ea,#5b4fe8)}
-html,body{height:100%}
+html,body{height:100%;height:100dvh}
 body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,sans-serif;display:flex;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s;z-index:20}
-#sb.x{margin-left:-290px}
+
 .brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd)}
 .logo{width:46px;height:46px;border:2px solid #7c3aed;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #7c3aed55}
 .brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
@@ -40,7 +40,7 @@ header h1{font-size:22px}
 #wel h2{font-size:clamp(26px,5vw,44px);line-height:1.15}
 #wel h2 span{background:linear-gradient(90deg,#fff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}
 #wel p{color:var(--mu);margin:14px 0 26px;max-width:760px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;width:100%}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:14px;width:100%}
 .cd{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px;text-align:center}
 .cd h3{font-size:17px;display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:8px}
 .cd h3 i{font-style:normal;width:36px;height:36px;border-radius:10px;background:#1b1747;display:grid;place-items:center}
@@ -93,9 +93,20 @@ button:active{transform:scale(.94);filter:brightness(1.25)}
 #mic.on{animation:pl 1s infinite}
 @keyframes pl{50%{box-shadow:0 0 0 8px #b91c1c55}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-@media(max-width:800px){#sb{position:fixed;height:100%;margin-left:-290px}#sb.x{margin-left:0}.hint span:last-child{display:none}.chip{display:none}#go{padding:0 14px}}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+#sb button,.cd,.lb{unicode-bidi:plaintext}
+.m,#in{unicode-bidi:plaintext}
+pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
+.rtl #sb,.rtl #dg>div,.rtl #wel{direction:rtl}
+#bk{display:none;position:fixed;inset:0;background:#000a;z-index:15}
+@media(min-width:901px){#sb.c{margin-left:-290px}}
+@media(max-width:900px){#sb{position:fixed;top:0;bottom:0;left:0;width:min(290px,86vw);transform:translateX(-100%);transition:transform .25s;padding-top:calc(14px + env(safe-area-inset-top))}#sb.o{transform:none}#sb.o+#bk{display:block}}
+@media(max-width:600px){header{padding:10px 12px;gap:8px}header h1{font-size:19px}.chip,.hint{display:none}.m{max-width:97%}#chat{padding:12px 10px}#bar{padding:8px 10px calc(8px + env(safe-area-inset-bottom))}#box{padding:6px;gap:6px;border-radius:18px}#box .ib{width:40px;height:40px}#go{padding:0 14px;height:40px}#wel{padding:10px 2px}#wel .logo{width:72px;height:72px;margin-bottom:14px}#wel p{margin:10px 0 18px;font-size:15px}}
+@media(max-height:520px){#wel .logo,#wel p,.hint{display:none}}
+@media(min-width:1300px){#msgs{max-width:980px}}
+@media(pointer:coarse){.ib{min-width:44px;min-height:44px}.nv,.hi{padding:12px}#in{font-size:16px!important}}
 </style></head><body>
-<aside id="sb" class="x">
+<aside id="sb">
  <div class="brand"><div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.6"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 9v3"/></svg></div>
  <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
  <button id="new">＋ Yeni Sohbet</button>
@@ -103,7 +114,7 @@ button:active{transform:scale(.94);filter:brightness(1.25)}
  <div class="lb" style="border-top:1px solid var(--bd);padding-top:12px">SOHBET GEÇMİŞİ <span id="cnt"></span></div>
  <div id="hist"></div>
  <div class="ft"><button id="memb"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
-</aside>
+</aside><div id="bk"></div>
 <div id="main">
  <header><button class="ib" id="burger">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
  <button class="chip" id="tone"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
@@ -129,11 +140,92 @@ const MODES={chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir
 code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
 project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
 game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']};
-let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16},img=null,busy=false,rec=null;
+let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cur=()=>S.chats.find(c=>c.id===S.cur);
+let LG='tr';
+const LGS=[['auto','Otomatik / Auto'],['tr','Türkçe'],['en','English'],['de','Deutsch'],['es','Español'],['fr','Français'],['ar','العربية'],['ru','Русский']];
+const T=[
+[`Ultimate Yapay Zekâ & Stüdyo`,`Ultimate AI & Studio`,`Ultimate KI & Studio`,`IA Ultimate y Estudio`,`IA Ultimate & Studio`,`الذكاء الاصطناعي والاستوديو`,`Ultimate ИИ и студия`],
+[`＋ Yeni Sohbet`,`＋ New chat`,`＋ Neuer Chat`,`＋ Nuevo chat`,`＋ Nouveau chat`,`＋ محادثة جديدة`,`＋ Новый чат`],
+[`ÇALIŞMA ALANLARI`,`WORKSPACES`,`ARBEITSBEREICHE`,`ESPACIOS DE TRABAJO`,`ESPACES DE TRAVAIL`,`مساحات العمل`,`РАБОЧИЕ ПРОСТРАНСТВА`],
+[`SOHBET GEÇMİŞİ`,`CHAT HISTORY`,`CHATVERLAUF`,`HISTORIAL`,`HISTORIQUE`,`سجل الدردشات`,`ИСТОРИЯ ЧАТОВ`],
+[`Hafıza Aktif`,`Memory on`,`Speicher aktiv`,`Memoria activa`,`Mémoire active`,`الذاكرة مفعّلة`,`Память включена`],
+[`Çevrimiçi`,`Online`,`Online`,`En línea`,`En ligne`,`متصل`,`Онлайн`],
+[`Çevrimdışı`,`Offline`,`Offline`,`Sin conexión`,`Hors ligne`,`غير متصل`,`Не в сети`],
+[`Anahtar yok`,`No API key`,`Kein API-Schlüssel`,`Sin clave API`,`Pas de clé API`,`لا يوجد مفتاح`,`Нет API-ключа`],
+[`ÖMER AI Ultimate'e Hoş Geldiniz`,`Welcome to ÖMER AI Ultimate`,`Willkommen bei ÖMER AI Ultimate`,`Bienvenido a ÖMER AI Ultimate`,`Bienvenue sur ÖMER AI Ultimate`,`مرحبًا بك في ÖMER AI Ultimate`,`Добро пожаловать в ÖMER AI Ultimate`],
+[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.`,`Advanced AI chat, web search, image analysis, smart memory, voice input, a coding studio and a Three.js 3D game engine at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe, Coding-Studio und eine 3D-Spiele-Engine auf Three.js-Basis – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz, estudio de código y un motor de juegos 3D con Three.js, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales, studio de code et moteur de jeux 3D Three.js, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية، استوديو برمجة ومحرك ألعاب ثلاثية الأبعاد بتقنية Three.js بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод, студия кода и 3D-движок на Three.js — всё под рукой.`],
+[`Yapay Zekâ Sohbet`,`AI Chat`,`KI-Chat`,`Chat con IA`,`Chat IA`,`دردشة الذكاء الاصطناعي`,`ИИ-чат`],
+[`Kodlama Stüdyosu`,`Coding Studio`,`Coding-Studio`,`Estudio de código`,`Studio de code`,`استوديو البرمجة`,`Студия кода`],
+[`Proje Oluşturucu`,`Project Builder`,`Projekt-Builder`,`Creador de proyectos`,`Créateur de projets`,`منشئ المشاريع`,`Конструктор проектов`],
+[`3D Oyun Stüdyosu`,`3D Game Studio`,`3D-Spielestudio`,`Estudio de juegos 3D`,`Studio de jeux 3D`,`استوديو ألعاب 3D`,`Студия 3D-игр`],
+[`Sohbet`,`Chat`,`Chat`,`Chat`,`Chat`,`دردشة`,`Чат`],
+[`Kodlama`,`Coding`,`Coding`,`Código`,`Code`,`برمجة`,`Код`],
+[`Proje`,`Project`,`Projekt`,`Proyecto`,`Projet`,`مشروع`,`Проект`],
+[`3D Oyun`,`3D Game`,`3D-Spiel`,`Juego 3D`,`Jeu 3D`,`لعبة 3D`,`3D-игра`],
+[`ÖMER AI Ultimate'e bir mesaj yazın...`,`Message ÖMER AI Ultimate...`,`Nachricht an ÖMER AI Ultimate...`,`Escribe a ÖMER AI Ultimate...`,`Écrivez à ÖMER AI Ultimate...`,`اكتب رسالة إلى ÖMER AI Ultimate...`,`Напишите ÖMER AI Ultimate...`],
+[`Ne kodlayalım? Kod yazın, hata ayıklayın...`,`What shall we code? Write code, debug...`,`Was sollen wir programmieren? Code schreiben, Fehler suchen...`,`¿Qué programamos? Escribe código, depura...`,`Que codons-nous ? Écrivez, déboguez...`,`ماذا نبرمج؟ اكتب الكود وأصلح الأخطاء...`,`Что пишем? Код, отладка...`],
+[`Nasıl bir proje istiyorsun? (site, uygulama, araç...)`,`What project do you want? (site, app, tool...)`,`Welches Projekt möchtest du? (Website, App, Tool...)`,`¿Qué proyecto quieres? (sitio, app, herramienta...)`,`Quel projet voulez-vous ? (site, appli, outil...)`,`أي مشروع تريد؟ (موقع، تطبيق، أداة...)`,`Какой проект нужен? (сайт, приложение, инструмент...)`],
+[`Nasıl bir 3D oyun yapalım?`,`What 3D game shall we make?`,`Welches 3D-Spiel bauen wir?`,`¿Qué juego 3D hacemos?`,`Quel jeu 3D créons-nous ?`,`أي لعبة 3D نصنع؟`,`Какую 3D-игру сделаем?`],
+[`Akıllı Sohbet & Analiz`,`Smart Chat & Analysis`,`Smarter Chat & Analyse`,`Chat inteligente y análisis`,`Chat intelligent & analyse`,`دردشة ذكية وتحليل`,`Умный чат и анализ`],
+[`Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.`,`Ask questions, develop ideas and chat with a memory-enabled assistant that can search the web.`,`Stelle Fragen, entwickle Ideen und chatte mit einem Assistenten mit Gedächtnis und Websuche.`,`Haz preguntas, desarrolla ideas y chatea con un asistente con memoria y búsqueda web.`,`Posez des questions, développez vos idées et discutez avec un assistant à mémoire et recherche web.`,`اسأل وطوّر أفكارك وتحدث مع مساعد بذاكرة وبحث على الويب.`,`Задавайте вопросы, развивайте идеи и общайтесь с ассистентом с памятью и поиском в сети.`],
+[`HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.`,`Write and debug code in HTML, JS, Python and more.`,`Schreibe und debugge Code in HTML, JS, Python und mehr.`,`Escribe y depura código en HTML, JS, Python y más.`,`Écrivez et déboguez du code HTML, JS, Python et plus.`,`اكتب وأصلح الكود بـ HTML وJS وPython وغيرها.`,`Пишите и отлаживайте код на HTML, JS, Python и других языках.`],
+[`Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.`,`Build a working website or app from one message and preview it instantly.`,`Erstelle mit einer Nachricht eine funktionierende Website oder App und sieh sie sofort in der Vorschau.`,`Crea un sitio o app funcional con un mensaje y previsualízalo al instante.`,`Créez un site ou une appli fonctionnels en un message et prévisualisez-les aussitôt.`,`أنشئ موقعًا أو تطبيقًا يعمل برسالة واحدة وعاينه فورًا.`,`Создайте рабочий сайт или приложение одним сообщением и сразу посмотрите результат.`],
+[`Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.`,`Make playable 3D games in the browser with Three.js.`,`Baue spielbare 3D-Spiele im Browser mit Three.js.`,`Crea juegos 3D jugables en el navegador con Three.js.`,`Créez des jeux 3D jouables dans le navigateur avec Three.js.`,`اصنع ألعابًا ثلاثية الأبعاد قابلة للعب في المتصفح عبر Three.js.`,`Создавайте 3D-игры в браузере на Three.js.`],
+[`Enter: Gönder • Shift+Enter: Alt satır`,`Enter: Send • Shift+Enter: New line`,`Enter: Senden • Umschalt+Enter: Neue Zeile`,`Enter: Enviar • Mayús+Enter: Nueva línea`,`Entrée : envoyer • Maj+Entrée : nouvelle ligne`,`Enter: إرسال • Shift+Enter: سطر جديد`,`Enter: отправить • Shift+Enter: новая строка`],
+[`Gönder ➤`,`Send ➤`,`Senden ➤`,`Enviar ➤`,`Envoyer ➤`,`إرسال ➤`,`Отправить ➤`],
+[`Arkadaş canlısı`,`Friendly`,`Freundlich`,`Amistoso`,`Amical`,`ودّي`,`Дружелюбный`],
+[`Profesyonel`,`Professional`,`Professionell`,`Profesional`,`Professionnel`,`احترافي`,`Деловой`],
+[`Kısa & net`,`Short & clear`,`Kurz & klar`,`Breve y claro`,`Court & clair`,`قصير وواضح`,`Кратко и ясно`],
+[`Yeni sohbet`,`New chat`,`Neuer Chat`,`Nuevo chat`,`Nouveau chat`,`محادثة جديدة`,`Новый чат`],
+[`Ayarlar`,`Settings`,`Einstellungen`,`Ajustes`,`Réglages`,`الإعدادات`,`Настройки`],
+[`Görsel ekle`,`Add image`,`Bild hinzufügen`,`Añadir imagen`,`Ajouter une image`,`إضافة صورة`,`Добавить фото`],
+[`Sesle yaz`,`Dictate`,`Diktieren`,`Dictar`,`Dicter`,`إملاء صوتي`,`Диктовка`],
+[`💬 Yeni Sohbet`,`💬 New chat`,`💬 Neuer Chat`,`💬 Nuevo chat`,`💬 Nouveau chat`,`💬 محادثة جديدة`,`💬 Новый чат`],
+[`⚙️ Ayarlar`,`⚙️ Settings`,`⚙️ Einstellungen`,`⚙️ Ajustes`,`⚙️ Réglages`,`⚙️ الإعدادات`,`⚙️ Настройки`],
+[`Ton`,`Tone`,`Ton`,`Tono`,`Ton`,`النبرة`,`Тон`],
+[`Web araması`,`Web search`,`Websuche`,`Búsqueda web`,`Recherche web`,`البحث على الويب`,`Поиск в сети`],
+[`Yanıtı sesli oku`,`Read replies aloud`,`Antworten vorlesen`,`Leer respuestas en voz alta`,`Lire les réponses à voix haute`,`قراءة الردود بصوت عالٍ`,`Озвучивать ответы`],
+[`Yazı boyutu`,`Text size`,`Schriftgröße`,`Tamaño del texto`,`Taille du texte`,`حجم الخط`,`Размер текста`],
+[`Küçük`,`Small`,`Klein`,`Pequeño`,`Petit`,`صغير`,`Мелкий`],
+[`Normal`,`Normal`,`Normal`,`Normal`,`Normal`,`عادي`,`Обычный`],
+[`Büyük`,`Large`,`Groß`,`Grande`,`Grand`,`كبير`,`Крупный`],
+[`Hafızayı sil`,`Clear memory`,`Speicher löschen`,`Borrar memoria`,`Effacer la mémoire`,`مسح الذاكرة`,`Очистить память`],
+[`Geçmişi sil`,`Clear history`,`Verlauf löschen`,`Borrar historial`,`Effacer l'historique`,`مسح السجل`,`Очистить историю`],
+[`Tamam`,`OK`,`OK`,`Aceptar`,`OK`,`حسنًا`,`ОК`],
+[`Kayıtlı hafıza notu`,`Saved memory notes`,`Gespeicherte Notizen`,`Notas guardadas`,`Notes en mémoire`,`الملاحظات المحفوظة`,`Заметок в памяти`],
+[`Sohbet geçmişi`,`Chat history`,`Chatverlauf`,`Historial`,`Historique`,`سجل المحادثات`,`История чатов`],
+[`Tüm sohbetler silinsin mi?`,`Delete all chats?`,`Alle Chats löschen?`,`¿Borrar todos los chats?`,`Supprimer tous les chats ?`,`حذف كل المحادثات؟`,`Удалить все чаты?`],
+[`Vazgeç`,`Cancel`,`Abbrechen`,`Cancelar`,`Annuler`,`إلغاء`,`Отмена`],
+[`Hepsini sil`,`Delete all`,`Alle löschen`,`Borrar todo`,`Tout supprimer`,`حذف الكل`,`Удалить всё`],
+[`Hafıza`,`Memory`,`Speicher`,`Memoria`,`Mémoire`,`الذاكرة`,`Память`],
+[`Kayıtlı tüm notlar silinsin mi?`,`Delete all saved notes?`,`Alle gespeicherten Notizen löschen?`,`¿Borrar todas las notas guardadas?`,`Supprimer toutes les notes ?`,`حذف كل الملاحظات المحفوظة؟`,`Удалить все сохранённые заметки?`],
+[`Sil`,`Delete`,`Löschen`,`Borrar`,`Supprimer`,`حذف`,`Удалить`],
+[`Hafıza boş. Kaydetmek için mesaj kutusuna şunu yaz:\nhatırla: adım Ömer`,`Memory is empty. To save something, type in the message box:\nremember: my name is Ömer`,`Speicher ist leer. Zum Speichern schreibe ins Nachrichtenfeld:\nremember: mein Name ist Ömer`,`La memoria está vacía. Para guardar algo, escribe en el cuadro de mensaje:\nremember: me llamo Ömer`,`La mémoire est vide. Pour enregistrer, écrivez dans le champ de message :\nremember: je m'appelle Ömer`,`الذاكرة فارغة. للحفظ اكتب في مربع الرسالة:\nremember: اسمي Ömer`,`Память пуста. Чтобы сохранить, напишите в поле сообщения:\nremember: меня зовут Ömer`],
+[`Ses tanıma`,`Voice input`,`Spracheingabe`,`Entrada de voz`,`Saisie vocale`,`الإدخال الصوتي`,`Голосовой ввод`],
+[`Bu tarayıcı sesle yazmayı desteklemiyor. Chrome ile açmayı dene.`,`This browser does not support voice input. Try Chrome.`,`Dieser Browser unterstützt keine Spracheingabe. Versuche Chrome.`,`Este navegador no admite entrada de voz. Prueba con Chrome.`,`Ce navigateur ne gère pas la saisie vocale. Essayez Chrome.`,`هذا المتصفح لا يدعم الإدخال الصوتي. جرّب Chrome.`,`Этот браузер не поддерживает голосовой ввод. Попробуйте Chrome.`],
+[`✓ Kopyalandı`,`✓ Copied`,`✓ Kopiert`,`✓ Copiado`,`✓ Copié`,`✓ تم النسخ`,`✓ Скопировано`],
+[`Kopyala`,`Copy`,`Kopieren`,`Copiar`,`Copier`,`نسخ`,`Копировать`],
+[`İndir`,`Download`,`Herunterladen`,`Descargar`,`Télécharger`,`تنزيل`,`Скачать`],
+[`▶ Çalıştır`,`▶ Run`,`▶ Ausführen`,`▶ Ejecutar`,`▶ Exécuter`,`▶ تشغيل`,`▶ Запустить`],
+[`✕ Kapat`,`✕ Close`,`✕ Schließen`,`✕ Cerrar`,`✕ Fermer`,`✕ إغلاق`,`✕ Закрыть`],
+[`Kapat`,`Close`,`Schließen`,`Cerrar`,`Fermer`,`إغلاق`,`Закрыть`],
+[`🖼️ Görsel eklendi`,`🖼️ Image attached`,`🖼️ Bild angehängt`,`🖼️ Imagen adjunta`,`🖼️ Image jointe`,`🖼️ تم إرفاق صورة`,`🖼️ Фото прикреплено`],
+[`Görsel analizi`,`Image analysis`,`Bildanalyse`,`Análisis de imagen`,`Analyse d'image`,`تحليل صورة`,`Анализ фото`],
+[`Bu görseli detaylıca analiz et.`,`Analyze this image in detail.`,`Analysiere dieses Bild im Detail.`,`Analiza esta imagen en detalle.`,`Analyse cette image en détail.`,`حلّل هذه الصورة بالتفصيل.`,`Подробно проанализируй это изображение.`]];
+const CODES=['en','de','es','fr','ar','ru'],D={},ANY={};
+CODES.forEach(c=>D[c]={});
+T.forEach(r=>{ANY[r[0]]=r[0];CODES.forEach((c,i)=>{D[c][r[0]]=r[i+1];ANY[r[i+1]]=r[0]})});
+const tt=s=>LG==='tr'?s:((D[LG]&&D[LG][s])||s);
+const vl=()=>({tr:'tr-TR',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR',ar:'ar-SA',ru:'ru-RU'})[S.lang]||navigator.language||'tr-TR';
+const tr1=v=>{const k=ANY[v];return k?(LG==='tr'?k:D[LG][k]):null};
+function trAll(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),L=[];let n;while(n=w.nextNode())L.push(n);
+ L.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|PRE|CODE|TEXTAREA)$/.test(p.tagName)||(p.closest('.m')&&!p.closest('.ch,.im')))return;const v=n.nodeValue.trim(),r=tr1(v);if(r&&r!==v)n.nodeValue=n.nodeValue.replace(v,r)});
+ document.querySelectorAll('[placeholder],[title]').forEach(e=>['placeholder','title'].forEach(a=>{const v=e.getAttribute(a),r=v&&tr1(v);if(r&&r!==v)e.setAttribute(a,r)}))}
+function applyLang(){const a=S.lang==='auto'?(navigator.language||'en').slice(0,2).toLowerCase():S.lang;LG=a==='tr'||D[a]?a:'en';document.documentElement.lang=LG;document.body.classList.toggle('rtl',LG==='ar');trAll()}
 function newChat(){let c=cur();if(c&&!c.msgs.length)return c;c={id:Date.now(),title:'Yeni Sohbet',mode:S.mode,msgs:[]};S.chats.unshift(c);S.cur=c.id;return c}
 function code(l,c){const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c);
  return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button data-a="copy">Kopyala</button>${h?'<button data-a="dl">İndir</button><button class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
@@ -150,38 +242,39 @@ function render(){const c=cur(),L=c?c.msgs:[];
  $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
  $('#cnt').textContent=S.chats.length;
  $('#hist').innerHTML=S.chats.map(h=>`<button class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
- $('#chat').scrollTop=1e9}
+ $('#chat').scrollTop=1e9;trAll()}
 function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
 async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
  const c=newChat();
- if(/^hatırla[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^hatırla[:,\s]*/i,'')].slice(-30);
- c.mode=S.mode;if(!c.msgs.length)c.title=(t||'Görsel analizi').slice(0,30);
- c.msgs.push({r:'user',t:t||'Bu görseli detaylıca analiz et.',img:!!img});
- const p={mode:S.mode,tone:S.tone,search:S.search!==false,memory:S.mem,messages:c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}))};
+ if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
+ c.mode=S.mode;if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
+ c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
+ const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}))};
  if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
  const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;render();
  try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
  catch(e){ai.t='⚠️ '+e.message}
  delete ai.load;busy=false;$('#go').disabled=false;save();render();
- if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`]/g,''));u.lang='tr-TR';speechSynthesis.speak(u)}}
-function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();if(innerWidth<=800)$('#sb').classList.remove('x');$('#in').focus()}
+ if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
+function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();closeSb();$('#in').focus()}
 document.addEventListener('click',e=>{
  const m=e.target.closest('[data-m]');if(m)return setMode(m.dataset.m);
- const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;S.mode=cur().mode||'chat';save();render();if(innerWidth<=800)$('#sb').classList.remove('x')}
+ const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;S.mode=cur().mode||'chat';save();render();closeSb()}
  const b=e.target.closest('[data-a]');if(!b)return;const cd=b.closest('.cb').querySelector('code').textContent,a=b.dataset.a;
- if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent='✓ Kopyalandı'}
+ if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent=tt('✓ Kopyalandı')}
  if(a==='run'){$('#fr').srcdoc=cd;$('#pv').style.display='flex'}
  if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([cd],{type:'text/html'}));l.download='proje.html';l.click()}});
 $('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
-$('#burger').onclick=()=>$('#sb').classList.toggle('x');
+const closeSb=()=>$('#sb').classList.remove('o');
+$('#burger').onclick=()=>$('#sb').classList.toggle(innerWidth>900?'c':'o');$('#bk').onclick=closeSb;
 function delChat(id){S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id){S.cur=S.chats[0]?S.chats[0].id:null;if(S.cur)S.mode=cur().mode||'chat'}if(!cur())newChat();save();render()}
 let sw=null,swd=false;
 $('#hist').addEventListener('pointerdown',e=>{const h=e.target.closest('.hi');if(h){sw={h,x:e.clientX,y:e.clientY,dx:0};swd=false}});
 addEventListener('pointermove',e=>{if(!sw)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
  if(!swd&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy))swd=true;
  if(swd){sw.dx=Math.min(0,dx);const s=sw.h.style;s.transition='none';s.transform=`translateX(${sw.dx}px)`;s.background=`rgba(239,68,68,${Math.min(.55,-sw.dx/200)})`}});
-  function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transition='transform .25s,opacity .25s,background .25s';
+function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transition='transform .25s,opacity .25s,background .25s';
  if(dx<-90){h.style.transform='translateX(-110%)';h.style.opacity=0;setTimeout(()=>delChat(+h.dataset.h),230)}else{h.style.transform='';h.style.background=''}}
  setTimeout(()=>swd=false,60)}
 addEventListener('pointerup',swEnd);addEventListener('pointercancel',swEnd);
@@ -189,17 +282,18 @@ document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');i
  d.className='rp';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
 $('#new').onclick=$('#edit').onclick=()=>{newChat();render();$('#in').focus()};
 function dlg(t,b,btns){$('#dgt').textContent=t;$('#dgb').textContent=b;$('#dgs').innerHTML='';
- btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex'}
+ btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex';trAll()}
 function clearAll(){dlg('Sohbet geçmişi','Tüm sohbetler silinsin mi?',[['Vazgeç',settings],['Hepsini sil',()=>{S.chats=[];S.cur=null;newChat();save();render()},1]])}
 function clearMem(){dlg('Hafıza','Kayıtlı tüm notlar silinsin mi?',[['Vazgeç',settings],['Sil',()=>{S.mem=[];save()},1]])}
 function applyFs(){$('#msgs').style.fontSize=$('#in').style.fontSize=S.fs+'px'}
-function settings(){const o=(a,v)=>a.map(x=>`<option${x==v?' selected':''}>${x}</option>`).join('');
+function settings(){const o=(a,v)=>a.map(x=>`<option value="${x}"${x==v?' selected':''}>${x}</option>`).join('');
  dlg('⚙️ Ayarlar','',[['Hafızayı sil',clearMem],['Geçmişi sil',clearAll],['Tamam',null,1]]);
- $('#dgb').innerHTML=`<label class="sr">Ton<select id="s1">${o(TONES,S.tone)}</select></label><label class="sr">Web araması<input type="checkbox" id="s2"${S.search?' checked':''}></label><label class="sr">Yanıtı sesli oku<input type="checkbox" id="s3"${S.tts?' checked':''}></label><label class="sr">Yazı boyutu<select id="s4">${o(['Küçük','Normal','Büyük'],{14:'Küçük',16:'Normal',18:'Büyük'}[S.fs])}</select></label><div style="margin-top:10px;font-size:13px">Kayıtlı hafıza notu: ${S.mem.length}</div>`;
+ $('#dgb').innerHTML=`<label class="sr">Dil / Language<select id="s0">${LGS.map(([k,n])=>`<option value="${k}"${k==S.lang?' selected':''}>${n}</option>`).join('')}</select></label><label class="sr">Ton<select id="s1">${o(TONES,S.tone)}</select></label><label class="sr">Web araması<input type="checkbox" id="s2"${S.search?' checked':''}></label><label class="sr">Yanıtı sesli oku<input type="checkbox" id="s3"${S.tts?' checked':''}></label><label class="sr">Yazı boyutu<select id="s4">${o(['Küçük','Normal','Büyük'],{14:'Küçük',16:'Normal',18:'Büyük'}[S.fs])}</select></label><div style="margin-top:10px;font-size:13px">${tt('Kayıtlı hafıza notu')}: ${S.mem.length}</div>`;
+ $('#s0').onchange=e=>{S.lang=e.target.value;save();applyLang();render();settings()};
  $('#s1').onchange=e=>{S.tone=e.target.value;save();render()};
  $('#s2').onchange=e=>{S.search=e.target.checked;save()};
  $('#s3').onchange=e=>{S.tts=e.target.checked;if(!S.tts&&window.speechSynthesis)speechSynthesis.cancel();save()};
- $('#s4').onchange=e=>{S.fs={'Küçük':14,'Normal':16,'Büyük':18}[e.target.value];applyFs();save()}}
+ $('#s4').onchange=e=>{S.fs={'Küçük':14,'Normal':16,'Büyük':18}[e.target.value];applyFs();save()};trAll()}
 $('#menu').onclick=settings;
 $('#tone').onclick=()=>{S.tone=TONES[(TONES.indexOf(S.tone)+1)%TONES.length];save();render()};
 $('#memb').onclick=()=>S.mem.length?dlg('Hafıza','- '+S.mem.join('\n- '),[['Kapat'],['Hafızayı sil',()=>{S.mem=[];save()},1]]):dlg('Hafıza','Hafıza boş. Kaydetmek için mesaj kutusuna şunu yaz:\nhatırla: adım Ömer',[['Tamam',null,1]]);
@@ -212,11 +306,11 @@ $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Imag
   $('#prev').innerHTML=`<img src="${u}"><button onclick="img=null;$('#prev').innerHTML=''">✕</button>`};im.src=u;e.target.value=''};
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 $('#mic').onclick=()=>{if(!SR)return dlg('Ses tanıma','Bu tarayıcı sesle yazmayı desteklemiyor. Chrome ile açmayı dene.',[['Tamam',null,1]]);if(rec)return rec.stop();
- rec=new SR;rec.lang='tr-TR';rec.interimResults=true;rec.onresult=e=>{$('#in').value=[...e.results].map(r=>r[0].transcript).join('');fit()};
+ rec=new SR;rec.lang=vl();rec.interimResults=true;rec.onresult=e=>{$('#in').value=[...e.results].map(r=>r[0].transcript).join('');fit()};
  rec.onend=()=>{rec=null;$('#mic').classList.remove('on')};$('#mic').classList.add('on');rec.start()};
-fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok'}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı'});
-if(innerWidth>800)$('#sb').classList.remove('x');
-applyFs();if(!cur())newChat();render();
+fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok';trAll()}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı';trAll()});
+
+applyFs();applyLang();if(!cur())newChat();render();
 </script>
 </body>
 </html>
