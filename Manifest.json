@@ -1,14 +1,16 @@
 {
   "name": "ÖMER AI Ultimate",
   "short_name": "ÖMER AI",
-  "description": "Yapay zekâ sohbet, kodlama ve 3D oyun stüdyosu",
+  "description": "Yapay zekâ sohbet, kodlama, proje ve 3D oyun stüdyosu",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#07050f",
+  "background_color": "#05050f",
   "theme_color": "#7c3aed",
+  "lang": "tr",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512(2).png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512(2).png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
