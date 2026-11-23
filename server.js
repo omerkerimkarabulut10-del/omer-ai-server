@@ -22,9 +22,10 @@ const EXTRA = {
   game: 'Mod: 3D Oyun Stüdyosu. Three.js (https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) ile tek dosyalık, oynanabilir 3D oyun üret; tam <!DOCTYPE html> ve TEK ```html bloğu. Tam ekran canvas, pencere yeniden boyutlandırma, klavye + dokunmatik kontrol, skor, game over ve yeniden başlat, requestAnimationFrame döngüsü olsun. THREE.CapsuleGeometry ve OrbitControls kullanma. Kod hatasız çalışmalı; kontrol talimatını oyunun içinde göster. Değişiklikte kodun tamamını yeniden ver.'
 };
 
-const sys = (mode, tone, mem) =>
+const LANGS = { tr: 'Türkçe', en: 'English', de: 'Deutsch', es: 'Español', fr: 'Français', ar: 'العربية', ru: 'Русский' };
+const sys = (mode, tone, mem, lang) =>
   BASE.replace('{D}', new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'full', timeStyle: 'short' })) +
-  `\nTon: ${tone || 'Arkadaş canlısı'}.\n` + (EXTRA[mode] || EXTRA.chat) +
+  `\nTon: ${tone || 'Arkadaş canlısı'}.\n` + (EXTRA[mode] || EXTRA.chat) + (LANGS[lang] ? `\nYanıt dili: ${LANGS[lang]}. Kullanıcı başka dilde yazsa bile bu dilde yanıt ver (kod dışındaki tüm metin).` : '') +
   (mem.length ? `\nKullanıcı hakkında hatırlanan notlar:\n- ${mem.slice(-30).join('\n- ')}` : '');
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -62,14 +63,14 @@ http.createServer(async (req, res) => {
   if (u.pathname === '/api/chat' && req.method === 'POST') {
     try {
       if (!KEY) throw new Error('GEMINI_API_KEY Render ortam değişkenlerinde tanımlı değil.');
-      const { mode = 'chat', tone, search, memory = [], messages = [], image } = JSON.parse(await readBody(req));
+      const { mode = 'chat', tone, search, lang, memory = [], messages = [], image } = JSON.parse(await readBody(req));
       const m = messages.filter(x => x && x.text).slice(-20);
       while (m.length && m[0].role !== 'user') m.shift();
       if (!m.length) throw new Error('Mesaj boş.');
       const contents = m.map(x => ({ role: x.role === 'user' ? 'user' : 'model', parts: [{ text: String(x.text).slice(0, 30000) }] }));
       if (image && image.data) contents[contents.length - 1].parts.push({ inlineData: { mimeType: image.mime || 'image/jpeg', data: image.data } });
       const payload = {
-        systemInstruction: { parts: [{ text: sys(mode, tone, memory) }] },
+        systemInstruction: { parts: [{ text: sys(mode, tone, memory, lang) }] },
         contents,
         generationConfig: { temperature: mode === 'chat' ? 0.3 : 0.5, maxOutputTokens: 16000 }
       };
