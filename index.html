@@ -15,7 +15,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .logo{width:46px;height:46px;border:2px solid #7c3aed;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #7c3aed55}
 .brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
 .tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
-#new{background:var(--g);border-radius:12px;padding:11px;font-weight:600;box-shadow:0 4px 18px #7c3aed55}
+#new{background:var(--g);border-radius:12px;padding:11px;font-weight:600;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0}
 .lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between}
 .nv{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%}
 .nv.on{background:#241047;border-color:#5b3fc4}
@@ -250,6 +250,7 @@ async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
  c.mode=S.mode;if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
  c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
  const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}))};
+ if(S.mode==='game')p.messages.push({role:'user',text:'GAME ENGINE QUALITY DIRECTIVE: Create a polished, genuinely playable game, not a static mockup. Choose the right technology for the requested game (Canvas 2D for lightweight 2D games, Three.js for 3D). Deliver complete runnable code in one HTML file with embedded CSS/JS and no missing assets or placeholder functions. Include a clear objective, responsive controls with touch/mobile support and keyboard support where appropriate, a game loop, collision/physics that fit the game, score or progress, difficulty/feedback, start and restart controls, readable HUD, attractive effects/animation, and graceful performance on mobile tablets. Keep the code self-contained; use external libraries only when truly needed and load them reliably. Explain controls briefly, then provide the full code.');
  if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
  const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;render();
  try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
@@ -279,7 +280,7 @@ function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transitio
  setTimeout(()=>swd=false,60)}
 addEventListener('pointerup',swEnd);addEventListener('pointercancel',swEnd);
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement('span');
-d.className='rp';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
+ d.className='rp';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
 $('#new').onclick=$('#edit').onclick=()=>{newChat();render();$('#in').focus()};
 function dlg(t,b,btns){$('#dgt').textContent=t;$('#dgb').textContent=b;$('#dgs').innerHTML='';
  btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex';trAll()}
