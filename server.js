@@ -2,7 +2,7 @@
 // Render ortam değişkenleri: GEMINI_API_KEY (zorunlu), GEMINI_MODEL (isteğe bağlı)
 const http = require('http'), fs = require('fs'), path = require('path');
 const KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const PORT = process.env.PORT || 3000;
 const MIME = { '.html': 'text/html; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.ico': 'image/x-icon' };
 
