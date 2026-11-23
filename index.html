@@ -1,255 +1,222 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
+<html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ÖMER AI Ultimate</title>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#7c3aed">
+<link rel="manifest" href="/Manifest.json"><link rel="icon" href="icon-192.png"><meta name="theme-color" content="#05050f">
 <style>
-:root{--bg:#07050f;--p:#120c26;--c:#0d1226;--b:#2a2150;--ac:#7c3aed;--t:#ece8ff;--m:#9a93bd;--fs:15px}
-[data-th=light]{--bg:#f6f4ff;--p:#fff;--c:#fff;--b:#ddd6fe;--t:#1e1b3a;--m:#6b6590}
-[data-th=emerald]{--bg:#04100c;--p:#071c15;--c:#0a1a14;--b:#14532d;--ac:#10b981;--t:#e6fff5;--m:#86b9a5}
-[data-th=amoled]{--bg:#000;--p:#000;--c:#0a0a0a;--b:#222}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-body{display:flex;overflow:hidden}
-button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
-#side{width:280px;background:var(--p);border-right:1px solid var(--b);display:flex;flex-direction:column;padding:12px;gap:8px;transition:margin .2s;flex-shrink:0}
-#side.hide{margin-left:-280px}
-.logo{display:flex;gap:10px;align-items:center;padding:6px}
-.logo b{font-size:18px}.logo small{display:block;color:var(--m);font-size:12px}
-.pro{background:#2a1a5e;border:1px solid var(--ac);border-radius:6px;font-size:10px;padding:1px 6px;margin-left:6px}
-.new{background:linear-gradient(90deg,#9333ea,#4f46e5);padding:12px;border-radius:12px;font-weight:600}
-.lbl{color:var(--m);font-size:11px;letter-spacing:1px;margin:10px 4px 2px}
-.ws,.hist{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;text-align:left;width:100%;border:1px solid transparent}
-.ws.on,.hist.on{background:#2a1450;border-color:var(--b)}
-.hist{font-size:14px;justify-content:space-between}.hist span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hist i{opacity:.5;font-style:normal;padding:0 4px}
-#hl{flex:1;overflow:auto;display:flex;flex-direction:column;gap:4px}
-.foot{display:flex;justify-content:space-between;font-size:12px;color:var(--m)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:6px}
-#main{flex:1;display:flex;flex-direction:column;min-width:0}
-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--b);padding-top:max(10px,env(safe-area-inset-top))}
-header h1{font-size:18px}
-.chip{border:1px solid var(--b);background:var(--c);border-radius:20px;padding:6px 12px;font-size:13px}
-header .sp{flex:1}
-#msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
-.wel{margin:auto;text-align:center;max-width:640px}
-.wel h2{font-size:28px;margin:10px 0;background:linear-gradient(90deg,#fff,#c084fc);-webkit-background-clip:text;color:transparent}
-.wel p{color:var(--m)}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-.card{background:var(--c);border:1px solid var(--b);border-radius:16px;padding:14px;text-align:left;font-size:13px;color:var(--m)}
-.card b{display:block;color:var(--t);margin-bottom:4px;font-size:14px}
-.m{max-width:min(820px,92%);padding:12px 14px;border-radius:16px;line-height:1.55;font-size:var(--fs);word-wrap:break-word;overflow-wrap:anywhere}
-.m.user{align-self:flex-end;background:#5b21b6;color:#fff}
-.m.ai{align-self:flex-start;background:var(--c);border:1px solid var(--b)}
-.m img{max-width:220px;border-radius:10px;display:block;margin-bottom:6px}
-pre{background:#05030d;border:1px solid var(--b);border-radius:10px;margin:8px 0;overflow:hidden}
-pre .bar{display:flex;justify-content:space-between;gap:6px;padding:6px 10px;background:#140e2e;font-size:12px;color:var(--m)}
-pre .bar button{background:#2a1a5e;border-radius:6px;padding:2px 8px;margin-left:4px;font-size:12px}
-pre code{color:#e9e5ff;display:block;padding:10px;overflow:auto;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre;max-height:420px}
-code.i{background:#1c1440;padding:1px 5px;border-radius:5px}
-.src{margin-top:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:6px}
-.src a{color:#c4b5fd;background:#1a1240;border-radius:8px;padding:3px 8px;text-decoration:none}
-.typing{opacity:.7}
-#bar{padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
-#prev{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-#prev div{position:relative}#prev img{height:56px;border-radius:8px}
-#prev button{position:absolute;top:-6px;right:-6px;background:#dc2626;border-radius:50%;width:20px;height:20px;font-size:12px}
-.row{display:flex;gap:8px;align-items:flex-end;background:var(--c);border:1px solid var(--b);border-radius:18px;padding:8px}
-.ib{background:var(--c);border-radius:12px;width:42px;height:42px;font-size:18px;flex-shrink:0}
-.ib.rec{background:#dc2626}
-textarea{flex:1;background:none;border:0;outline:0;color:var(--t);font:inherit;resize:none;max-height:140px;padding:10px 4px}
-.send{background:linear-gradient(90deg,#9333ea,#4f46e5);border-radius:12px;padding:0 18px;height:42px;font-weight:600}
-.send:disabled{opacity:.5}
-.hint{font-size:11px;color:var(--m);margin-top:6px;text-align:center}
-.ov{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:20;padding:14px}
-.ov.on{display:flex}
-.box{background:var(--p);border:1px solid var(--b);border-radius:18px;padding:18px;width:min(460px,100%);max-height:90vh;overflow:auto}
-.box h3{margin-bottom:12px}
-.box label{display:block;font-size:13px;color:var(--m);margin:12px 0 4px}
-select{width:100%;background:var(--c);color:var(--t);border:1px solid var(--b);border-radius:10px;padding:10px;font:inherit}
-.tg{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-.tg input{width:20px;height:20px}
-#pv{position:fixed;inset:0;background:#000d;z-index:30;display:none;flex-direction:column}
-#pv.on{display:flex}
-#pv .t{display:flex;justify-content:space-between;padding:10px;background:var(--p)}
-#pv iframe{flex:1;border:0;background:#fff}
-@media(max-width:800px){#side{position:fixed;z-index:15;top:0;bottom:0;box-shadow:0 0 40px #000}.cards{grid-template-columns:1fr}.send span{display:none}}
-</style>
-</head>
-<body>
-<aside id="side">
-  <div class="logo"><div style="font-size:30px">⬡</div><div><b>ÖMER AI<span class="pro">PRO v3</span></b><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
-  <button class="new" onclick="newChat()">＋ Yeni Sohbet</button>
-  <div class="lbl">ÇALIŞMA ALANLARI</div>
-  <button class="ws" data-m="chat" onclick="setMode('chat')">💬 Yapay Zekâ Sohbet</button>
-  <button class="ws" data-m="code" onclick="setMode('code')">&lt;/&gt; Kodlama Stüdyosu</button>
-  <button class="ws" data-m="project" onclick="setMode('project')">📦 Proje Oluşturucu</button>
-  <button class="ws" data-m="game" onclick="setMode('game')">🎮 3D Oyun Stüdyosu <span class="chip" style="font-size:10px;padding:2px 6px;color:#6ee7b7">WebGL</span></button>
-  <div class="lbl">SOHBET GEÇMİŞİ</div>
-  <div id="hl"></div>
-  <div class="foot"><span class="chip"><i class="dot"></i>Hafıza Aktif</span><span><i class="dot"></i>Çevrimiçi</span></div>
+:root{--bg:#05050f;--sb:#080716;--card:#0c1124;--bd:#26214d;--tx:#e8e6f5;--mu:#8f8ca8;--p:#a855f7;--g:linear-gradient(90deg,#9333ea,#5b4fe8)}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,sans-serif;display:flex;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s;z-index:20}
+#sb.x{margin-left:-290px}
+.brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.logo{width:46px;height:46px;border:2px solid #7c3aed;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #7c3aed55}
+.brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
+.tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+#new{background:var(--g);border-radius:12px;padding:11px;font-weight:600;box-shadow:0 4px 18px #7c3aed55}
+.lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between}
+.nv{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%}
+.nv.on{background:#241047;border-color:#5b3fc4}
+.nv span.i{width:22px;text-align:center;color:#8b7cf6}
+.nv em{margin-left:auto;font-style:normal;font-size:11px;background:#0f3a33;color:#5eead4;padding:2px 8px;border-radius:7px}
+#hist{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.hi{touch-action:pan-y;user-select:none;padding:10px 12px;border-radius:12px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid transparent}
+.hi.on{background:#241047;border-color:#5b3fc4}
+.ft{display:flex;justify-content:space-between;font-size:14px;color:var(--mu);border-top:1px solid var(--bd);padding-top:12px}
+.ft button{border:1px solid var(--bd);border-radius:10px;padding:5px 10px;color:var(--tx)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#34d399;margin-right:7px}.dot.off{background:#f87171}
+#main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd)}
+header h1{font-size:22px}
+#pill{font-size:14px;color:#d8c8ff;background:#1c1140;border:1px solid #4b3a99;border-radius:14px;padding:2px 14px}
+.sp{flex:1}
+.chip{border:1px solid var(--bd);background:#0d0b2a;border-radius:16px;padding:6px 14px;font-size:14px}
+.ib{width:38px;height:38px;border-radius:10px;font-size:19px}
+#chat{flex:1;overflow:auto;padding:16px;position:relative}
+#wel{flex-direction:column;align-items:center;text-align:center;padding:24px 8px;max-width:1000px;margin:auto}
+#wel .logo{width:96px;height:96px;border-radius:24px;border-width:4px;margin-bottom:22px}
+#wel h2{font-size:clamp(26px,5vw,44px);line-height:1.15}
+#wel h2 span{background:linear-gradient(90deg,#fff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}
+#wel p{color:var(--mu);margin:14px 0 26px;max-width:760px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;width:100%}
+.cd{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px;text-align:center}
+.cd h3{font-size:17px;display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:8px}
+.cd h3 i{font-style:normal;width:36px;height:36px;border-radius:10px;background:#1b1747;display:grid;place-items:center}
+.cd p{margin:0;font-size:14px}
+#msgs{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.m{padding:12px 16px;border-radius:18px;max-width:92%;overflow-wrap:anywhere}
+.m.u{align-self:flex-end;background:linear-gradient(90deg,#7c3aed,#5b4fe8)}
+.m.a{align-self:flex-start;background:var(--card);border:1px solid var(--bd)}
+.m code{background:#1a1740;padding:1px 6px;border-radius:6px;font-size:.9em}
+.m h4{margin:8px 0 2px}.m li{margin-left:20px;list-style:disc}.m a{color:#c4b5fd}
+.im{font-size:13px;opacity:.85;margin-bottom:4px}
+.src{margin-top:10px;padding-top:8px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;font-size:12px}
+.src a{border:1px solid var(--bd);border-radius:8px;padding:2px 8px;text-decoration:none;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#15123a;font-size:12px;color:var(--mu)}
+.ch button{margin-left:8px;border:1px solid #4b3a99;border-radius:8px;padding:2px 9px;color:var(--tx);font-size:12px}
+.ch button.run{background:var(--g)}
+pre{padding:12px;overflow:auto;font:13px/1.45 ui-monospace,Menlo,monospace;max-height:420px}
+.dots i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:50%;background:var(--p);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{opacity:.2;transform:translateY(-4px)}}
+#bar{padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+#box{max-width:1100px;margin:auto;display:flex;gap:10px;align-items:flex-end;background:#0a0a1f;border:1px solid var(--bd);border-radius:20px;padding:10px}
+#box .ib{background:#14122e;flex-shrink:0;width:44px;height:44px}
+#mic.on{background:#b91c1c}
+#in{flex:1;background:none;border:0;outline:0;color:var(--tx);font:inherit;resize:none;max-height:160px;padding:10px 4px}
+#go{background:var(--g);border-radius:14px;padding:0 22px;height:44px;font-weight:600;flex-shrink:0}
+#go:disabled{opacity:.5}
+#prev{max-width:1100px;margin:0 auto 8px;display:flex;gap:8px;align-items:center}
+#prev img{height:64px;border-radius:10px;border:1px solid var(--bd)}
+#prev button{border:1px solid var(--bd);border-radius:50%;width:26px;height:26px}
+.hint{max-width:1100px;margin:6px auto 0;font-size:12px;color:var(--mu);display:flex;justify-content:space-between;gap:10px}
+#pv{display:none;position:fixed;inset:0;z-index:50;background:#000;flex-direction:column}
+#pv button{padding:10px;background:#15123a;text-align:right}
+#fr{flex:1;border:0;width:100%;background:#fff}
+#dg{display:none;position:fixed;inset:0;z-index:60;background:#000b;align-items:center;justify-content:center;padding:16px}
+#dg>div{background:var(--card);border:1px solid #4b3a99;border-radius:18px;padding:20px;max-width:420px;width:100%;max-height:80vh;overflow:auto}
+#dg h3{margin-bottom:10px}#dg .bd{color:var(--mu);font-size:15px;white-space:pre-wrap;margin-bottom:16px;overflow-wrap:anywhere}
+#dg .bt{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}#dg .bt button{border:1px solid var(--bd);border-radius:12px;padding:8px 16px}#dg .bt .pr{background:var(--g);border-color:transparent}
+#dg .sr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);color:var(--tx);white-space:normal}
+#dg select{background:#0a0a1f;color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font:inherit}
+#dg input[type=checkbox]{width:22px;height:22px;accent-color:#a855f7}
+button{transition:transform .12s,filter .15s,box-shadow .2s;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+button:active{transform:scale(.94);filter:brightness(1.25)}
+#new:hover,#go:hover{box-shadow:0 6px 24px #7c3aed99}
+.rp{position:absolute;border-radius:50%;background:#ffffff40;transform:scale(0);animation:rp .55s ease-out;pointer-events:none}
+@keyframes rp{to{transform:scale(4);opacity:0}}
+#msgs .m:last-child{animation:mi .3s ease-out}
+@keyframes mi{from{opacity:0;transform:translateY(8px)}}
+#mic.on{animation:pl 1s infinite}
+@keyframes pl{50%{box-shadow:0 0 0 8px #b91c1c55}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:800px){#sb{position:fixed;height:100%;margin-left:-290px}#sb.x{margin-left:0}.hint span:last-child{display:none}.chip{display:none}#go{padding:0 14px}}
+</style></head><body>
+<aside id="sb" class="x">
+ <div class="brand"><div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.6"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 9v3"/></svg></div>
+ <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
+ <button id="new">＋ Yeni Sohbet</button>
+ <div class="lb">ÇALIŞMA ALANLARI</div><div id="nav"></div>
+ <div class="lb" style="border-top:1px solid var(--bd);padding-top:12px">SOHBET GEÇMİŞİ <span id="cnt"></span></div>
+ <div id="hist"></div>
+ <div class="ft"><button id="memb"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
 </aside>
-
 <div id="main">
-  <header>
-    <button class="ib" onclick="side.classList.toggle('hide')">☰</button>
-    <h1>ÖMER AI</h1><span class="chip" id="modeChip">Sohbet</span>
-    <span class="sp"></span>
-    <button class="chip" id="setChip" onclick="openSet()"></button>
-    <button class="ib" onclick="newChat()">✎</button>
-  </header>
+ <header><button class="ib" id="burger">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
+ <button class="chip" id="tone"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
+ <button class="ib" id="edit" title="Yeni sohbet">✎</button><button class="ib" id="menu" title="Ayarlar">⋮</button></header>
+ <div id="chat">
+  <div id="wel"><div class="logo"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.4"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 9v3"/></svg></div>
+   <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
+   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.</p>
+   <div class="cards" id="cards"></div></div>
   <div id="msgs"></div>
-  <div id="bar">
-    <div id="prev"></div>
-    <div class="row">
-      <button class="ib" onclick="file.click()" title="Görsel">📎</button>
-      <button class="ib" id="mic" onclick="toggleMic()" title="Sesli komut">🎤</button>
-      <textarea id="inp" rows="1"></textarea>
-      <button class="send" id="sendBtn" onclick="send()"><span>Gönder </span>➤</button>
-    </div>
-    <div class="hint">Enter: Gönder • Shift+Enter: Alt satır • ÖMER AI v3.0 Ultimate + Vision &amp; WebGL 3D</div>
-  </div>
+ </div>
+ <div id="bar"><div id="prev"></div>
+  <div id="box"><input type="file" id="file" accept="image/*" hidden>
+   <button class="ib" id="att" title="Görsel ekle">📎</button><button class="ib" id="mic" title="Sesle yaz">🎙️</button>
+   <textarea id="in" rows="1"></textarea><button id="go">Gönder ➤</button></div>
+  <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision &amp; WebGL 3D</span></div></div>
 </div>
-<input type="file" id="file" accept="image/*" multiple hidden>
-
-<div class="ov" id="setOv" onclick="if(event.target===this)closeSet()">
-  <div class="box">
-    <h3>⚙ Ayarlar</h3>
-    <label>Dil / Language</label>
-    <select id="sLang">
-      <option value="tr">Türkçe</option><option value="en">English</option><option value="de">Deutsch</option>
-      <option value="es">Español</option><option value="fr">Français</option><option value="ar">العربية</option>
-      <option value="th">ไทย</option><option value="he">עברית</option><option value="hi">हिन्दी</option><option value="zh">中文</option>
-    </select>
-    <label>Kişilik</label>
-    <select id="sPer">
-      <option value="friendly">Arkadaş canlısı</option><option value="professional">Profesyonel</option>
-      <option value="teacher">Öğretmen</option><option value="funny">Esprili</option>
-      <option value="concise">Kısa ve net</option><option value="creative">Yaratıcı</option>
-    </select>
-    <label>Tema</label><select id="sTheme"><option value="dark">🌙 Dark</option><option value="light">☀️ Light</option><option value="emerald">🌿 Emerald</option><option value="amoled">⚫ AMOLED</option></select><select id="sFs" style="margin-top:8px"><option value="13">Aa 13</option><option value="15">Aa 15</option><option value="17">Aa 17</option><option value="19">Aa 19</option></select>
-    <div class="tg"><span>🌐 Web araması</span><input type="checkbox" id="sSea"></div>
-    <div class="tg"><span>🔊 Sesli cevap</span><input type="checkbox" id="sTts"></div>
-    <label>Hafıza (her satır bir bilgi)</label>
-    <textarea id="sMem" rows="4" style="width:100%;background:var(--c);border:1px solid var(--b);border-radius:10px;padding:10px"></textarea>
-    <div class="tg"><button class="chip" onclick="clearAll()">🗑 Tüm sohbetleri sil</button><button class="send" onclick="saveSet()">Kaydet</button></div>
-  </div>
-</div>
-
-<div id="pv"><div class="t"><b>Önizleme</b><button class="chip" onclick="pv.classList.remove('on');pf.srcdoc=''">✕ Kapat</button></div><iframe id="pf" sandbox="allow-scripts allow-pointer-lock"></iframe></div>
-
+<div id="dg"><div><h3 id="dgt"></h3><div class="bd" id="dgb"></div><div class="bt" id="dgs"></div></div></div>
+<div id="pv"><button id="cl">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
 <script>
-const $=id=>document.getElementById(id);
-const UI={tr:['ÖMER AI Ultimate\'e bir mesaj yazın...','Gönder'],en:['Message ÖMER AI Ultimate...','Send'],de:['Nachricht an ÖMER AI...','Senden'],es:['Escribe a ÖMER AI...','Enviar'],fr:['Écrivez à ÖMER AI...','Envoyer'],ar:['اكتب رسالة...','إرسال'],th:['พิมพ์ข้อความ...','ส่ง'],he:['כתוב הודעה...','שלח'],hi:['संदेश लिखें...','भेजें'],zh:['输入消息...','发送']};
-const SR={tr:'tr-TR',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR',ar:'ar-SA',th:'th-TH',he:'he-IL',hi:'hi-IN',zh:'zh-CN'};
-const MODES={chat:'Sohbet',code:'Kodlama',project:'Proje',game:'3D Oyun'};
-const WEL={chat:['💬 Akıllı Sohbet &amp; Analiz','Soru sorun, görsel gönderin, web\'de arayın.'],code:['⚡ Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],project:['📦 Proje Oluşturucu','Fikrinizi anlatın, dosyalarıyla birlikte projeyi çıkarayım.'],game:['🎮 3D Oyun Stüdyosu','Three.js ile oynanabilir 3D oyun üretin ve hemen önizleyin.']};
-const SUG={chat:['Bugün dünyada neler oldu? Webde ara.','Bana kendini tanıt'],code:['Todo uygulaması yaz (HTML+JS)','Python ile hesap makinesi'],project:['Portfolyo web sitesi projesi oluştur','Hava durumu uygulaması'],game:['Uzay gemisi 3D oyunu yap','Küp toplama 3D oyunu yap']};
-const I=Object.fromEntries(Object.entries({
-tr:'Yeni Sohbet|ÇALIŞMA ALANLARI|Yapay Zekâ Sohbet|Kodlama Stüdyosu|Proje Oluşturucu|3D Oyun Stüdyosu|SOHBET GEÇMİŞİ|Ayarlar|Dil|Kişilik|Tema|Web araması|Sesli cevap|Kaydet|Düşünüyor...|Hoş Geldiniz',
-en:'New Chat|WORKSPACES|AI Chat|Coding Studio|Project Builder|3D Game Studio|CHAT HISTORY|Settings|Language|Personality|Theme|Web search|Voice replies|Save|Thinking...|Welcome',
-de:'Neuer Chat|ARBEITSBEREICHE|KI-Chat|Coding-Studio|Projekt-Builder|3D-Spielstudio|CHAT-VERLAUF|Einstellungen|Sprache|Persönlichkeit|Design|Websuche|Sprachausgabe|Speichern|Denkt nach...|Willkommen',
-es:'Nuevo chat|ESPACIOS DE TRABAJO|Chat IA|Estudio de código|Creador de proyectos|Estudio de juegos 3D|HISTORIAL|Ajustes|Idioma|Personalidad|Tema|Búsqueda web|Respuesta por voz|Guardar|Pensando...|Bienvenido',
-fr:'Nouvelle discussion|ESPACES DE TRAVAIL|Chat IA|Studio de code|Créateur de projets|Studio de jeux 3D|HISTORIQUE|Paramètres|Langue|Personnalité|Thème|Recherche web|Réponse vocale|Enregistrer|Réflexion...|Bienvenue',
-ar:'محادثة جديدة|مساحات العمل|دردشة الذكاء الاصطناعي|استوديو البرمجة|منشئ المشاريع|استوديو ألعاب 3D|سجل المحادثات|الإعدادات|اللغة|الشخصية|المظهر|بحث الويب|رد صوتي|حفظ|يفكر...|مرحبًا',
-th:'แชทใหม่|พื้นที่ทำงาน|แชท AI|สตูดิโอเขียนโค้ด|ตัวสร้างโปรเจกต์|สตูดิโอเกม 3D|ประวัติแชท|การตั้งค่า|ภาษา|บุคลิก|ธีม|ค้นหาเว็บ|ตอบด้วยเสียง|บันทึก|กำลังคิด...|ยินดีต้อนรับ',
-he:'שיחה חדשה|סביבות עבודה|צ׳אט AI|סטודיו קוד|בונה פרויקטים|סטודיו משחקי 3D|היסטוריית שיחות|הגדרות|שפה|אישיות|ערכת נושא|חיפוש ברשת|תגובה קולית|שמור|חושב...|ברוכים הבאים',
-hi:'नई चैट|कार्यक्षेत्र|AI चैट|कोडिंग स्टूडियो|प्रोजेक्ट बिल्डर|3D गेम स्टूडियो|चैट इतिहास|सेटिंग्स|भाषा|व्यक्तित्व|थीम|वेब खोज|आवाज़ में उत्तर|सहेजें|सोच रहा है...|स्वागत है',
-zh:'新对话|工作区|AI 聊天|编程工作室|项目构建器|3D 游戏工作室|聊天记录|设置|语言|个性|主题|网页搜索|语音回复|保存|思考中...|欢迎'
-}).map(([k,v])=>[k,v.split('|')]));
-const tt=i=>I[S.set.lang][i];
-function i18n(){const q=s=>document.querySelector(s),a=s=>document.querySelectorAll(s),h=document.documentElement;
-h.dataset.th=S.set.theme||'dark';h.style.setProperty('--fs',(S.set.fs||15)+'px');
-q('.new').textContent='＋ '+tt(0);const l=a('.lbl');l[0].textContent=tt(1);l[1].textContent=tt(6);
-[['chat','💬',2],['code','</>',3],['project','📦',4],['game','🎮',5]].forEach(([m,e,i])=>q('.ws[data-m='+m+']').firstChild.textContent=e+' '+tt(i));
-q('.box h3').textContent='⚙ '+tt(7);const b=a('.box label');b[0].textContent=tt(8);b[1].textContent=tt(9);b[2].textContent=tt(10);
-const s=a('.tg span');s[0].textContent='🌐 '+tt(11);s[1].textContent='🔊 '+tt(12);q('.tg .send').textContent=tt(13)}
-let S=JSON.parse(localStorage.getItem('omer3')||'null')||{chats:[],cur:null,mode:'chat',set:{lang:'tr',persona:'friendly',search:true,tts:false},mem:[]};
-let imgs=[],busy=false,rec=null;
-const save=()=>{const c=JSON.parse(JSON.stringify(S));c.chats.forEach(ch=>ch.msgs.forEach(m=>delete m.images));try{localStorage.setItem('omer3',JSON.stringify(c))}catch(e){}};
+const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı','Profesyonel','Kısa & net'];
+const MODES={chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
+code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
+project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
+game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']};
+let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16},img=null,busy=false,rec=null;
+try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cur=()=>S.chats.find(c=>c.id===S.cur);
-const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-function newChat(){const c={id:Date.now(),title:'Yeni Sohbet',mode:S.mode,msgs:[]};S.chats.unshift(c);S.cur=c.id;save();render();if(innerWidth<800)side.classList.add('hide')}
-function setMode(m){S.mode=m;newChat()}
-function delChat(id,e){e.stopPropagation();S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id)S.cur=S.chats[0]?.id||null;if(!S.cur)return newChat();save();render()}
-function openChat(id){S.cur=id;S.mode=cur().mode||'chat';save();render();if(innerWidth<800)side.classList.add('hide')}
-
-function render(){
-  const L=S.set.lang;document.documentElement.dir=(L==='ar'||L==='he')?'rtl':'ltr';
-  i18n();inp.placeholder=UI[L][0];sendBtn.firstElementChild.textContent=UI[L][1]+' ';
-  setChip.textContent='● '+$('sPer').selectedOptions[0]?.text+' • '+L.toUpperCase();
-  modeChip.textContent=tt({chat:2,code:3,project:4,game:5}[S.mode]);
-  document.querySelectorAll('.ws').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));
-  hl.innerHTML=S.chats.map(c=>`<button class="hist ${c.id===S.cur?'on':''}" onclick="openChat(${c.id})"><span>💬 ${esc(c.title)}</span><i onclick="delChat(${c.id},event)">✕</i></button>`).join('');
-  const c=cur();if(!c)return newChat();
-  if(!c.msgs.length){const w=WEL[S.mode];msgs.innerHTML=`<div class="wel"><div style="font-size:54px">⬡</div><h2>ÖMER AI Ultimate — ${tt(15)}</h2><p>Gelişmiş sohbet, görsel analizi, web araması, hafıza, sesli komutlar, kodlama ve Three.js tabanlı 3D oyun motoru.</p><div class="cards"><div class="card"><b>${w[0]}</b>${w[1]}</div>${SUG[S.mode].map(s=>`<button class="card" onclick="inp.value=this.textContent;send()">${s}</button>`).join('')}</div></div>`;return}
-  msgs.innerHTML='';c.msgs.forEach(addMsg);msgs.scrollTop=msgs.scrollHeight;
-}
-
-function fmt(t){
-  let h=esc(t);
-  h=h.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>{const html=/^(html|htm)$/i.test(l)||/<!doctype html|<html/i.test(c);return`<pre><div class="bar"><span>${l||'code'}</span><span>${html?'<button onclick="prevCode(this)">▶ Önizle</button>':''}<button onclick="copyCode(this)">Kopyala</button></span></div><code>${c}</code></pre>`});
-  return h.replace(/`([^`\n]+)`/g,'<code class="i">$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>').replace(/<\/pre><br>/g,'</pre>').replace(/<br><pre>/g,'<pre>');
-}
-function addMsg(m){
-  const d=document.createElement('div');d.className='m '+(m.role==='user'?'user':'ai');
-  let h='';(m.images||[]).forEach(i=>h+=`<img src="${i}">`);if(m.imgCount&&!m.images)h+=`<div style="opacity:.6;font-size:12px">🖼 ${m.imgCount} görsel</div>`;
-  h+=m.role==='user'?esc(m.text).replace(/\n/g,'<br>'):fmt(m.text);
-  if(m.sources?.length)h+='<div class="src">'+m.sources.slice(0,6).map(s=>`<a target="_blank" rel="noopener" href="${esc(s.uri)}">🔗 ${esc(s.title||'kaynak')}</a>`).join('')+'</div>';
-  d.innerHTML=h;msgs.appendChild(d);return d;
-}
-function copyCode(b){navigator.clipboard.writeText(b.closest('pre').querySelector('code').textContent);b.textContent='✓'}
-function prevCode(b){pf.srcdoc=b.closest('pre').querySelector('code').textContent;pv.classList.add('on')}
-
-file.onchange=async()=>{for(const f of file.files){imgs.push(await shrink(f))}file.value='';drawPrev()};
-function shrink(f){return new Promise(r=>{const im=new Image,u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.85))};im.src=u})}
-function drawPrev(){prev.innerHTML=imgs.map((s,i)=>`<div><img src="${s}"><button onclick="imgs.splice(${i},1);drawPrev()">✕</button></div>`).join('')}
-addEventListener('paste',async e=>{for(const it of e.clipboardData.items)if(it.type.startsWith('image/')){imgs.push(await shrink(it.getAsFile()));drawPrev()}});
-
-  function toggleMic(){
-  const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alert('Tarayıcı sesli komutu desteklemiyor.');
-  if(rec){rec.stop();return}
-  rec=new R;rec.lang=SR[S.set.lang];rec.interimResults=true;rec.continuous=false;mic.classList.add('rec');
-  rec.onresult=e=>{inp.value=[...e.results].map(r=>r[0].transcript).join('')};
-  rec.onend=()=>{rec=null;mic.classList.remove('rec');if(inp.value.trim())send()};
-  rec.onerror=()=>{};rec.start();
-}
-
-async function send(){
-  const text=inp.value.trim();if((!text&&!imgs.length)||busy)return;
-  const c=cur();busy=true;sendBtn.disabled=true;
-  const um={role:'user',text:text||'Bu görseli analiz et.',images:imgs.slice(),imgCount:imgs.length};
-  if(/^(hatırla|remember)[:\s]/i.test(text)){S.mem.push(text.replace(/^(hatırla|remember)[:\s]*/i,''))}
-  c.msgs.push(um);if(c.msgs.length===1)c.title=(text||'Görsel').slice(0,30);
-  inp.value='';inp.style.height='auto';imgs=[];drawPrev();render();
-  const t=addMsg({role:'ai',text:'⏳ '+tt(14)});t.classList.add('typing');msgs.scrollTop=msgs.scrollHeight;
-  try{
-    const r=await fetch('/api/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:c.msgs.map(m=>({role:m.role,text:m.text,images:m.images})),lang:S.set.lang,persona:S.set.persona,mode:S.mode,search:S.set.search,memory:S.mem})});
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Sunucu hatası '+r.status)}
-    const rd=r.body.getReader(),dc=new TextDecoder();let buf='',txt='',src=[];t.classList.remove('typing');
-    for(;;){const{done,value}=await rd.read();if(done)break;buf+=dc.decode(value,{stream:true});let i;
-      while((i=buf.indexOf('\n'))>=0){const ln=buf.slice(0,i);buf=buf.slice(i+1);if(!ln)continue;const o=JSON.parse(ln);
-        if(o.error)throw new Error(o.error);if(o.t){txt+=o.t;t.innerHTML=fmt(txt);msgs.scrollTop=msgs.scrollHeight}if(o.sources)src=o.sources}}
-    const j={text:txt||'...'};
-    c.msgs.push({role:'ai',text:j.text,sources:src});
-    if(S.set.tts&&speechSynthesis){const u=new SpeechSynthesisUtterance(j.text.replace(/```[\s\S]*?```/g,' ').replace(/[*`#]/g,''));u.lang=SR[S.set.lang];speechSynthesis.cancel();speechSynthesis.speak(u)}
-  }catch(e){c.msgs.push({role:'ai',text:'❌ Hata: '+e.message})}
-  busy=false;sendBtn.disabled=false;save();render();msgs.scrollTop=msgs.scrollHeight;
-}
-inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&innerWidth>800){e.preventDefault();send()}});
-inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,140)+'px'});
-
-function openSet(){sTheme.value=S.set.theme||'dark';sFs.value=S.set.fs||15;sLang.value=S.set.lang;sPer.value=S.set.persona;sSea.checked=S.set.search;sTts.checked=S.set.tts;sMem.value=S.mem.join('\n');setOv.classList.add('on')}
-function closeSet(){setOv.classList.remove('on')}
-function saveSet(){S.set={lang:sLang.value,persona:sPer.value,search:sSea.checked,tts:sTts.checked,theme:sTheme.value,fs:+sFs.value};S.mem=sMem.value.split('\n').map(s=>s.trim()).filter(Boolean);save();closeSet();render()}
-function clearAll(){if(confirm('Tüm sohbetler silinsin mi?')){S.chats=[];S.cur=null;newChat();closeSet()}}
-
-if(innerWidth<800)side.classList.add('hide');
-if(!S.cur||!cur())newChat();else render();
+function newChat(){let c=cur();if(c&&!c.msgs.length)return c;c={id:Date.now(),title:'Yeni Sohbet',mode:S.mode,msgs:[]};S.chats.unshift(c);S.cur=c.id;return c}
+function code(l,c){const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c);
+ return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button data-a="copy">Kopyala</button>${h?'<button data-a="dl">İndir</button><button class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
+function md(t){const B=[];t=t.replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
+ t=esc(t).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>').replace(/^#{1,4} (.+)$/gm,'<h4>$1</h4>').replace(/^[-*] (.+)$/gm,'<li>$1</li>')
+ .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
+ return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i])}
+function render(){const c=cur(),L=c?c.msgs:[];
+ $('#pill').textContent=MODES[S.mode][2];$('#in').placeholder=MODES[S.mode][3];$('#tn').textContent=S.tone;
+ $('#wel').style.display=L.length?'none':'flex';
+ $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
+  :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${x.src&&x.src.length?'<div class="src">'+x.src.map(s=>`<a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t||'Kaynak')}</a>`).join('')+'</div>':''}</div>`).join('');
+ $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span>${v[1]}${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
+ $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
+ $('#cnt').textContent=S.chats.length;
+ $('#hist').innerHTML=S.chats.map(h=>`<button class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
+ $('#chat').scrollTop=1e9}
+function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
+async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
+ const c=newChat();
+ if(/^hatırla[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^hatırla[:,\s]*/i,'')].slice(-30);
+ c.mode=S.mode;if(!c.msgs.length)c.title=(t||'Görsel analizi').slice(0,30);
+ c.msgs.push({r:'user',t:t||'Bu görseli detaylıca analiz et.',img:!!img});
+ const p={mode:S.mode,tone:S.tone,search:S.search!==false,memory:S.mem,messages:c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}))};
+ if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
+ const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;render();
+ try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
+ catch(e){ai.t='⚠️ '+e.message}
+ delete ai.load;busy=false;$('#go').disabled=false;save();render();
+ if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`]/g,''));u.lang='tr-TR';speechSynthesis.speak(u)}}
+function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();if(innerWidth<=800)$('#sb').classList.remove('x');$('#in').focus()}
+document.addEventListener('click',e=>{
+ const m=e.target.closest('[data-m]');if(m)return setMode(m.dataset.m);
+ const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;S.mode=cur().mode||'chat';save();render();if(innerWidth<=800)$('#sb').classList.remove('x')}
+ const b=e.target.closest('[data-a]');if(!b)return;const cd=b.closest('.cb').querySelector('code').textContent,a=b.dataset.a;
+ if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent='✓ Kopyalandı'}
+ if(a==='run'){$('#fr').srcdoc=cd;$('#pv').style.display='flex'}
+ if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([cd],{type:'text/html'}));l.download='proje.html';l.click()}});
+$('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
+$('#burger').onclick=()=>$('#sb').classList.toggle('x');
+function delChat(id){S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id){S.cur=S.chats[0]?S.chats[0].id:null;if(S.cur)S.mode=cur().mode||'chat'}if(!cur())newChat();save();render()}
+let sw=null,swd=false;
+$('#hist').addEventListener('pointerdown',e=>{const h=e.target.closest('.hi');if(h){sw={h,x:e.clientX,y:e.clientY,dx:0};swd=false}});
+addEventListener('pointermove',e=>{if(!sw)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
+ if(!swd&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy))swd=true;
+ if(swd){sw.dx=Math.min(0,dx);const s=sw.h.style;s.transition='none';s.transform=`translateX(${sw.dx}px)`;s.background=`rgba(239,68,68,${Math.min(.55,-sw.dx/200)})`}});
+  function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transition='transform .25s,opacity .25s,background .25s';
+ if(dx<-90){h.style.transform='translateX(-110%)';h.style.opacity=0;setTimeout(()=>delChat(+h.dataset.h),230)}else{h.style.transform='';h.style.background=''}}
+ setTimeout(()=>swd=false,60)}
+addEventListener('pointerup',swEnd);addEventListener('pointercancel',swEnd);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement('span');
+ d.className='rp';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
+$('#new').onclick=$('#edit').onclick=()=>{newChat();render();$('#in').focus()};
+function dlg(t,b,btns){$('#dgt').textContent=t;$('#dgb').textContent=b;$('#dgs').innerHTML='';
+ btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex'}
+function clearAll(){dlg('Sohbet geçmişi','Tüm sohbetler silinsin mi?',[['Vazgeç',settings],['Hepsini sil',()=>{S.chats=[];S.cur=null;newChat();save();render()},1]])}
+function clearMem(){dlg('Hafıza','Kayıtlı tüm notlar silinsin mi?',[['Vazgeç',settings],['Sil',()=>{S.mem=[];save()},1]])}
+function applyFs(){$('#msgs').style.fontSize=$('#in').style.fontSize=S.fs+'px'}
+function settings(){const o=(a,v)=>a.map(x=>`<option${x==v?' selected':''}>${x}</option>`).join('');
+ dlg('⚙️ Ayarlar','',[['Hafızayı sil',clearMem],['Geçmişi sil',clearAll],['Tamam',null,1]]);
+ $('#dgb').innerHTML=`<label class="sr">Ton<select id="s1">${o(TONES,S.tone)}</select></label><label class="sr">Web araması<input type="checkbox" id="s2"${S.search?' checked':''}></label><label class="sr">Yanıtı sesli oku<input type="checkbox" id="s3"${S.tts?' checked':''}></label><label class="sr">Yazı boyutu<select id="s4">${o(['Küçük','Normal','Büyük'],{14:'Küçük',16:'Normal',18:'Büyük'}[S.fs])}</select></label><div style="margin-top:10px;font-size:13px">Kayıtlı hafıza notu: ${S.mem.length}</div>`;
+ $('#s1').onchange=e=>{S.tone=e.target.value;save();render()};
+ $('#s2').onchange=e=>{S.search=e.target.checked;save()};
+ $('#s3').onchange=e=>{S.tts=e.target.checked;if(!S.tts&&window.speechSynthesis)speechSynthesis.cancel();save()};
+ $('#s4').onchange=e=>{S.fs={'Küçük':14,'Normal':16,'Büyük':18}[e.target.value];applyFs();save()}}
+$('#menu').onclick=settings;
+$('#tone').onclick=()=>{S.tone=TONES[(TONES.indexOf(S.tone)+1)%TONES.length];save();render()};
+$('#memb').onclick=()=>S.mem.length?dlg('Hafıza','- '+S.mem.join('\n- '),[['Kapat'],['Hafızayı sil',()=>{S.mem=[];save()},1]]):dlg('Hafıza','Hafıza boş. Kaydetmek için mesaj kutusuna şunu yaz:\nhatırla: adım Ömer',[['Tamam',null,1]]);
+$('#go').onclick=send;$('#in').oninput=fit;
+$('#in').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+$('#att').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image,u=URL.createObjectURL(f);
+ im.onload=()=>{const k=Math.min(1,1400/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;
+  cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);img={data:cv.toDataURL('image/jpeg',.88).split(',')[1],mime:'image/jpeg'};
+  $('#prev').innerHTML=`<img src="${u}"><button onclick="img=null;$('#prev').innerHTML=''">✕</button>`};im.src=u;e.target.value=''};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('#mic').onclick=()=>{if(!SR)return dlg('Ses tanıma','Bu tarayıcı sesle yazmayı desteklemiyor. Chrome ile açmayı dene.',[['Tamam',null,1]]);if(rec)return rec.stop();
+ rec=new SR;rec.lang='tr-TR';rec.interimResults=true;rec.onresult=e=>{$('#in').value=[...e.results].map(r=>r[0].transcript).join('');fit()};
+ rec.onend=()=>{rec=null;$('#mic').classList.remove('on')};$('#mic').classList.add('on');rec.start()};
+fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok'}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı'});
+if(innerWidth>800)$('#sb').classList.remove('x');
+applyFs();if(!cur())newChat();render();
 </script>
 </body>
 </html>
