@@ -146,7 +146,7 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
  <div id="chat">
   <div id="wel"><div class="logo" id="wel-logo"></div>
    <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
-   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.</p>
+   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar ve kodlama stüdyosu elinizin altında.</p>
    <div class="cards" id="cards"></div></div>
   <div id="msgs"></div>
  </div>
@@ -154,18 +154,18 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
   <div id="prev"></div>
   <div id="studio-box">
    <div class="sb-top">
-    <span class="sb-title" id="sb-label">🎮 3D Oyun Mesaj Kutusu</span>
+    <span class="sb-title" id="sb-label"></span>
     <div class="sb-presets" id="sb-presets"></div>
    </div>
    <div class="sb-row">
-    <input type="text" id="studio-in" placeholder="Nasıl bir 3D oyun yapalım?">
+    <input type="text" id="studio-in" placeholder="">
     <button id="studio-send" type="button">Oluştur ➤</button>
    </div>
   </div>
   <div id="box"><input type="file" id="file" accept="image/*" hidden>
    <button class="ib" id="att" type="button" title="Görsel ekle">📎</button><button class="ib" id="mic" type="button" title="Sesle yaz">🎙️</button>
    <textarea id="in" rows="1"></textarea><button id="go" type="button">Gönder ➤</button></div>
-  <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision &amp; WebGL 3D</span></div></div>
+  <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision</span></div></div>
 </div>
 <div id="dg"><div><h3 id="dgt"></h3><div class="bd" id="dgb"></div><div class="bt" id="dgs"></div></div></div>
 <div id="pv"><button id="cl" type="button">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
@@ -246,14 +246,14 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
       background_color: '#05050f',
       theme_color: '#05050f',
       icons: [
-        { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+               { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
         { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
       ]
     };
     const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
     document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
   };
- img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
 
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     const swCode = `
@@ -274,7 +274,7 @@ const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı',
 const MODES={
   chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
   code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
-  project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
+  project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.']
 };
 const STUDIO_META={
   code:{
@@ -286,7 +286,9 @@ const STUDIO_META={
     label:'🧱 Proje Mesaj Kutusu',
     placeholder:'Nasıl bir tek sayfalık site veya araç istiyorsun? Örn: Neon temalı pomodoro ve not uygulaması',
     presets:['Pomodoro & Görev Sitesi','Hesap Makinesi Aracı','Kişisel Portföy Sayfası','Hava / Saat Paneli']
-  },
+  }
+};
+
 let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
 if(!MODES[S.mode])S.mode='chat';
@@ -305,24 +307,20 @@ const T=[
 [`Çevrimdışı`,`Offline`,`Offline`,`Sin conexión`,`Hors ligne`,`غير متصل`,`Не в сети`],
 [`Anahtar yok`,`No API key`,`Kein API-Schlüssel`,`Sin clave API`,`Pas de clé API`,`لا يوجد مفتاح`,`Нет API-ключа`],
 [`ÖMER AI Ultimate'e Hoş Geldiniz`,`Welcome to ÖMER AI Ultimate`,`Willkommen bei ÖMER AI Ultimate`,`Bienvenido a ÖMER AI Ultimate`,`Bienvenue sur ÖMER AI Ultimate`,`مرحبًا بك في ÖMER AI Ultimate`,`Добро пожаловать в ÖMER AI Ultimate`],
-[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.`,`Advanced AI chat, web search, image analysis, smart memory, voice input, a coding studio and a Three.js 3D game engine at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe, Coding-Studio und eine 3D-Spiele-Engine auf Three.js-Basis – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz, estudio de código y un motor de juegos 3D con Three.js, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales, studio de code et moteur de jeux 3D Three.js, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية، استوديو برمجة ومحرك ألعاب ثلاثية الأبعاد بتقنية Three.js بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод, студия кода и 3D-движок на Three.js — всё под рукой.`],
+[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar ve kodlama stüdyosu elinizin altında.`,`Advanced AI chat, web search, image analysis, smart memory, voice input and a coding studio at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe und Coding-Studio – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz y estudio de código, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales et studio de code, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية واستوديو برمجة بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод и студия кода — всё под рукой.`],
 [`Yapay Zekâ Sohbet`,`AI Chat`,`KI-Chat`,`Chat con IA`,`Chat IA`,`دردشة الذكاء الاصطناعي`,`ИИ-чат`],
 [`Kodlama Stüdyosu`,`Coding Studio`,`Coding-Studio`,`Estudio de código`,`Studio de code`,`استوديو البرمجة`,`Студия кода`],
 [`Proje Oluşturucu`,`Project Builder`,`Projekt-Builder`,`Creador de proyectos`,`Créateur de projets`,`منشئ المشاريع`,`Конструктор проектов`],
-[`3D Oyun Stüdyosu`,`3D Game Studio`,`3D-Spielestudio`,`Estudio de juegos 3D`,`Studio de jeux 3D`,`استوديو ألعاب 3D`,`Студия 3D-игр`],
 [`Sohbet`,`Chat`,`Chat`,`Chat`,`Chat`,`دردشة`,`Чат`],
 [`Kodlama`,`Coding`,`Coding`,`Código`,`Code`,`برمجة`,`Код`],
 [`Proje`,`Project`,`Projekt`,`Proyecto`,`Projet`,`مشروع`,`Проект`],
-[`3D Oyun`,`3D Game`,`3D-Spiel`,`Juego 3D`,`Jeu 3D`,`لعبة 3D`,`3D-игра`],
 [`ÖMER AI Ultimate'e bir mesaj yazın...`,`Message ÖMER AI Ultimate...`,`Nachricht an ÖMER AI Ultimate...`,`Escribe a ÖMER AI Ultimate...`,`Écrivez à ÖMER AI Ultimate...`,`اكتب رسالة إلى ÖMER AI Ultimate...`,`Напишите ÖMER AI Ultimate...`],
 [`Ne kodlayalım? Kod yazın, hata ayıklayın...`,`What shall we code? Write code, debug...`,`Was sollen wir programmieren? Code schreiben, Fehler suchen...`,`¿Qué programamos? Escribe código, depura...`,`Que codons-nous ? Écrivez, déboguez...`,`ماذا نبرمج؟ اكتب الكود وأصلح الأخطاء...`,`Что пишем? Код, отладка...`],
 [`Nasıl bir proje istiyorsun? (site, uygulama, araç...)`,`What project do you want? (site, app, tool...)`,`Welches Projekt möchtest du? (Website, App, Tool...)`,`¿Qué proyecto quieres? (sitio, app, herramienta...)`,`Quel projet voulez-vous ? (site, appli, outil...)`,`أي مشروع تريد؟ (موقع، تطبيق، أداة...)`,`Какой проект нужен? (сайт, приложение, инструмент...)`],
-[`Nasıl bir 3D oyun yapalım?`,`What 3D game shall we make?`,`Welches 3D-Spiel bauen wir?`,`¿Qué juego 3D hacemos?`,`Quel jeu 3D créons-nous ?`,`أي لعبة 3D نصنع؟`,`Какую 3D-игру сделаем?`],
 [`Akıllı Sohbet & Analiz`,`Smart Chat & Analysis`,`Smarter Chat & Analyse`,`Chat inteligente y análisis`,`Chat intelligent & analyse`,`دردشة ذكية وتحليل`,`Умный чат и анализ`],
 [`Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.`,`Ask questions, develop ideas and chat with a memory-enabled assistant that can search the web.`,`Stelle Fragen, entwickle Ideen und chatte mit einem Assistenten mit Gedächtnis und Websuche.`,`Haz preguntas, desarrolla ideas y chatea con un asistente con memoria y búsqueda web.`,`Posez des questions, développez vos idées et discutez avec un assistant à mémoire et recherche web.`,`اسأل وطوّر أفكارك وتحدث مع مساعد بذاكرة وبحث على الويب.`,`Задавайте вопросы, развивайте идеи и общайтесь с ассистентом с памятью и поиском в сети.`],
 [`HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.`,`Write and debug code in HTML, JS, Python and more.`,`Schreibe und debugge Code in HTML, JS, Python und mehr.`,`Escribe y depura código en HTML, JS, Python y más.`,`Écrivez et déboguez du code HTML, JS, Python et plus.`,`اكتب وأصلح الكود بـ HTML وJS وPython وغيرها.`,`Пишите и отлаживайте код на HTML, JS, Python и других языках.`],
 [`Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.`,`Build a working website or app from one message and preview it instantly.`,`Erstelle mit einer Nachricht eine funktionierende Website oder App und sieh sie sofort in der Vorschau.`,`Crea un sitio o app funcional con un mensaje y previsualízalo al instante.`,`Créez un site ou une appli fonctionnels en un message et prévisualisez-les aussitôt.`,`أنشئ موقعًا أو تطبيقًا يعمل برسالة واحدة وعاينه فورًا.`,`Создайте рабочий сайт или приложение одним сообщением и сразу посмотрите результат.`],
-[`Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.`,`Make playable 3D games in the browser with Three.js.`,`Baue spielbare 3D-Spiele im Browser mit Three.js.`,`Crea juegos 3D jugables en el navegador con Three.js.`,`Créez des jeux 3D jouables dans le navigateur avec Three.js.`,`اصنع ألعابًا ثلاثية الأبعاد قابلة للعب في المتصفح عبر Three.js.`,`Создавайте 3D-игры в браузере на Three.js.`],
 [`Enter: Gönder • Shift+Enter: Alt satır`,`Enter: Send • Shift+Enter: New line`,`Enter: Senden • Umschalt+Enter: Neue Zeile`,`Enter: Enviar • Mayús+Enter: Nueva línea`,`Entrée : envoyer • Maj+Entrée : nouvelle ligne`,`Enter: إرسال • Shift+Enter: سطر جديد`,`Enter: отправить • Shift+Enter: новая строка`],
 [`Gönder ➤`,`Send ➤`,`Senden ➤`,`Enviar ➤`,`Envoyer ➤`,`إرسال ➤`,`Отправить ➤`],
 [`Arkadaş canlısı`,`Friendly`,`Freundlich`,`Amistoso`,`Amical`,`ودّي`,`Дружелюбный`],
@@ -384,8 +382,8 @@ function newChat(forceNew=false){
   S.cur=c.id;
   save();
   return c;
- }
- 
+}
+
 function stripLatex(str){
   let out = String(str || '');
   out = out
@@ -407,7 +405,7 @@ function stripLatex(str){
 
   const symMap = {
     '\\zeta':'ζ', '\\eta':'η', '\\gamma':'γ', '\\Gamma':'Γ', '\\lambda':'λ', '\\Lambda':'Λ',
-        '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
+    '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
     '\\epsilon':'ε', '\\varepsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ',
     '\\rho':'ρ', '\\sigma':'σ', '\\Sigma':'Σ', '\\tau':'τ', '\\phi':'φ', '\\varphi':'φ',
     '\\psi':'ψ', '\\omega':'ω', '\\Omega':'Ω', '\\infty':'∞', '\\sum':'Σ', '\\prod':'Π',
@@ -447,7 +445,7 @@ function md(t){
     .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
     .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-    .replace(/[*#~`$?]/g,'')
+        .replace(/[*#~`$?]/g,'')
     .replace(/\n/g,'<br>');
   return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
 }
@@ -498,7 +496,7 @@ function render(){
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
    :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${renderSrc(x.src)}</div>`).join('');
-  $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span><span>${v[1]}</span>${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
+  $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span><span>${v[1]}</span></button>`).join('');
   $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
   $('#cnt').textContent=S.chats.length;
   $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
@@ -524,7 +522,7 @@ async function sendWithText(customText){
   historyMsgs.unshift({role:'user',text:cleanDirective});
 
   const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
-  } else if(S.mode==='project'){
+  if(S.mode==='project'){
     p.messages.push({
       role:'user',
       text:'PROJECT BUILDER DIRECTIVE: Create a complete, clean, working single-file HTML/CSS/JS project that can be run immediately in the browser preview. Include clear UI, responsive layout, interactive functionality, and zero raw LaTeX or # or * or ? symbols in your explanation.'
@@ -601,7 +599,7 @@ $('#studio-send').onclick=()=>{
 
 $('#studio-in').onkeydown=e=>{
   if(e.key==='Enter' && !e.shiftKey){
- e.preventDefault();
+    e.preventDefault();
     $('#studio-send').click();
   }
 };
