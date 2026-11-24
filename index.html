@@ -275,7 +275,6 @@ const MODES={
   chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
   code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
   project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
-  game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']
 };
 const STUDIO_META={
   code:{
@@ -288,13 +287,6 @@ const STUDIO_META={
     placeholder:'Nasıl bir tek sayfalık site veya araç istiyorsun? Örn: Neon temalı pomodoro ve not uygulaması',
     presets:['Pomodoro & Görev Sitesi','Hesap Makinesi Aracı','Kişisel Portföy Sayfası','Hava / Saat Paneli']
   },
-  game:{
-    label:'🎮 3D Oyun Mesaj Kutusu',
-    placeholder:'Nasıl bir 3D oyun yapalım? Örn: Uzayda engellerden kaçmalı 3D koşu oyunu',
-    presets:['3D Labirent Oyunu','3D Uzay Koşusu','3D Araba / Parkur','3D Top Sektirme']
-  }
-};
-
 let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
 if(!MODES[S.mode])S.mode='chat';
@@ -532,11 +524,6 @@ async function sendWithText(customText){
   historyMsgs.unshift({role:'user',text:cleanDirective});
 
   const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
-  if(S.mode==='game'){
-    p.messages.push({
-      role:'user',
-      text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw LaTeX or # or * or ? symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
-    });
   } else if(S.mode==='project'){
     p.messages.push({
       role:'user',
