@@ -62,10 +62,11 @@ header h1{font-size:22px}
 .m h4{margin:10px 0 4px;color:#d8b4fe;font-size:1.05em}.m li{margin-left:20px;list-style:disc;margin-bottom:3px}.m a{color:#c4b5fd}
 .im{font-size:13px;opacity:.85;margin-bottom:4px}
 .src{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;font-size:12px}
-.src a{display:inline-flex;align-items:center;gap:6px;border:1px solid #352e6b;background:#121631;border-radius:10px;padding:4px 10px;text-decoration:none;max-width:230px;color:#e0d7ff;transition:border-color .15s,background .15s}
+.src a{display:inline-flex;align-items:center;gap:7px;border:1px solid #352e6b;background:#121631;border-radius:10px;padding:5px 10px;text-decoration:none;max-width:250px;color:#e0d7ff;transition:border-color .15s,background .15s}
 .src a:hover{border-color:#7c3aed;background:#1b1f44}
-.src a img{width:15px;height:15px;border-radius:4px;flex-shrink:0;object-fit:contain;background:#fff1}
-.src a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src .site-logo{width:18px;height:18px;border-radius:5px;flex-shrink:0;display:grid;place-items:center;background:#1e244d;color:#67e8f9;font-weight:700;font-size:11px;overflow:hidden;position:relative}
+.src .site-logo img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
+.src a span.stitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
 .ch{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#15123a;font-size:12px;color:var(--mu)}
 .ch button{margin-left:8px;border:1px solid #4b3a99;border-radius:8px;padding:2px 9px;color:var(--tx);font-size:12px}
@@ -391,23 +392,21 @@ function newChat(forceNew=false){
   S.cur=c.id;
   save();
   return c;
-}
-
+ }
+ 
 function stripLatex(str){
   let out = String(str || '');
   out = out
-      .replace(/\\begin\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix|cases)\}/g, '')
-    .replace(/\\end\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix|cases)\}/g, '')
+    .replace(/\\begin\{[a-zA-Z0-9*]+\}/g, '')
+    .replace(/\\end\{[a-zA-Z0-9*]+\}/g, '')
     .replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, '');
 
-  for(let i=0; i<8; i++){
+  for(let i=0; i<10; i++){
     const next = out
-      .replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
-      .replace(/\\dfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
-      .replace(/\\tfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
-      .replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^{}]+)\}/g, '($1. dereceden kök: $2)')
-      .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'karekök($1)')
-      .replace(/\\(text|mathrm|mathbf|mathit|mathsf|mathtt|operatorname|textbf|textit)\s*\{([^{}]+)\}/g, '$2')
+      .replace(/\\(?:frac|dfrac|tfrac|cfrac)\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^{}]+)\}/g, '($1. kok: $2)')
+      .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'karekok($1)')
+      .replace(/\\(?:text|mathrm|mathbf|mathit|mathsf|mathtt|operatorname|textbf|textit|textrm|emph)\s*\{([^{}]+)\}/g, '$1')
       .replace(/\^\{([^{}]+)\}/g, '^($1)')
       .replace(/_\{([^{}]+)\}/g, '_($1)');
     if(next === out) break;
@@ -461,14 +460,26 @@ function md(t){
   return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
 }
 
+function normalizeSources(d){
+  const raw = d?.sources || d?.citations || d?.webSources || d?.searchResults || d?.results || [];
+  if(!Array.isArray(raw)) return [];
+  return raw.map(item=>{
+    if(typeof item === 'string') return { u: item, t: item };
+    const u = item.u || item.url || item.link || item.uri || '';
+    const t = item.t || item.title || item.name || item.source || '';
+    return u ? { u, t } : null;
+  }).filter(Boolean);
+}
+
 function renderSrc(srcs){
   if(!srcs || !srcs.length) return '';
   return '<div class="src">' + srcs.map(s=>{
     let host = '';
-    try { host = new URL(s.u).hostname; } catch(e) {}
-    const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32` : '';
+    try { host = new URL(s.u).hostname.replace(/^www\./,''); } catch(e) {}
+    const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64` : '';
+    const letter = (host || s.t || 'W').charAt(0).toUpperCase();
     const label = s.t || host || 'Kaynak';
-    return `<a href="${esc(s.u)}" target="_blank" rel="noopener">${fav?`<img src="${fav}" alt="" onerror="this.style.display='none'">`:''}<span>${esc(label)}</span></a>`;
+    return `<a href="${esc(s.u)}" target="_blank" rel="noopener"><span class="site-logo">${fav?`<img src="${fav}" alt="${esc(host)}" loading="lazy" onerror="this.remove()">`:''}<span>${esc(letter)}</span></span><span class="stitle">${esc(label)}</span></a>`;
   }).join('') + '</div>';
 }
 
@@ -542,7 +553,7 @@ async function sendWithText(customText){
   if(!customText){$('#in').value='';fit();}
   const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
   try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
-   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
+   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=stripLatex(d.text||'');ai.src=normalizeSources(d)}
   catch(e){ai.t='⚠️ '+e.message}
   delete ai.load;busy=false;$('#go').disabled=false;$('#studio-send').disabled=false;save();render();
   if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}
@@ -563,7 +574,7 @@ function setMode(m){
     stIn.focus();
   } else {
     $('#in').focus();
- }
+  }
 }
 
 $('#nav').addEventListener('click',e=>{
@@ -603,7 +614,7 @@ $('#studio-send').onclick=()=>{
 
 $('#studio-in').onkeydown=e=>{
   if(e.key==='Enter' && !e.shiftKey){
-    e.preventDefault();
+ e.preventDefault();
     $('#studio-send').click();
   }
 };
