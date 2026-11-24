@@ -1,826 +1,540 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ÖMER AI v3.0 Ultimate + Vision & WebGL 3D</title>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ÖMER AI Ultimate</title>
+<meta name="theme-color" content="#05050f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ÖMER AI">
+<link id="pwa-manifest" rel="manifest">
+<link id="pwa-icon" rel="icon" type="image/png">
+<link id="pwa-apple-icon" rel="apple-touch-icon">
+<style>
+*{box-sizing:border-box;margin:0}
+:root{--bg:#05050f;--sb:#080716;--card:#0c1124;--bd:#26214d;--tx:#e8e6f5;--mu:#8f8ca8;--p:#a855f7;--g:linear-gradient(90deg,#9333ea,#5b4fe8)}
+html,body{height:100%;height:100dvh}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,sans-serif;display:flex;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#nav{display:flex;flex-direction:column;gap:3px;flex-shrink:0}#sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s;z-index:20;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 
-  <!-- MathJax Ayarları: LaTeX formüllerinin kesin çizilmesi için -->
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
+.brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.logo{width:46px;height:46px;background:radial-gradient(circle at 30% 30%,#112240,#070b19);border:1.5px solid #2b4c7e;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #00d2ff33;overflow:hidden;flex-shrink:0}
+.logo svg{width:86%;height:86%;display:block}
+.brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
+.tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+#new{display:flex;align-items:center;justify-content:center;width:100%;height:48px;min-height:48px;background:var(--g);border-radius:12px;padding:0 14px;font-weight:700;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0;white-space:nowrap}
+.lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between;flex-shrink:0}
+.nv{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%;flex-shrink:0}
+.nv.on{background:#241047;border-color:#5b3fc4}
+.nv span.i{width:22px;text-align:center;color:#8b7cf6}
+.nv em{margin-left:auto;font-style:normal;font-size:11px;background:#0f3a33;color:#5eead4;padding:2px 8px;border-radius:7px}
+#hist{flex:1 1 auto;min-height:120px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.hi{flex-shrink:0;touch-action:pan-y;user-select:none;padding:10px 12px;border-radius:12px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid transparent}
+.hi.on{background:#241047;border-color:#5b3fc4}
+.ft{display:flex;justify-content:space-between;font-size:14px;color:var(--mu);border-top:1px solid var(--bd);padding-top:12px;flex-shrink:0}
+.ft button{border:1px solid var(--bd);border-radius:10px;padding:5px 10px;color:var(--tx)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#34d399;margin-right:7px}.dot.off{background:#f87171}
+#main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd)}
+header h1{font-size:22px}
+#pill{font-size:14px;color:#d8c8ff;background:#1c1140;border:1px solid #4b3a99;border-radius:14px;padding:2px 14px}
+.sp{flex:1}
+.chip{border:1px solid var(--bd);background:#0d0b2a;border-radius:16px;padding:6px 14px;font-size:14px}
+.ib{width:38px;height:38px;border-radius:10px;font-size:19px}
+#chat{flex:1;overflow:auto;padding:16px;position:relative}
+#wel{flex-direction:column;align-items:center;text-align:center;padding:24px 8px;max-width:1000px;margin:auto}
+#wel .logo{width:96px;height:96px;border-radius:24px;border-width:2px;margin-bottom:22px;box-shadow:0 0 32px #00d2ff44,0 0 24px #ff6a0022}
+#wel h2{font-size:clamp(26px,5vw,44px);line-height:1.15}
+#wel h2 span{background:linear-gradient(90deg,#fff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}
+#wel p{color:var(--mu);margin:14px 0 26px;max-width:760px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:14px;width:100%}
+.cd{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px;text-align:center}
+.cd h3{font-size:17px;display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:8px}
+.cd h3 i{font-style:normal;width:36px;height:36px;border-radius:10px;background:#1b1747;display:grid;place-items:center}
+.cd p{margin:0;font-size:14px}
+#msgs{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.m{padding:12px 16px;border-radius:18px;max-width:92%;overflow-wrap:anywhere}
+.m.u{align-self:flex-end;background:linear-gradient(90deg,#7c3aed,#5b4fe8)}
+.m.a{align-self:flex-start;background:var(--card);border:1px solid var(--bd)}
+.m code{background:#1a1740;padding:1px 6px;border-radius:6px;font-size:.9em}
+.m h4{margin:10px 0 4px;color:#d8b4fe;font-size:1.05em}.m li{margin-left:20px;list-style:disc;margin-bottom:3px}.m a{color:#c4b5fd}
+.im{font-size:13px;opacity:.85;margin-bottom:4px}
+.src{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;font-size:12px}
+.src a{display:inline-flex;align-items:center;gap:6px;border:1px solid #352e6b;background:#121631;border-radius:10px;padding:4px 10px;text-decoration:none;max-width:230px;color:#e0d7ff;transition:border-color .15s,background .15s}
+.src a:hover{border-color:#7c3aed;background:#1b1f44}
+.src a img{width:15px;height:15px;border-radius:4px;flex-shrink:0;object-fit:contain;background:#fff1}
+.src a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#15123a;font-size:12px;color:var(--mu)}
+.ch button{margin-left:8px;border:1px solid #4b3a99;border-radius:8px;padding:2px 9px;color:var(--tx);font-size:12px}
+.ch button.run{background:var(--g)}
+pre{padding:12px;overflow:auto;font:13px/1.45 ui-monospace,Menlo,monospace;max-height:420px}
+.dots i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:50%;background:var(--p);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{opacity:.2;transform:translateY(-4px)}}
+#bar{padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+#box{max-width:1100px;margin:auto;display:flex;gap:10px;align-items:flex-end;background:#0a0a1f;border:1px solid var(--bd);border-radius:20px;padding:10px}
+#box .ib{background:#14122e;flex-shrink:0;width:44px;height:44px}
+#mic.on{background:#b91c1c}
+#in{flex:1;background:none;border:0;outline:0;color:var(--tx);font:inherit;resize:none;max-height:160px;padding:10px 4px}
+#go{background:var(--g);border-radius:14px;padding:0 22px;height:44px;font-weight:600;flex-shrink:0}
+#go:disabled{opacity:.5}
+#prev{max-width:1100px;margin:0 auto 8px;display:flex;gap:8px;align-items:center}
+#prev img{height:64px;border-radius:10px;border:1px solid var(--bd)}
+#prev button{border:1px solid var(--bd);border-radius:50%;width:26px;height:26px}
+.hint{max-width:1100px;margin:6px auto 0;font-size:12px;color:var(--mu);display:flex;justify-content:space-between;gap:10px}
+#pv{display:none;position:fixed;inset:0;z-index:50;background:#000;flex-direction:column}
+#pv button{padding:10px;background:#15123a;text-align:right}
+#fr{flex:1;border:0;width:100%;background:#fff}
+#dg{display:none;position:fixed;inset:0;z-index:60;background:#000b;align-items:center;justify-content:center;padding:16px}
+#dg>div{background:var(--card);border:1px solid #4b3a99;border-radius:18px;padding:20px;max-width:420px;width:100%;max-height:80vh;overflow:auto}
+#dg h3{margin-bottom:10px}#dg .bd{color:var(--mu);font-size:15px;white-space:pre-wrap;margin-bottom:16px;overflow-wrap:anywhere}
+#dg .bt{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}#dg .bt button{border:1px solid var(--bd);border-radius:12px;padding:8px 16px}#dg .bt .pr{background:var(--g);border-color:transparent}
+#dg .sr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);color:var(--tx);white-space:normal}
+#dg select{background:#0a0a1f;color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font:inherit}
+#dg input[type=checkbox]{width:22px;height:22px;accent-color:#a855f7}
+button{transition:transform .12s,filter .15s,box-shadow .2s;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+button:active{transform:scale(.94);filter:brightness(1.25)}
+#new:hover,#go:hover{box-shadow:0 6px 24px #7c3aed99}
+.rp{position:absolute;border-radius:50%;background:#ffffff40;transform:scale(0);animation:rp .55s ease-out;pointer-events:none}
+@keyframes rp{to{transform:scale(4);opacity:0}}
+#msgs .m:last-child{animation:mi .3s ease-out}
+@keyframes mi{from{opacity:0;transform:translateY(8px)}}
+#mic.on{animation:pl 1s infinite}
+@keyframes pl{50%{box-shadow:0 0 0 8px #b91c1c55}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+#sb button,.cd,.lb{unicode-bidi:plaintext}
+.m,#in{unicode-bidi:plaintext}
+pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
+.rtl #sb,.rtl #dg>div,.rtl #wel{direction:rtl}
+#bk{display:none;position:fixed;inset:0;background:#000a;z-index:15}
+@media(min-width:901px){#sb.c{margin-left:-290px}}
+@media(max-width:900px){#sb{position:fixed;top:0;bottom:0;left:0;width:min(290px,86vw);transform:translateX(-100%);transition:transform .25s;padding-top:calc(14px + env(safe-area-inset-top));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}#sb.o{transform:none}#sb.o+#bk{display:block}}
+@media(max-width:600px){header{padding:10px 12px;gap:8px}header h1{font-size:19px}.chip,.hint{display:none}.m{max-width:97%}#chat{padding:12px 10px}#bar{padding:8px 10px calc(8px + env(safe-area-inset-bottom))}#box{padding:6px;gap:6px;border-radius:18px}#box .ib{width:40px;height:40px}#go{padding:0 14px;height:40px}#wel{padding:10px 2px}#wel .logo{width:72px;height:72px;margin-bottom:14px}#wel p{margin:10px 0 18px;font-size:15px}}
+@media(max-height:520px){#wel .logo,#wel p,.hint{display:none}}
+@media(min-width:1300px){#msgs{max-width:980px}}
+@media(pointer:coarse){.ib{min-width:44px;min-height:44px}.nv,.hi{padding:12px}#in{font-size:16px!important}}
+</style></head><body>
+<aside id="sb">
+ <div class="brand"><div class="logo" id="sb-logo"></div>
+ <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
+ <button id="new" type="button">＋ Yeni Sohbet</button>
+ <div class="lb">ÇALIŞMA ALANLARI</div><div id="nav"></div>
+ <div class="lb" style="border-top:1px solid var(--bd);padding-top:12px">SOHBET GEÇMİŞİ <span id="cnt"></span></div>
+ <div id="hist"></div>
+ <div class="ft"><button id="memb" type="button"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
+</aside><div id="bk"></div>
+<div id="main">
+ <header><button class="ib" id="burger" type="button">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
+ <button class="chip" id="tone" type="button"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
+ <button class="ib" id="edit" type="button" title="Yeni sohbet">✎</button><button class="ib" id="menu" type="button" title="Ayarlar">⋮</button></header>
+ <div id="chat">
+  <div id="wel"><div class="logo" id="wel-logo"></div>
+   <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
+   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.</p>
+   <div class="cards" id="cards"></div></div>
+  <div id="msgs"></div>
+ </div>
+ <div id="bar"><div id="prev"></div>
+  <div id="box"><input type="file" id="file" accept="image/*" hidden>
+   <button class="ib" id="att" type="button" title="Görsel ekle">📎</button><button class="ib" id="mic" type="button" title="Sesle yaz">🎙️</button>
+   <textarea id="in" rows="1"></textarea><button id="go" type="button">Gönder ➤</button></div>
+  <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision &amp; WebGL 3D</span></div></div>
+</div>
+<div id="dg"><div><h3 id="dgt"></h3><div class="bd" id="dgb"></div><div class="bt" id="dgs"></div></div></div>
+<div id="pv"><button id="cl" type="button">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
+<script>
+const OMER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="neon-grad" x1="15%" y1="15%" x2="85%" y2="85%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="52%" stop-color="#38bdf8"/>
+      <stop offset="68%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ff512f"/>
+    </linearGradient>
+    <linearGradient id="orange-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <filter id="neon-glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="3.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#neon-glow)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="84" cy="36" r="7.5" stroke="#00f2fe" stroke-width="4.5"/>
+    <circle cx="116" cy="36" r="7.5" stroke="#fb923c" stroke-width="4.5"/>
+    <line x1="92" y1="36" x2="108" y2="36" stroke="url(#neon-grad)" stroke-width="4"/>
+    <circle cx="129" cy="24" r="2.2" fill="#fb923c" stroke="none"/>
+    <line x1="122" y1="31" x2="127" y2="26" stroke="#fb923c" stroke-width="2.5"/>
+    <path d="M 129 63 A 52 52 0 1 0 144 82" stroke="url(#neon-grad)" stroke-width="6.5"/>
+    <path d="M 119 73 A 37 37 0 1 0 132 92" stroke="url(#neon-grad)" stroke-width="4.5" opacity="0.9"/>
+    <path d="M 52 152 L 84 102 L 103 119 L 154 46 L 114 134 L 96 117 L 64 156 Z" fill="#071326" stroke="url(#neon-grad)" stroke-width="4.5"/>
+    <path d="M 103 119 L 154 46 L 114 134" stroke="url(#orange-accent)" stroke-width="4.5"/>
+    <circle cx="143" cy="68" r="3" fill="#fb923c" stroke="none"/>
+    <line x1="133" y1="78" x2="141" y2="70" stroke="#fb923c" stroke-width="2.5"/>
+  </g>
+</svg>`;
+
+document.getElementById('sb-logo').innerHTML = OMER_LOGO_SVG;
+document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
+
+(function initPWA() {
+  const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+      <radialGradient id="bg" cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#112240"/>
+        <stop offset="100%" stop-color="#05050f"/>
+      </radialGradient>
+    </defs>
+    <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+    <g transform="translate(56,56) scale(2)">
+      ${OMER_LOGO_SVG.replace(/<svg[^>]*>|<\/svg>/g, '')}
+    </g>
+  </svg>`;
+
+  const img = new Image();
+  img.onload = () => {
+    const makeIcon = (size) => {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      c.getContext('2d').drawImage(img, 0, 0, size, size);
+      return c.toDataURL('image/png');
     };
-  </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    const icon192 = makeIcon(192);
+    const icon512 = makeIcon(512);
+    document.getElementById('pwa-icon').href = icon192;
+    document.getElementById('pwa-apple-icon').href = icon192;
 
-  <style>
-    :root {
-      --bg-main: #090d16;
-      --bg-sidebar: #0d1322;
-      --bg-card: #121a2e;
-      --bg-card-hover: #18233d;
-      --border: #1f2d4d;
-      --accent: #7c3aed;
-      --accent-2: #3b82f6;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --success: #10b981;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg-main);
-      color: var(--text-main);
-      height: 100dvh;
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* SOL MENÜ */
-    .sidebar {
-      width: 270px;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 16px;
-      z-index: 30;
-      flex-shrink: 0;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 1.05rem;
-      margin-bottom: 18px;
-      color: #fff;
-    }
-
-    .brand-badge {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-    }
-
-    .nav-label {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin: 12px 0 8px 6px;
-    }
-
-    .nav-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      margin-bottom: 6px;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 12px;
-      color: var(--text-main);
-      font-size: 0.92rem;
-      text-align: left;
-      cursor: pointer;
-      touch-action: manipulation;
-      position: relative;
-      z-index: 35;
-      transition: 0.18s ease;
-    }
-
-    .nav-btn * {
-      pointer-events: none;
-    }
-
-    .nav-btn:hover,
-    .nav-btn.active {
-      background: var(--bg-card-hover);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    .sidebar-footer {
-      border-top: 1px solid var(--border);
-      padding-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .memory-pill {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #6ee7b7;
-      font-size: 0.85rem;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    /* ANA ALAN */
-    .main-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100dvh;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .topbar {
-      height: 54px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      background: rgba(13, 19, 34, 0.85);
-    }
-
-    .mobile-menu-btn {
-      display: none;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    /* ÇALIŞMA ALANLARI */
-    .workspace {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 18px;
-    }
-
-    .workspace.active {
-      display: flex;
-    }
-
-    /* SOHBET ALANI */
-    .quick-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .quick-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: 0.2s;
-    }
-
-    .quick-card * {
-      pointer-events: none;
-    }
-
-    .quick-card:hover {
-      border-color: var(--accent);
-      background: var(--bg-card-hover);
-      transform: translateY(-2px);
-    }
-
-    .quick-card h4 {
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-    }
-
-    .quick-card p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-right: 4px;
-    }
-
-    .msg {
-      max-width: 85%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      line-height: 1.6;
-      font-size: 0.95rem;
-      overflow-x: auto;
-    }
-
-    .msg.assistant {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      align-self: flex-start;
-    }
-
-    .msg.user {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-      align-self: flex-end;
-    }
-
-    .chat-input-bar {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 8px;
-    }
-
-    .chat-input-bar textarea {
-      flex: 1;
-      background: transparent;
-     border: none;
-      color: #fff;
-      resize: none;
-      outline: none;
-      font-size: 0.95rem;
-      padding: 6px;
-      height: 40px;
-    }
-
-    .send-btn {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      border: none;
-      color: #fff;
-      padding: 0 18px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* KODLAMA STÜDYOSU & PROJE OLUŞTURUCU */
-    .studio-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      flex: 1;
-      min-height: 0;
-    }
-
-    .studio-pane {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .pane-header {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .code-editor {
-      flex: 1;
-      width: 100%;
-      background: #060911;
-      color: #38bdf8;
-      border: none;
-      padding: 14px;
-      font-family: monospace;
-      font-size: 0.88rem;
-      resize: none;
-      outline: none;
-    }
-
-    .preview-frame {
-      flex: 1;
-      width: 100%;
-      border: none;
-      background: #fff;
-    }
-
-    .action-btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    /* 3D OYUN STÜDYOSU */
-    .game-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    #game-canvas {
-      flex: 1;
-      width: 100%;
-      background: #050811;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      display: block;
-    }
-
-    /* HAFIZA MODALI */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 16px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-box {
-      width: 100%;
-      max-width: 480px;
-      background: var(--bg-sidebar);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    @media (max-width: 820px) {
-      .sidebar {
-        position: fixed;
-        left: -280px;
-        top: 0;
-        bottom: 0;
-        transition: 0.25s ease;
-      }
-      .sidebar.open {
-        left: 0;
-      }
-      .mobile-menu-btn {
-        display: inline-block;
-      }
-      .studio-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- SOL MENÜ -->
-  <aside class="sidebar" id="sidebar">
-    <div>
-      <div class="brand">
-        <span>ÖMER AI</span>
-        <span class="brand-badge">v3.0 Ultimate</span>
-      </div>
-
-      <div class="nav-label">Çalışma Alanları</div>
-      <button type="button" class="nav-btn active" data-workspace="chat">💬 Yapay Zekâ Sohbet</button>
-      <button type="button" class="nav-btn" data-workspace="code">💻 Kodlama Stüdyosu</button>
-      <button type="button" class="nav-btn" data-workspace="project">🚀 Proje Oluşturucu</button>
-      <button type="button" class="nav-btn" data-workspace="game3d">🎮 3D Oyun Stüdyosu</button>
-    </div>
-
-    <div class="sidebar-footer">
-      <button type="button" class="memory-pill" id="open-memory-btn">
-        <span>🧠 Hafıza Aktif</span>
-        <span id="memory-count">0 kayıt</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- ANA EKRAN -->
-  <main class="main-area">
-    <header class="topbar">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <button type="button" class="mobile-menu-btn" id="toggle-sidebar-btn">☰ Menü</button>
-        <strong id="workspace-title">Yapay Zekâ Sohbet</strong>
-      </div>
-      <span style="font-size:0.78rem;color:var(--text-muted);">Vision & WebGL 3D</span>
-    </header>
-
-    <!-- 1. SOHBET ÇALIŞMA ALANI -->
-    <section class="workspace active" id="ws-chat">
-      <div class="quick-cards">
-        <div class="quick-card" data-workspace="code">
-          <h4>💻 Kodlama Stüdyosu</h4>
-          <p>Canlı HTML/CSS/JS kodu yaz ve anında önizle.</p>
-        </div>
-        <div class="quick-card" data-workspace="project">
-          <h4>🚀 Proje Oluşturucu</h4>
-          <p>Tek dosyalı web uygulamaları üret ve indir.</p>
-        </div>
-        <div class="quick-card" data-workspace="game3d">
-          <h4>🎮 3D Oyun Stüdyosu</h4>
-          <p>Dokunmatik ve klavye kontrollü 3D sahne & labirent oluştur.</p>
-        </div>
-      </div>
-
-      <div class="chat-messages" id="chat-messages"></div>
-
-      <div class="chat-input-bar">
-        <textarea id="chat-input" placeholder="ÖMER AI Ultimate'e bir mesaj veya matematik denklemi yazın..."></textarea>
-        <button type="button" class="send-btn" id="send-btn">Gönder ➤</button>
-      </div>
-    </section>
-
-    <!-- 2. KODLAMA STÜDYOSU -->
-    <section class="workspace" id="ws-code">
-      <div class="studio-grid">
-        <div class="studio-pane">
-          <div class="pane-header">
-            <span>index.html Editörü</span>
-            <button type="button" class="action-btn" id="run-code-btn">▶ Çalıştır</button>
-          </div>
-          <textarea class="code-editor" id="code-editor"><!DOCTYPE html>
-<html>
-<body style="background:#0f172a;color:#38bdf8;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0;">
-  <div style="text-align:center;">
-    <h1>ÖMER AI Kodlama Stüdyosu</h1>
-    <p>Kodunuz burada canlı olarak çalışıyor!</p>
-  </div>
-</body>
-</html></textarea>
-        </div>
-        <div class="studio-pane">
-          <div class="pane-header">
-            <span>Canlı Önizleme</span>
-            <button type="button" class="action-btn" id="download-code-btn">⬇ HTML İndir</button>
-          </div>
-          <iframe class="preview-frame" id="code-preview"></iframe>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. PROJE OLUŞTURUCU -->
-    <section class="workspace" id="ws-project">
-      <div class="studio-pane" style="padding:18px;gap:14px;">
-        <h3>🚀 Tek Dosya Web Proje Oluşturucu</h3>
-        <p style="color:var(--text-muted);font-size:0.9rem;">Proje başlığını ve şablon türünü seç, hazır <code>index.html</code> dosyanı tek tıkla Kodlama Stüdyosuna aktar veya indir.</p>
-        <input type="text" id="project-name-input" placeholder="Proje Adı (örn: Ömer AI Hesap Makinesi)" style="padding:12px;border-radius:10px;border:1px solid var(--border);background:#060911;color:#fff;" />
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button type="button" class="action-btn" id="gen-landing-btn">✨ Modern Arayüz Şablonu Üret</button>
-          <button type="button" class="action-btn" id="gen-math-btn">∑ Matematik & Grafik Şablonu Üret</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. 3D OYUN STÜDYOSU -->
-    <section class="workspace" id="ws-game3d">
-      <div class="game-controls">
-        <button type="button" class="action-btn" id="start-3d-btn">▶ 3D Sahneyi Başlat</button>
-        <button type="button" class="action-btn" id="export-3d-btn">⬇ Oynanabilir 3D HTML İndir</button>
-        <span style="color:var(--text-muted);font-size:0.85rem;align-self:center;">Hareket: Ok Tuşları / WASD veya Ekrana Dokun</span>
-      </div>
-      <canvas id="game-canvas"></canvas>
-    </section>
-  </main>
-
-  <!-- HAFIZA MODALI -->
-  <div class="modal-backdrop" id="memory-modal">
-    <div class="modal-box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong>🧠 ÖMER AI Hafıza Yönetimi</strong>
-        <button type="button" class="action-btn" id="close-memory-btn">Kapat</button>
-      </div>
-      <div id="memory-list" style="max-height:220px;overflow-y:auto;font-size:0.86rem;color:var(--text-muted);margin-bottom:12px;"></div>
-      <div style="display:flex;gap:8px;">
-        <input type="text" id="new-memory-input" placeholder="Yeni hafıza notu ekle..." style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:#060911;color:#fff;" />
-        <button type="button" class="action-btn" id="add-memory-btn">Ekle</button>
-      </div>
-    </div>
-  </div>
-
- <script>
-    // ==========================================
-    // 1. ÇALIŞMA ALANI GEÇİŞLERİ (KESİN ÇÖZÜM)
-    // ==========================================
-    const WORKSPACE_TITLES = {
-      chat: 'Yapay Zekâ Sohbet',
-      code: 'Kodlama Stüdyosu',
-      project: 'Proje Oluşturucu',
-      game3d: '3D Oyun Stüdyosu'
+    const manifest = {
+      name: 'ÖMER AI Ultimate',
+      short_name: 'ÖMER AI',
+      description: 'Ultimate Yapay Zekâ & Stüdyo',
+      start_url: './',
+      scope: './',
+      display: 'standalone',
+      orientation: 'any',
+      background_color: '#05050f',
+      theme_color: '#05050f',
+      icons: [
+        { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+      ]
     };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
+  };
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
 
-    function switchWorkspace(key) {
-      if (!WORKSPACE_TITLES[key]) return;
-
-      document.querySelectorAll('.workspace').forEach(ws => ws.classList.remove('active'));
-      const target = document.getElementById('ws-' + key);
-      if (target) target.classList.add('active');
-
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.workspace === key);
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    const swCode = `
+      const CACHE = 'omer-ai-v3';
+      self.addEventListener('install', e => { self.skipWaiting(); });
+      self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+      self.addEventListener('fetch', e => {
+        if (e.request.method !== 'GET') return;
+        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
       });
+    `;
+    const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  }
+})();
 
-      document.getElementById('workspace-title').textContent = WORKSPACE_TITLES[key];
-      document.getElementById('sidebar').classList.remove('open');
+const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı','Profesyonel','Kısa & net'];
+const MODES={chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
+code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
+project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
+game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']};
+let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
+try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cur=()=>S.chats.find(c=>c.id===S.cur)||null;
+let LG='tr';
+const LGS=[['auto','Otomatik / Auto'],['tr','Türkçe'],['en','English'],['de','Deutsch'],['es','Español'],['fr','Français'],['ar','العربية'],['ru','Русский']];
+const T=[
+[`Ultimate Yapay Zekâ & Stüdyo`,`Ultimate AI & Studio`,`Ultimate KI & Studio`,`IA Ultimate y Estudio`,`IA Ultimate & Studio`,`الذكاء الاصطناعي والاستوديو`,`Ultimate ИИ и студия`],
+[`＋ Yeni Sohbet`,`＋ New chat`,`＋ Neuer Chat`,`＋ Nuevo chat`,`＋ Nouveau chat`,`＋ محادثة جديدة`,`＋ Новый чат`],
+[`ÇALIŞMA ALANLARI`,`WORKSPACES`,`ARBEITSBEREICHE`,`ESPACIOS DE TRABAJO`,`ESPACES DE TRAVAIL`,`مساحات العمل`,`РАБОЧИЕ ПРОСТРАНСТВА`],
+[`SOHBET GEÇMİŞİ`,`CHAT HISTORY`,`CHATVERLAUF`,`HISTORIAL`,`HISTORIQUE`,`سجل الدردشات`,`ИСТОРИЯ ЧАТОВ`],
+[`Hafıza Aktif`,`Memory on`,`Speicher aktiv`,`Memoria activa`,`Mémoire active`,`الذاكرة مفعّلة`,`Память включена`],
+[`Çevrimiçi`,`Online`,`Online`,`En línea`,`En ligne`,`متصل`,`Онлайн`],
+[`Çevrimdışı`,`Offline`,`Offline`,`Sin conexión`,`Hors ligne`,`غير متصل`,`Не в сети`],
+[`Anahtar yok`,`No API key`,`Kein API-Schlüssel`,`Sin clave API`,`Pas de clé API`,`لا يوجد مفتاح`,`Нет API-ключа`],
+[`ÖMER AI Ultimate'e Hoş Geldiniz`,`Welcome to ÖMER AI Ultimate`,`Willkommen bei ÖMER AI Ultimate`,`Bienvenido a ÖMER AI Ultimate`,`Bienvenue sur ÖMER AI Ultimate`,`مرحبًا بك في ÖMER AI Ultimate`,`Добро пожаловать в ÖMER AI Ultimate`],
+[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.`,`Advanced AI chat, web search, image analysis, smart memory, voice input, a coding studio and a Three.js 3D game engine at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe, Coding-Studio und eine 3D-Spiele-Engine auf Three.js-Basis – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz, estudio de código y un motor de juegos 3D con Three.js, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales, studio de code et moteur de jeux 3D Three.js, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية، استوديو برمجة ومحرك ألعاب ثلاثية الأبعاد بتقنية Three.js بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод, студия кода и 3D-движок на Three.js — всё под рукой.`],
+[`Yapay Zekâ Sohbet`,`AI Chat`,`KI-Chat`,`Chat con IA`,`Chat IA`,`دردشة الذكاء الاصطناعي`,`ИИ-чат`],
+[`Kodlama Stüdyosu`,`Coding Studio`,`Coding-Studio`,`Estudio de código`,`Studio de code`,`استوديو البرمجة`,`Студия кода`],
+[`Proje Oluşturucu`,`Project Builder`,`Projekt-Builder`,`Creador de proyectos`,`Créateur de projets`,`منشئ المشاريع`,`Конструктор проектов`],
+[`3D Oyun Stüdyosu`,`3D Game Studio`,`3D-Spielestudio`,`Estudio de juegos 3D`,`Studio de jeux 3D`,`استوديو ألعاب 3D`,`Студия 3D-игр`],
+[`Sohbet`,`Chat`,`Chat`,`Chat`,`Chat`,`دردشة`,`Чат`],
+[`Kodlama`,`Coding`,`Coding`,`Código`,`Code`,`برمجة`,`Код`],
+[`Proje`,`Project`,`Projekt`,`Proyecto`,`Projet`,`مشروع`,`Проект`],
+[`3D Oyun`,`3D Game`,`3D-Spiel`,`Juego 3D`,`Jeu 3D`,`لعبة 3D`,`3D-игра`],
+[`ÖMER AI Ultimate'e bir mesaj yazın...`,`Message ÖMER AI Ultimate...`,`Nachricht an ÖMER AI Ultimate...`,`Escribe a ÖMER AI Ultimate...`,`Écrivez à ÖMER AI Ultimate...`,`اكتب رسالة إلى ÖMER AI Ultimate...`,`Напишите ÖMER AI Ultimate...`],
+[`Ne kodlayalım? Kod yazın, hata ayıklayın...`,`What shall we code? Write code, debug...`,`Was sollen wir programmieren? Code schreiben, Fehler suchen...`,`¿Qué programamos? Escribe código, depura...`,`Que codons-nous ? Écrivez, déboguez...`,`ماذا نبرمج؟ اكتب الكود وأصلح الأخطاء...`,`Что пишем? Код, отладка...`],
+[`Nasıl bir proje istiyorsun? (site, uygulama, araç...)`,`What project do you want? (site, app, tool...)`,`Welches Projekt möchtest du? (Website, App, Tool...)`,`¿Qué proyecto quieres? (sitio, app, herramienta...)`,`Quel projet voulez-vous ? (site, appli, outil...)`,`أي مشروع تريد؟ (موقع، تطبيق، أداة...)`,`Какой проект нужен? (сайт, приложение, инструмент...)`],
+[`Nasıl bir 3D oyun yapalım?`,`What 3D game shall we make?`,`Welches 3D-Spiel bauen wir?`,`¿Qué juego 3D hacemos?`,`Quel jeu 3D créons-nous ?`,`أي لعبة 3D نصنع؟`,`Какую 3D-игру сделаем?`],
+[`Akıllı Sohbet & Analiz`,`Smart Chat & Analysis`,`Smarter Chat & Analyse`,`Chat inteligente y análisis`,`Chat intelligent & analyse`,`دردشة ذكية وتحليل`,`Умный чат и анализ`],
+[`Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.`,`Ask questions, develop ideas and chat with a memory-enabled assistant that can search the web.`,`Stelle Fragen, entwickle Ideen und chatte mit einem Assistenten mit Gedächtnis und Websuche.`,`Haz preguntas, desarrolla ideas y chatea con un asistente con memoria y búsqueda web.`,`Posez des questions, développez vos idées et discutez avec un assistant à mémoire et recherche web.`,`اسأل وطوّر أفكارك وتحدث مع مساعد بذاكرة وبحث على الويب.`,`Задавайте вопросы, развивайте идеи и общайтесь с ассистентом с памятью и поиском в сети.`],
+[`HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.`,`Write and debug code in HTML, JS, Python and more.`,`Schreibe und debugge Code in HTML, JS, Python und mehr.`,`Escribe y depura código en HTML, JS, Python y más.`,`Écrivez et déboguez du code HTML, JS, Python et plus.`,`اكتب وأصلح الكود بـ HTML وJS وPython وغيرها.`,`Пишите и отлаживайте код на HTML, JS, Python и других языках.`],
+[`Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.`,`Build a working website or app from one message and preview it instantly.`,`Erstelle mit einer Nachricht eine funktionierende Website oder App und sieh sie sofort in der Vorschau.`,`Crea un sitio o app funcional con un mensaje y previsualízalo al instante.`,`Créez un site ou une appli fonctionnels en un message et prévisualisez-les aussitôt.`,`أنشئ موقعًا أو تطبيقًا يعمل برسالة واحدة وعاينه فورًا.`,`Создайте рабочий сайт или приложение одним сообщением и сразу посмотрите результат.`],
+[`Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.`,`Make playable 3D games in the browser with Three.js.`,`Baue spielbare 3D-Spiele im Browser mit Three.js.`,`Crea juegos 3D jugables en el navegador con Three.js.`,`Créez des jeux 3D jouables dans le navigateur avec Three.js.`,`اصنع ألعابًا ثلاثية الأبعاد قابلة للعب في المتصفح عبر Three.js.`,`Создавайте 3D-игры в браузере на Three.js.`],
+[`Enter: Gönder • Shift+Enter: Alt satır`,`Enter: Send • Shift+Enter: New line`,`Enter: Senden • Umschalt+Enter: Neue Zeile`,`Enter: Enviar • Mayús+Enter: Nueva línea`,`Entrée : envoyer • Maj+Entrée : nouvelle ligne`,`Enter: إرسال • Shift+Enter: سطر جديد`,`Enter: отправить • Shift+Enter: новая строка`],
+[`Gönder ➤`,`Send ➤`,`Senden ➤`,`Enviar ➤`,`Envoyer ➤`,`إرسال ➤`,`Отправить ➤`],
+[`Arkadaş canlısı`,`Friendly`,`Freundlich`,`Amistoso`,`Amical`,`ودّي`,`Дружелюбный`],
+[`Profesyonel`,`Professional`,`Professionell`,`Profesional`,`Professionnel`,`احترافي`,`Деловой`],
+[`Kısa & net`,`Short & clear`,`Kurz & klar`,`Breve y claro`,`Court & clair`,`قصير وواضح`,`Кратко и ясно`],
+[`Yeni sohbet`,`New chat`,`Neuer Chat`,`Nuevo chat`,`Nouveau chat`,`محادثة جديدة`,`Новый чат`],
+[`Ayarlar`,`Settings`,`Einstellungen`,`Ajustes`,`Réglages`,`الإعدادات`,`Настройки`],
+[`Görsel ekle`,`Add image`,`Bild hinzufügen`,`Añadir imagen`,`Ajouter une image`,`إضافة صورة`,`Добавить фото`],
+[`Sesle yaz`,`Dictate`,`Diktieren`,`Dictar`,`Dicter`,`إملاء صوتي`,`Диктовка`],
+[`💬 Yeni Sohbet`,`💬 New chat`,`💬 Neuer Chat`,`💬 Nuevo chat`,`💬 Nouveau chat`,`💬 محادثة جديدة`,`💬 Новый чат`],
+[`⚙️ Ayarlar`,`⚙️ Settings`,`⚙️ Einstellungen`,`⚙️ Ajustes`,`⚙️ Réglages`,`⚙️ الإعدادات`,`⚙️ Настройки`],
+[`Ton`,`Tone`,`Ton`,`Tono`,`Ton`,`النبرة`,`Тон`],
+[`Web araması`,`Web search`,`Websuche`,`Búsqueda web`,`Recherche web`,`البحث على الويب`,`Поиск в сети`],
+[`Yanıtı sesli oku`,`Read replies aloud`,`Antworten vorlesen`,`Leer respuestas en voz alta`,`Lire les réponses à voix haute`,`قراءة الردود بصوت عالٍ`,`Озвучивать ответы`],
+[`Yazı boyutu`,`Text size`,`Schriftgröße`,`Tamaño del texto`,`Taille du texte`,`حجم الخط`,`Размер текста`],
+[`Küçük`,`Small`,`Klein`,`Pequeño`,`Petit`,`صغير`,`Мелкий`],
+[`Normal`,`Normal`,`Normal`,`Normal`,`Normal`,`عادي`,`Обычный`],
+[`Büyük`,`Large`,`Groß`,`Grande`,`Grand`,`كبير`,`Крупный`],
+[`Hafızayı sil`,`Clear memory`,`Speicher löschen`,`Borrar memoria`,`Effacer la mémoire`,`مسح الذاكرة`,`Очистить память`],
+[`Geçmişi sil`,`Clear history`,`Verlauf löschen`,`Borrar historial`,`Effacer l'historique`,`مسح السجل`,`Очистить историю`],
+[`Tamam`,`OK`,`OK`,`Aceptar`,`OK`,`حسنًا`,`ОК`],
+[`Kayıtlı hafıza notu`,`Saved memory notes`,`Gespeicherte Notizen`,`Notas guardadas`,`Notes en mémoire`,`الملاحظات المحفوظة`,`Заметок в памяти`],
+[`Sohbet geçmişi`,`Chat history`,`Chatverlauf`,`Historial`,`Historique`,`سجل المحادثات`,`История чатов`],
+[`Tüm sohbetler silinsin mi?`,`Delete all chats?`,`Alle Chats löschen?`,`¿Borrar todos los chats?`,`Supprimer tous les chats ?`,`حذف كل المحادثات؟`,`Удалить все чаты?`],
+[`Vazgeç`,`Cancel`,`Abbrechen`,`Cancelar`,`Annuler`,`إلغاء`,`Отмена`],
+[`Hepsini sil`,`Delete all`,`Alle löschen`,`Borrar todo`,`Tout supprimer`,`حذف الكل`,`Удалить всё`],
+[`Hafıza`,`Memory`,`Speicher`,`Memoria`,`Mémoire`,`الذاكرة`,`Память`],
+[`Kayıtlı tüm notlar silinsin mi?`,`Delete all saved notes?`,`Alle gespeicherten Notizen löschen?`,`¿Borrar todas las notas guardadas?`,`Supprimer toutes les notes ?`,`حذف كل الملاحظات المحفوظة؟`,`Удалить все сохранённые заметки?`],
+[`Sil`,`Delete`,`Löschen`,`Borrar`,`Supprimer`,`حذف`,`Удалить`],
+[`Hafıza boş. Kaydetmek için mesaj kutusuna şunu yaz:\nhatırla: adım Ömer`,`Memory is empty. To save something, type in the message box:\nremember: my name is Ömer`,`Speicher ist leer. Zum Speichern schreibe ins Nachrichtenfeld:\nremember: mein Name ist Ömer`,`La memoria está vacía. Para guardar algo, escribe en el cuadro de mensaje:\nremember: me llamo Ömer`,`La mémoire est vide. Pour enregistrer, écrivez dans le champ de message :\nremember: je m'appelle Ömer`,`الذاكرة فارغة. للحفظ اكتب في مربع الرسالة:\nremember: اسمي Ömer`,`Память пуста. Чтобы сохранить, напишите в поле сообщения:\nremember: меня зовут Ömer`],
+[`Ses tanıma`,`Voice input`,`Spracheingabe`,`Entrada de voz`,`Saisie vocale`,`الإدخال الصوتي`,`Голосовой ввод`],
+[`Bu tarayıcı sesle yazmayı desteklemiyor. Chrome ile açmayı dene.`,`This browser does not support voice input. Try Chrome.`,`Dieser Browser unterstützt keine Spracheingabe. Versuche Chrome.`,`Este navegador no admite entrada de voz. Prueba con Chrome.`,`Ce navigateur ne gère pas la saisie vocale. Essayez Chrome.`,`هذا المتصفح لا يدعم الإدخال الصوتي. جرّب Chrome.`,`Этот браузер не поддерживает голосовой ввод. Попробуйте Chrome.`],
+[`✓ Kopyalandı`,`✓ Copied`,`✓ Kopiert`,`✓ Copiado`,`✓ Copié`,`✓ تم النسخ`,`✓ Скопировано`],
+[`Kopyala`,`Copy`,`Kopieren`,`Copiar`,`Copier`,`نسخ`,`Копировать`],
+[`İndir`,`Download`,`Herunterladen`,`Descargar`,`Télécharger`,`تنزيل`,`Скачать`],
+[`▶ Çalıştır`,`▶ Run`,`▶ Ausführen`,`▶ Ejecutar`,`▶ Exécuter`,`▶ تشغيل`,`▶ Запустить`],
+[`✕ Kapat`,`✕ Close`,`✕ Schließen`,`✕ Cerrar`,`✕ Fermer`,`✕ إغلاق`,`✕ Закрыть`],
+[`Kapat`,`Close`,`Schließen`,`Cerrar`,`Fermer`,`إغلاق`,`Закрыть`],
+[`🖼️ Görsel eklendi`,`🖼️ Image attached`,`🖼️ Bild angehängt`,`🖼️ Imagen adjunta`,`🖼️ Image jointe`,`🖼️ تم إرفاق صورة`,`🖼️ Фото прикреплено`],
+[`Görsel analizi`,`Image analysis`,`Bildanalyse`,`Análisis de imagen`,`Analyse d'image`,`تحليل صورة`,`Анализ фото`],
+[`Bu görseli detaylıca analiz et.`,`Analyze this image in detail.`,`Analysiere dieses Bild im Detail.`,`Analiza esta imagen en detalle.`,`Analyse cette image en détail.`,`حلّل هذه الصورة بالتفصيل.`,`Подробно проанализируй это изображение.`]];
+const CODES=['en','de','es','fr','ar','ru'],D={},ANY={};
+CODES.forEach(c=>D[c]={});
+T.forEach(r=>{ANY[r[0]]=r[0];CODES.forEach((c,i)=>{D[c][r[0]]=r[i+1];ANY[r[i+1]]=r[0]})});
+const tt=s=>LG==='tr'?s:((D[LG]&&D[LG][s])||s);
+const vl=()=>({tr:'tr-TR',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR',ar:'ar-SA',ru:'ru-RU'})[S.lang]||navigator.language||'tr-TR';
+const tr1=v=>{const k=ANY[v];return k?(LG==='tr'?k:D[LG][k]):null};
+function trAll(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),L=[];let n;while(n=w.nextNode())L.push(n);
+ L.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|PRE|CODE|TEXTAREA)$/.test(p.tagName)||(p.closest('.m')&&!p.closest('.ch,.im')))return;const v=n.nodeValue.trim(),r=tr1(v);if(r&&r!==v)n.nodeValue=n.nodeValue.replace(v,r)});
+ document.querySelectorAll('[placeholder],[title]').forEach(e=>['placeholder','title'].forEach(a=>{const v=e.getAttribute(a),r=v&&tr1(v);if(r&&r!==v)e.setAttribute(a,r)}))}
+function applyLang(){const a=S.lang==='auto'?(navigator.language||'en').slice(0,2).toLowerCase():S.lang;LG=a==='tr'||D[a]?a:'en';document.documentElement.lang=LG;document.body.classList.toggle('rtl',LG==='ar');trAll()}
 
-      if (key === 'code') runCodePreview();
-      if (key === 'game3d') init3DScene();
-    }
+function newChat(forceNew=false){
+  let c=cur();
+  if(c && !c.msgs.length) return c;
+  if(!forceNew && c && c.msgs.length) return c;
+  c={id:Date.now()+Math.floor(Math.random()*1000),title:'Yeni Sohbet',mode:S.mode,msgs:[]};
+  S.chats.unshift(c);
+  S.cur=c.id;
+  save();
+  return c;
+}
 
-    document.addEventListener('click', (e) => {
-      const trigger = e.target.closest('[data-workspace]');
-      if (!trigger) return;
-      e.preventDefault();
-      switchWorkspace(trigger.dataset.workspace);
-    });
+function stripLatex(str){
+  let out = String(str || '');
+  out = out
+    .replace(/\\begin\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix)\}/g, '')
+    .replace(/\\end\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix)\}/g, '')
+    .replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, '');
 
-    document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('open');
-    });
+  for(let i=0; i<6; i++){
+    const next = out
+      .replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\dfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\tfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'karekök($1)')
+      .replace(/\\text\s*\{([^{}]+)\}/g, '$1')
+      .replace(/\\mathrm\s*\{([^{}]+)\}/g, '$1')
+      .replace(/\\mathbf\s*\{([^{}]+)\}/g, '$1')
+      .replace(/\\operatorname\s*\{([^{}]+)\}/g, '$1');
+    if(next === out) break;
+    out = next;
+  }
 
-    // ==========================================
-    // 2. MATEMATİK (LaTeX) TEMİZLEME VE ÇİZİM
-    // ==========================================
-    function normalizeLatex(raw) {
-      return raw
-        // Çift ters eğik çizgileri (\frac, \sin, \(, \) vb.) tek ters eğik çizgiye çevir
-        .replace(/\\\\([a-zA-Z()\[\]{}!,])/g, '\\$1')
-        // Matematik bloğu içindeki hatalı madde işaretlerini '+' yap
-        .replace(/\s*•\s*/g, ' + ');
-    }
+  const symMap = {
+    '\\zeta':'ζ', '\\eta':'η', '\\gamma':'γ', '\\Gamma':'Γ', '\\lambda':'λ', '\\Lambda':'Λ',
+    '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
+    '\\epsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ', '\\rho':'ρ',
+    '\\sigma':'σ', '\\Sigma':'Σ', '\\tau':'τ', '\\phi':'φ', '\\Phi':'Φ', '\\psi':'ψ',
+    '\\omega':'ω', '\\Omega':'Ω', '\\infty':'∞', '\\sum':'Σ', '\\prod':'Π', '\\int':'∫',
+    '\\partial':'∂', '\\nabla':'∇', '\\cdot':'·', '\\times':'×', '\\div':'÷',
+    '\\pm':'±', '\\mp':'∓', '\\leq':'≤', '\\geq':'≥', '\\neq':'≠', '\\approx':'≈',
+    '\\equiv':'≡', '\\sim':'~', '\\rightarrow':'→', '\\leftarrow':'←', '\\Rightarrow':'⇒',
+    '\\Leftarrow':'⇐', '\\left':'', '\\right':'', '\\Bigl':'', '\\Bigr':'', '\\bigl':'', '\\bigr':'',
+    '\\qquad':' ', '\\quad':' ', '\\!':'', '\\,':' ', '\\;':' ', '\\\\':'\n'
+  };
+  for(const [k,v] of Object.entries(symMap)){
+    out = out.split(k).join(v);
+  }
 
-    async function addMessage(role, text) {
-      const container = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'msg ' + role;
+  out = out
+    .replace(/\\[a-zA-Z]+/g, '')
+    .replace(/&/g, ' ')
+    .replace(/\[[0-9.]+\s*(?:pt|em|ex|cm|mm)\]/g, '')
+    .replace(/[{}]/g, '')
+    .replace(/[ \t]{2,}/g, ' ');
 
-      const cleanText = normalizeLatex(text);
-      div.innerHTML = cleanText.replace(/\n/g, '<br>');
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
+  return out;
+}
 
-      if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-        try {
-          await window.MathJax.typesetPromise([div]);
-        } catch (err) {
-          console.error('MathJax render hatası:', err);
-        }
-      }
-    }
+function code(l,c){const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c);
+ return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
 
-    // Başlangıç örnek matematik mesajı (düzeltilmiş render testi için)
-    window.addEventListener('DOMContentLoaded', () => {
-      const sampleMath = `\\[
-\\left(\\frac{d^4y}{dx^4}\\right)
-+ 5\\sin(x^2 + 3y)\\frac{d^3y}{dx^3}
-+ \\frac{e^x}{1+x^2}\\frac{d^2y}{dx^2}
-+ \\frac{\\ln(1+x^4)}{\\sqrt{1+y^2}}\\frac{dy}{dx}
-+ \\frac{7x^3y^2 - 4xy + 9}{(x^2+y^2)^2}
-= \\int_{0}^{\\pi} \\frac{\\cos(t^2)}{1+\\sin^2(t)}\\,dt
-\\]
-Bu denklem, dördüncü mertebeden türev, trigonometrik, üstel, logaritmik ve integral terimlerini içeren bir diferansiyel ifadedir.`;
-      addMessage('assistant', sampleMath);
-    });
+function md(t){
+   const B=[];
+  t=String(t||'').replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
+  t=stripLatex(t);
+  t=esc(t)
+    .replace(/`([^`\n]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>')
+    .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
+    .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/[*#~`$]/g,'')
+    .replace(/\?{2,}/g,'?')
+    .replace(/\n/g,'<br>');
+  return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
+}
 
-    function handleSend() {
-      const input = document.getElementById('chat-input');
-      const val = input.value.trim();
-      if (!val) return;
-      addMessage('user', val);
-      input.value = '';
+function renderSrc(srcs){
+  if(!srcs || !srcs.length) return '';
+  return '<div class="src">' + srcs.map(s=>{
+    let host = '';
+    try { host = new URL(s.u).hostname; } catch(e) {}
+    const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32` : '';
+    const label = s.t || host || 'Kaynak';
+    return `<a href="${esc(s.u)}" target="_blank" rel="noopener">${fav?`<img src="${fav}" alt="" onerror="this.style.display='none'">`:''}<span>${esc(label)}</span></a>`;
+  }).join('') + '</div>';
+}
 
-      setTimeout(() => {
-        if (val.includes('\\') || val.includes('$')) {
-          addMessage('assistant', 'Denklem işlendi:\n' + val);
-        } else {
-          addMessage('assistant', 'Mesajın alındı: **' + val + '**. Üstteki kartlardan veya sol menüden Kodlama Stüdyosu, Proje Oluşturucu ve 3D Oyun Stüdyosuna geçiş yapabilirsin.');
-        }
-      }, 250);
-    }
+function render(){const c=cur(),L=c?c.msgs:[];
+ $('#pill').textContent=MODES[S.mode][2];$('#in').placeholder=MODES[S.mode][3];$('#tn').textContent=S.tone;
+ $('#wel').style.display=L.length?'none':'flex';
+ $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
+  :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${renderSrc(x.src)}</div>`).join('');
+ $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span>${v[1]}${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
+ $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
+ $('#cnt').textContent=S.chats.length;
+ $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
+ $('#chat').scrollTop=1e9;trAll()}
 
-    document.getElementById('send-btn').addEventListener('click', handleSend);
-    document.getElementById('chat-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSend();
-      }
-    });
+function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
 
-    // ==========================================
-    // 3. KODLAMA STÜDYOSU & PROJE OLUŞTURUCU
-    // ==========================================
-    function runCodePreview() {
-      const code = document.getElementById('code-editor').value;
-      document.getElementById('code-preview').srcdoc = code;
-    }
+async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
+ let c=cur();
+ if(!c) c=newChat(true);
+ if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
+ c.mode=S.mode;
+ if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
+ c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
 
-    function downloadHtmlFile(filename, content) {
-      const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
+ const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or repeated ??? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
+ const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
+ historyMsgs.unshift({role:'user',text:cleanDirective});
 
-    document.getElementById('run-code-btn').addEventListener('click', runCodePreview);
-    document.getElementById('download-code-btn').addEventListener('click', () => {
-      downloadHtmlFile('omer-ai-project.html', document.getElementById('code-editor').value);
-    });
+ const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
+ if(S.mode==='game'){
+   p.messages.push({
+     role:'user',
+     text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw LaTeX or # or * symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
+   });
+ }
+ if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
+ const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;render();
+ try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
+ catch(e){ai.t='⚠️ '+e.message}
+ delete ai.load;busy=false;$('#go').disabled=false;save();render();
+ if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
 
-    document.getElementById('gen-landing-btn').addEventListener('click', () => {
-      const title = document.getElementById('project-name-input').value.trim() || 'ÖMER AI Uygulaması';
-      document.getElementById('code-editor').value = `<!DOCTYPE html>
-<html lang="tr">
-<head><meta charset="UTF-8"><title>${title}</title></head>
-<body style="margin:0;background:#090d16;color:#f8fafc;font-family:sans-serif;display:grid;place-items:center;height:100vh;">
-  <div style="background:#121a2e;padding:32px;border-radius:16px;border:1px solid #3b82f6;text-align:center;">
-    <h1>${title}</h1>
-    <p>Proje Oluşturucu ile tek dosya olarak üretildi.</p>
-  </div>
-</body>
-</html>`;
-      switchWorkspace('code');
-    });
+function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();closeSb();$('#in').focus()}
 
-    document.getElementById('gen-math-btn').addEventListener('click', () => {
-      const title = document.getElementById('project-name-input').value.trim() || 'Matematik Laboratuvarı';
-      document.getElementById('code-editor').value = `<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <title>${title}</title>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"><\/script>
-</head>
-<body style="background:#090d16;color:#fff;font-family:sans-serif;padding:40px;">
-  <h2>${title}</h2>
-  <p>$$\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}$$</p>
-</body>
-</html>`;
-      switchWorkspace('code');
-    });
+document.addEventListener('click',e=>{
+ const m=e.target.closest('[data-m]');if(m)return setMode(m.dataset.m);
+ const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;const found=cur();if(found)S.mode=found.mode||'chat';save();render();closeSb();return}
+ const b=e.target.closest('[data-a]');if(!b)return;const cd=b.closest('.cb').querySelector('code').textContent,a=b.dataset.a;
+ if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent=tt('✓ Kopyalandı')}
+ if(a==='run'){$('#fr').srcdoc=cd;$('#pv').style.display='flex'}
+ if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([cd],{type:'text/html'}));l.download='proje.html';l.click()}});
 
-    // ==========================================
-    // 4. 3D OYUN STÜDYOSU (3D LABİRENT / SAHNE)
-    // ==========================================
-    let animId = null;
-    let playerAngle = 0;
-    let playerX = 3.5;
-    let playerY = 3.5;
+$('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
+const closeSb=()=>$('#sb').classList.remove('o');
+$('#burger').onclick=e=>{e.stopPropagation();$('#sb').classList.toggle(innerWidth>900?'c':'o')};
+$('#bk').onclick=closeSb;
+$('#sb').addEventListener('click',e=>{e.stopPropagation()});
 
-    const MAP = [
-      [1,1,1,1,1,1,1,1],
-      [1,0,0,0,0,0,0,1],
-      [1,0,1,1,0,1,0,1],
-      [1,0,0,0,0,1,0,1],
-      [1,0,1,0,0,0,0,1],
-      [1,0,1,1,1,0,0,1],
-      [1,0,0,0,0,0,0,1],
-      [1,1,1,1,1,1,1,1]
-    ];
+function delChat(id){S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id){S.cur=S.chats[0]?S.chats[0].id:null;if(S.cur)S.mode=cur().mode||'chat'}if(!cur())newChat(true);save();render()}
+let sw=null,swd=false;
+$('#hist').addEventListener('pointerdown',e=>{const h=e.target.closest('.hi');if(h){sw={h,x:e.clientX,y:e.clientY,dx:0};swd=false}});
+addEventListener('pointermove',e=>{if(!sw)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
+ if(!swd&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy))swd=true;
+ if(swd){sw.dx=Math.min(0,dx);const s=sw.h.style;s.transition='none';s.transform=`translateX(${sw.dx}px)`;s.background=`rgba(239,68,68,${Math.min(.55,-sw.dx/200)})`}});
+function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transition='transform .25s,opacity .25s,background .25s';
+ if(dx<-90){h.style.transform='translateX(-110%)';h.style.opacity=0;setTimeout(()=>delChat(+h.dataset.h),230)}else{h.style.transform='';h.style.background=''}}
+ setTimeout(()=>swd=false,60)}
+addEventListener('pointerup',swEnd);addEventListener('pointercancel',swEnd);
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement('span');
+ d.className='rp';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
 
-    function init3DScene() {
-      const canvas = document.getElementById('game-canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = canvas.clientWidth || 640;
-      canvas.height = canvas.clientHeight || 360;
+function startFreshChat(e){
+  if(e) e.stopPropagation();
+  newChat(true);
+  render();
+  closeSb();
+  $('#in').focus();
+}
+$('#new').onclick=startFreshChat;
+$('#edit').onclick=startFreshChat;
 
-      if (animId) cancelAnimationFrame(animId);
+function dlg(t,b,btns){$('#dgt').textContent=t;$('#dgb').textContent=b;$('#dgs').innerHTML='';
+ btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.type='button';x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex';trAll()}
+function clearAll(){dlg('Sohbet geçmişi','Tüm sohbetler silinsin mi?',[['Vazgeç',settings],['Hepsini sil',()=>{S.chats=[];S.cur=null;newChat(true);save();render()},1]])}
+function clearMem(){dlg('Hafıza','Kayıtlı tüm notlar silinsin mi?',[['Vazgeç',settings],['Sil',()=>{S.mem=[];save()},1]])}
+function applyFs(){$('#msgs').style.fontSize=$('#in').style.fontSize=S.fs+'px'}
+function settings(){const o=(a,v)=>a.map(x=>`<option value="${x}"${x==v?' selected':''}>${x}</option>`).join('');
+ dlg('⚙️ Ayarlar','',[['Hafızayı sil',clearMem],['Geçmişi sil',clearAll],['Tamam',null,1]]);
+ $('#dgb').innerHTML=`<label class="sr">Dil / Language<select id="s0">${LGS.map(([k,n])=>`<option value="${k}"${k==S.lang?' selected':''}>${n}</option>`).join('')}</select></label><label class="sr">Ton<select id="s1">${o(TONES,S.tone)}</select></label><label class="sr">Web araması<input type="checkbox" id="s2"${S.search?' checked':''}></label><label class="sr">Yanıtı sesli oku<input type="checkbox" id="s3"${S.tts?' checked':''}></label><label class="sr">Yazı boyutu<select id="s4">${o(['Küçük','Normal','Büyük'],{14:'Küçük',16:'Normal',18:'Büyük'}[S.fs])}</select></label><div style="margin-top:10px;font-size:13px">${tt('Kayıtlı hafıza notu')}: ${S.mem.length}</div>`;
+ $('#s0').onchange=e=>{S.lang=e.target.value;save();applyLang();render();settings()};
+ $('#s1').onchange=e=>{S.tone=e.target.value;save();render()};
+ $('#s2').onchange=e=>{S.search=e.target.checked;save()};
+ $('#s3').onchange=e=>{S.tts=e.target.checked;if(!S.tts&&window.speechSynthesis)speechSynthesis.cancel();save()};
+ $('#s4').onchange=e=>{S.fs={'Küçük':14,'Normal':16,'Büyük':18}[e.target.value];applyFs();save()};trAll()}
+$('#menu').onclick=settings;
+$('#tone').onclick=()=>{S.tone=TONES[(TONES.indexOf(S.tone)+1)%TONES.length];save();render()};
+$('#memb').onclick=()=>S.mem.length?dlg('Hafıza','- '+S.mem.join('\n- '),[['Kapat'],['Hafızayı sil',()=>{S.mem=[];save()},1]]):dlg('Hafıza','Hafıza boş. Kaydetmek için mesaj kutusuna şunu yaz:\nhatırla: adım Ömer',[['Tamam',null,1]]);
+$('#go').onclick=send;$('#in').oninput=fit;
+$('#in').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+$('#att').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image,u=URL.createObjectURL(f);
+ im.onload=()=>{const k=Math.min(1,1400/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;
+  cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);img={data:cv.toDataURL('image/jpeg',.88).split(',')[1],mime:'image/jpeg'};
+  $('#prev').innerHTML=`<img src="${u}"><button type="button" onclick="img=null;$('#prev').innerHTML=''">✕</button>`};im.src=u;e.target.value=''};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('#mic').onclick=()=>{if(!SR)return dlg('Ses tanıma','Bu tarayıcı sesle yazmayı desteklemiyor. Chrome ile açmayı dene.',[['Tamam',null,1]]);if(rec)return rec.stop();
+ rec=new SR;rec.lang=vl();rec.interimResults=true;rec.onresult=e=>{$('#in').value=[...e.results].map(r=>r[0].transcript).join('');fit()};
+ rec.onend=()=>{rec=null;$('#mic').classList.remove('on')};$('#mic').classList.add('on');rec.start()};
+fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok';trAll()}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı';trAll()});
 
-      function render() {
-        const w = canvas.width;
-        const h = canvas.height;
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(0, 0, w, h / 2);
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(0, h / 2, w, h / 2);
-
-        const fov = Math.PI / 3;
-        const rays = 120;
-        for (let i = 0; i < rays; i++) {
-          const rayAngle = playerAngle - fov / 2 + (i / rays) * fov;
-          let dist = 0;
-          let hit = false;
-          const sin = Math.sin(rayAngle);
-          const cos = Math.cos(rayAngle);
-
-          while (!hit && dist < 12) {
-            dist += 0.05;
-            const tx = Math.floor(playerX + cos * dist);
-            const ty = Math.floor(playerY + sin * dist);
-            if (MAP[ty] && MAP[ty][tx] === 1) hit = true;
-          }
-
-          const corrected = dist * Math.cos(rayAngle - playerAngle);
-          const wallH = Math.min(h, h / (corrected || 0.1));
-          const shade = Math.max(40, 230 - corrected * 22);
-          ctx.fillStyle = `rgb(${shade * 0.45}, ${shade * 0.6}, ${shade})`;
-          const sliceW = w / rays + 1;
-          ctx.fillRect(i * (w / rays), (h - wallH) / 2, sliceW, wallH);
-        }
-        animId = requestAnimationFrame(render);
-      }
-      render();
-    }
-
-    function movePlayer(forward, turn) {
-      playerAngle += turn;
-      const nx = playerX + Math.cos(playerAngle) * forward;
-      const ny = playerY + Math.sin(playerAngle) * forward;
-      if (MAP[Math.floor(ny)] && MAP[Math.floor(ny)][Math.floor(nx)] === 0) {
-        playerX = nx;
-        playerY = ny;
-      }
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (!document.getElementById('ws-game3d').classList.contains('active')) return;
-      if (e.key === 'ArrowUp' || e.key === 'w') movePlayer(0.2, 0);
-      if (e.key === 'ArrowDown' || e.key === 's') movePlayer(-0.2, 0);
-      if (e.key === 'ArrowLeft' || e.key === 'a') movePlayer(0, -0.12);
-      if (e.key === 'ArrowRight' || e.key === 'd') movePlayer(0, 0.12);
-    });
-
-    document.getElementById('game-canvas').addEventListener('touchstart', (e) => {
-      const rect = e.target.getBoundingClientRect();
-      const x = e.touches[0].clientX - rect.left;
-      if (x < rect.width * 0.33) movePlayer(0, -0.2);
-      else if (x > rect.width * 0.66) movePlayer(0, 0.2);
-      else movePlayer(0.35, 0);
-    });
-
-    document.getElementById('start-3d-btn').addEventListener('click', init3DScene);
-    document.getElementById('export-3d-btn').addEventListener('click', () => {
-      downloadHtmlFile('omer-ai-3d-oyun.html', document.documentElement.outerHTML);
-    });
-
-    // ==========================================
-    // 5. HAFIZA MODALI
-    // ==========================================
-    let memories = JSON.parse(localStorage.getItem('omer_ai_memories') || '["ÖMER AI v3.0 aktif"]');
-
-    function renderMemories() {
-      document.getElementById('memory-count').textContent = memories.length + ' kayıt';
-      document.getElementById('memory-list').innerHTML = memories
-        .map((m, i) => `<div style="padding:8px;border-bottom:1px solid #1f2d4d;">${i + 1}. ${m}</div>`)
-        .join('');
-    }
-
-    document.getElementById('open-memory-btn').addEventListener('click', () => {
-      renderMemories();
-      document.getElementById('memory-modal').classList.add('open');
-    });
-
-    document.getElementById('close-memory-btn').addEventListener('click', () => {
-      document.getElementById('memory-modal').classList.remove('open');
-    });
-
-    document.getElementById('add-memory-btn').addEventListener('click', () => {
-      const inp = document.getElementById('new-memory-input');
-      if (!inp.value.trim()) return;
-      memories.push(inp.value.trim());
-      localStorage.setItem('omer_ai_memories', JSON.stringify(memories));
-      inp.value = '';
-      renderMemories();
-    });
-
-    renderMemories();
-  </script>
+applyFs();applyLang();if(!cur())newChat(true);render();
+</script>
 </body>
 </html>
