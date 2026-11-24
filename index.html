@@ -349,19 +349,67 @@ function newChat(forceNew=false){
   return c;
 }
 
+function stripLatex(str){
+  let out = String(str || '');
+  out = out
+    .replace(/\\begin\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix)\}/g, '')
+    .replace(/\\end\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix)\}/g, '')
+    .replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, '');
+
+  for(let i=0; i<6; i++){
+    const next = out
+      .replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\dfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\tfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'karekök($1)')
+      .replace(/\\text\s*\{([^{}]+)\}/g, '$1')
+      .replace(/\\mathrm\s*\{([^{}]+)\}/g, '$1')
+      .replace(/\\mathbf\s*\{([^{}]+)\}/g, '$1')
+      .replace(/\\operatorname\s*\{([^{}]+)\}/g, '$1');
+    if(next === out) break;
+    out = next;
+  }
+
+  const symMap = {
+    '\\zeta':'ζ', '\\eta':'η', '\\gamma':'γ', '\\Gamma':'Γ', '\\lambda':'λ', '\\Lambda':'Λ',
+    '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
+    '\\epsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ', '\\rho':'ρ',
+    '\\sigma':'σ', '\\Sigma':'Σ', '\\tau':'τ', '\\phi':'φ', '\\Phi':'Φ', '\\psi':'ψ',
+    '\\omega':'ω', '\\Omega':'Ω', '\\infty':'∞', '\\sum':'Σ', '\\prod':'Π', '\\int':'∫',
+    '\\partial':'∂', '\\nabla':'∇', '\\cdot':'·', '\\times':'×', '\\div':'÷',
+    '\\pm':'±', '\\mp':'∓', '\\leq':'≤', '\\geq':'≥', '\\neq':'≠', '\\approx':'≈',
+    '\\equiv':'≡', '\\sim':'~', '\\rightarrow':'→', '\\leftarrow':'←', '\\Rightarrow':'⇒',
+    '\\Leftarrow':'⇐', '\\left':'', '\\right':'', '\\Bigl':'', '\\Bigr':'', '\\bigl':'', '\\bigr':'',
+    '\\qquad':' ', '\\quad':' ', '\\!':'', '\\,':' ', '\\;':' ', '\\\\':'\n'
+  };
+  for(const [k,v] of Object.entries(symMap)){
+    out = out.split(k).join(v);
+  }
+
+  out = out
+    .replace(/\\[a-zA-Z]+/g, '')
+    .replace(/&/g, ' ')
+    .replace(/\[[0-9.]+\s*(?:pt|em|ex|cm|mm)\]/g, '')
+    .replace(/[{}]/g, '')
+    .replace(/[ \t]{2,}/g, ' ');
+
+  return out;
+}
+
 function code(l,c){const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c);
  return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
 
 function md(t){
-  const B=[];
-  t=t.replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
+ const B=[];
+  t=String(t||'').replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
+  t=stripLatex(t);
   t=esc(t)
     .replace(/`([^`\n]+)`/g,'<code>$1</code>')
     .replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>')
     .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
     .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-    .replace(/[*#~`]/g,'')
+    .replace(/[*#~`$]/g,'')
     .replace(/\?{2,}/g,'?')
     .replace(/\n/g,'<br>');
   return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
@@ -399,7 +447,7 @@ async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
  if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
  c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
 
-  const cleanDirective = 'FORMAT RULE: Never use raw markdown symbols like #, ##, ###, *, **, ***, or repeated ??? in your text responses. Write clean, natural paragraphs and plain sentences without asterisks or hash symbols.';
+ const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or repeated ??? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
  const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
  historyMsgs.unshift({role:'user',text:cleanDirective});
 
@@ -407,7 +455,7 @@ async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
  if(S.mode==='game'){
    p.messages.push({
      role:'user',
-     text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw # or * symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
+     text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw LaTeX or # or * symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
    });
  }
  if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
@@ -416,7 +464,7 @@ async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
  catch(e){ai.t='⚠️ '+e.message}
  delete ai.load;busy=false;$('#go').disabled=false;save();render();
- if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
+ if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
 
 function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();closeSb();$('#in').focus()}
 
