@@ -150,7 +150,7 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
  <div id="chat">
   <div id="wel"><div class="logo" id="wel-logo"></div>
    <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
-   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.</p>
+   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Canvas tabanlı 2D oyun stüdyosu elinizin altında.</p>
    <div class="cards" id="cards"></div></div>
   <div id="msgs"></div>
  </div>
@@ -158,18 +158,18 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
   <div id="prev"></div>
   <div id="studio-box">
    <div class="sb-top">
-    <span class="sb-title" id="sb-label">🎮 3D Oyun Mesaj Kutusu</span>
+    <span class="sb-title" id="sb-label">🎮 2D Oyun Mesaj Kutusu</span>
     <div class="sb-presets" id="sb-presets"></div>
    </div>
    <div class="sb-row">
-    <input type="text" id="studio-in" placeholder="Nasıl bir 3D oyun yapalım?">
+    <input type="text" id="studio-in" placeholder="Nasıl bir 2D oyun yapalım?">
     <button id="studio-send" type="button">Oluştur ➤</button>
    </div>
   </div>
   <div id="box"><input type="file" id="file" accept="image/*" hidden>
    <button class="ib" id="att" type="button" title="Görsel ekle">📎</button><button class="ib" id="mic" type="button" title="Sesle yaz">🎙️</button>
    <textarea id="in" rows="1"></textarea><button id="go" type="button">Gönder ➤</button></div>
-  <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision &amp; WebGL 3D</span></div></div>
+  <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision &amp; Canvas 2D</span></div></div>
 </div>
 <div id="dg"><div><h3 id="dgt"></h3><div class="bd" id="dgb"></div><div class="bt" id="dgs"></div></div></div>
 <div id="pv"><button id="cl" type="button">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
@@ -258,8 +258,8 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
     document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
   };
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
-
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+})();
+ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     const swCode = `
       const CACHE = 'omer-ai-v3';
       self.addEventListener('install', e => { self.skipWaiting(); });
@@ -279,7 +279,7 @@ const MODES={
   chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
   code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
   project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
-  game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']
+  game:['🎮','2D Oyun Stüdyosu','2D Oyun','Nasıl bir 2D oyun yapalım?','2D Oyun Stüdyosu','Canvas ile tarayıcıda oynanabilir 2D oyunlar yapın.']
 };
 const STUDIO_META={
   code:{
@@ -293,9 +293,9 @@ const STUDIO_META={
     presets:['Pomodoro & Görev Sitesi','Hesap Makinesi Aracı','Kişisel Portföy Sayfası','Hava / Saat Paneli']
   },
   game:{
-    label:'🎮 3D Oyun Mesaj Kutusu',
-    placeholder:'Nasıl bir 3D oyun yapalım? Örn: Uzayda engellerden kaçmalı 3D koşu oyunu',
-    presets:['3D Labirent Oyunu','3D Uzay Koşusu','3D Araba / Parkur','3D Top Sektirme']
+    label:'🎮 2D Oyun Mesaj Kutusu',
+    placeholder:'Nasıl bir 2D oyun yapalım? Örn: Uzayda engellerden kaçmalı 3D koşu oyunu',
+    presets:['2D Labirent Oyunu','2D Uzay Koşusu','2D Araba / Parkur','2D Top Sektirme']
   }
 };
 
@@ -317,24 +317,24 @@ const T=[
 [`Çevrimdışı`,`Offline`,`Offline`,`Sin conexión`,`Hors ligne`,`غير متصل`,`Не в сети`],
 [`Anahtar yok`,`No API key`,`Kein API-Schlüssel`,`Sin clave API`,`Pas de clé API`,`لا يوجد مفتاح`,`Нет API-ключа`],
 [`ÖMER AI Ultimate'e Hoş Geldiniz`,`Welcome to ÖMER AI Ultimate`,`Willkommen bei ÖMER AI Ultimate`,`Bienvenido a ÖMER AI Ultimate`,`Bienvenue sur ÖMER AI Ultimate`,`مرحبًا بك في ÖMER AI Ultimate`,`Добро пожаловать в ÖMER AI Ultimate`],
-[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.`,`Advanced AI chat, web search, image analysis, smart memory, voice input, a coding studio and a Three.js 3D game engine at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe, Coding-Studio und eine 3D-Spiele-Engine auf Three.js-Basis – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz, estudio de código y un motor de juegos 3D con Three.js, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales, studio de code et moteur de jeux 3D Three.js, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية، استوديو برمجة ومحرك ألعاب ثلاثية الأبعاد بتقنية Three.js بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод, студия кода и 3D-движок на Three.js — всё под рукой.`],
+[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Canvas tabanlı 2D oyun stüdyosu elinizin altında.`,`Advanced AI chat, web search, image analysis, smart memory, voice input, a coding studio and a Canvas-based 2D game studio at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe, Coding-Studio und eine 3D-Spiele-Engine auf Canvas 2D-Basis – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz, estudio de código y un motor de juegos 3D con Canvas 2D, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales, studio de code et moteur de jeux 3D Canvas 2D, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية، استوديو برمجة ومحرك ألعاب ثلاثية الأبعاد بتقنية Canvas 2D بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод, студия кода и 3D-движок на Canvas 2D — всё под рукой.`],
 [`Yapay Zekâ Sohbet`,`AI Chat`,`KI-Chat`,`Chat con IA`,`Chat IA`,`دردشة الذكاء الاصطناعي`,`ИИ-чат`],
 [`Kodlama Stüdyosu`,`Coding Studio`,`Coding-Studio`,`Estudio de código`,`Studio de code`,`استوديو البرمجة`,`Студия кода`],
 [`Proje Oluşturucu`,`Project Builder`,`Projekt-Builder`,`Creador de proyectos`,`Créateur de projets`,`منشئ المشاريع`,`Конструктор проектов`],
-[`3D Oyun Stüdyosu`,`3D Game Studio`,`3D-Spielestudio`,`Estudio de juegos 3D`,`Studio de jeux 3D`,`استوديو ألعاب 3D`,`Студия 3D-игр`],
+[`2D Oyun Stüdyosu`,`3D Game Studio`,`3D-Spielestudio`,`Estudio de juegos 3D`,`Studio de jeux 3D`,`استوديو ألعاب 3D`,`Студия 3D-игр`],
 [`Sohbet`,`Chat`,`Chat`,`Chat`,`Chat`,`دردشة`,`Чат`],
 [`Kodlama`,`Coding`,`Coding`,`Código`,`Code`,`برمجة`,`Код`],
 [`Proje`,`Project`,`Projekt`,`Proyecto`,`Projet`,`مشروع`,`Проект`],
-[`3D Oyun`,`3D Game`,`3D-Spiel`,`Juego 3D`,`Jeu 3D`,`لعبة 3D`,`3D-игра`],
+[`2D Oyun`,`3D Game`,`3D-Spiel`,`Juego 3D`,`Jeu 3D`,`لعبة 3D`,`3D-игра`],
 [`ÖMER AI Ultimate'e bir mesaj yazın...`,`Message ÖMER AI Ultimate...`,`Nachricht an ÖMER AI Ultimate...`,`Escribe a ÖMER AI Ultimate...`,`Écrivez à ÖMER AI Ultimate...`,`اكتب رسالة إلى ÖMER AI Ultimate...`,`Напишите ÖMER AI Ultimate...`],
 [`Ne kodlayalım? Kod yazın, hata ayıklayın...`,`What shall we code? Write code, debug...`,`Was sollen wir programmieren? Code schreiben, Fehler suchen...`,`¿Qué programamos? Escribe código, depura...`,`Que codons-nous ? Écrivez, déboguez...`,`ماذا نبرمج؟ اكتب الكود وأصلح الأخطاء...`,`Что пишем? Код, отладка...`],
 [`Nasıl bir proje istiyorsun? (site, uygulama, araç...)`,`What project do you want? (site, app, tool...)`,`Welches Projekt möchtest du? (Website, App, Tool...)`,`¿Qué proyecto quieres? (sitio, app, herramienta...)`,`Quel projet voulez-vous ? (site, appli, outil...)`,`أي مشروع تريد؟ (موقع، تطبيق، أداة...)`,`Какой проект нужен? (сайт, приложение, инструмент...)`],
-[`Nasıl bir 3D oyun yapalım?`,`What 3D game shall we make?`,`Welches 3D-Spiel bauen wir?`,`¿Qué juego 3D hacemos?`,`Quel jeu 3D créons-nous ?`,`أي لعبة 3D نصنع؟`,`Какую 3D-игру сделаем?`],
+[`Nasıl bir 2D oyun yapalım?`,`What 3D game shall we make?`,`Welches 3D-Spiel bauen wir?`,`¿Qué juego 3D hacemos?`,`Quel jeu 3D créons-nous ?`,`أي لعبة 3D نصنع؟`,`Какую 3D-игру сделаем?`],
 [`Akıllı Sohbet & Analiz`,`Smart Chat & Analysis`,`Smarter Chat & Analyse`,`Chat inteligente y análisis`,`Chat intelligent & analyse`,`دردشة ذكية وتحليل`,`Умный чат и анализ`],
 [`Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.`,`Ask questions, develop ideas and chat with a memory-enabled assistant that can search the web.`,`Stelle Fragen, entwickle Ideen und chatte mit einem Assistenten mit Gedächtnis und Websuche.`,`Haz preguntas, desarrolla ideas y chatea con un asistente con memoria y búsqueda web.`,`Posez des questions, développez vos idées et discutez avec un assistant à mémoire et recherche web.`,`اسأل وطوّر أفكارك وتحدث مع مساعد بذاكرة وبحث على الويب.`,`Задавайте вопросы, развивайте идеи и общайтесь с ассистентом с памятью и поиском в сети.`],
 [`HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.`,`Write and debug code in HTML, JS, Python and more.`,`Schreibe und debugge Code in HTML, JS, Python und mehr.`,`Escribe y depura código en HTML, JS, Python y más.`,`Écrivez et déboguez du code HTML, JS, Python et plus.`,`اكتب وأصلح الكود بـ HTML وJS وPython وغيرها.`,`Пишите и отлаживайте код на HTML, JS, Python и других языках.`],
 [`Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.`,`Build a working website or app from one message and preview it instantly.`,`Erstelle mit einer Nachricht eine funktionierende Website oder App und sieh sie sofort in der Vorschau.`,`Crea un sitio o app funcional con un mensaje y previsualízalo al instante.`,`Créez un site ou une appli fonctionnels en un message et prévisualisez-les aussitôt.`,`أنشئ موقعًا أو تطبيقًا يعمل برسالة واحدة وعاينه فورًا.`,`Создайте рабочий сайт или приложение одним сообщением и сразу посмотрите результат.`],
-[`Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.`,`Make playable 3D games in the browser with Three.js.`,`Baue spielbare 3D-Spiele im Browser mit Three.js.`,`Crea juegos 3D jugables en el navegador con Three.js.`,`Créez des jeux 3D jouables dans le navigateur avec Three.js.`,`اصنع ألعابًا ثلاثية الأبعاد قابلة للعب في المتصفح عبر Three.js.`,`Создавайте 3D-игры в браузере на Three.js.`],
+[`Canvas ile tarayıcıda oynanabilir 2D oyunlar yapın.`,`Make playable 3D games in the browser with Canvas 2D.`,`Baue spielbare 3D-Spiele im Browser mit Canvas 2D.`,`Crea juegos 3D jugables en el navegador con Canvas 2D.`,`Créez des jeux 3D jouables dans le navigateur avec Canvas 2D.`,`اصنع ألعابًا ثلاثية الأبعاد قابلة للعب في المتصفح عبر Canvas 2D.`,`Создавайте 3D-игры в браузере на Canvas 2D.`],
 [`Enter: Gönder • Shift+Enter: Alt satır`,`Enter: Send • Shift+Enter: New line`,`Enter: Senden • Umschalt+Enter: Neue Zeile`,`Enter: Enviar • Mayús+Enter: Nueva línea`,`Entrée : envoyer • Maj+Entrée : nouvelle ligne`,`Enter: إرسال • Shift+Enter: سطر جديد`,`Enter: отправить • Shift+Enter: новая строка`],
 [`Gönder ➤`,`Send ➤`,`Senden ➤`,`Enviar ➤`,`Envoyer ➤`,`إرسال ➤`,`Отправить ➤`],
 [`Arkadaş canlısı`,`Friendly`,`Freundlich`,`Amistoso`,`Amical`,`ودّي`,`Дружелюбный`],
@@ -397,7 +397,7 @@ function newChat(forceNew=false){
   save();
   return c;
  }
- 
+
 function stripLatex(str){
   let out = String(str || '');
   out = out
@@ -415,9 +415,9 @@ function stripLatex(str){
       .replace(/_\{([^{}]+)\}/g, '_($1)');
     if(next === out) break;
     out = next;
- }
+  }
 
- const symMap = {
+  const symMap = {
     '\\zeta':'ζ', '\\eta':'η', '\\gamma':'γ', '\\Gamma':'Γ', '\\lambda':'λ', '\\Lambda':'Λ',
     '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
     '\\epsilon':'ε', '\\varepsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ',
@@ -483,32 +483,8 @@ function renderSrc(srcs){
     const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64` : '';
     const letter = (host || s.t || 'W').charAt(0).toUpperCase();
     const label = s.t || host || 'Kaynak';
-    return `<a href="${esc(s.u)}" target="_blank" rel="noopener"><span class="site-logo">${fav?`<img src="${fav}" alt="${esc(host)}" loading="lazy" onerror="this.remove()">`:''}<span>${esc(letter)}</span></span><span class="stitle">${esc(label)}</span></a>`;
-  }).join('') + '</div>';
-}
-
-function renderStudioBox(){
-  const box = $('#studio-box');
-  const meta = STUDIO_META[S.mode];
-  const bar = $('#bar');
-  if(!meta){
-    box.classList.remove('on');
-    bar.classList.remove('studio-active');
-    return;
-  }
-  box.classList.add('on');
-  bar.classList.add('studio-active');
-  $('#sb-label').textContent = meta.label;
-  $('#studio-in').placeholder = meta.placeholder;
-  $('#sb-presets').innerHTML = meta.presets.map(p =>
-    `<button type="button" class="sb-preset" data-preset="${esc(p)}">${esc(p)}</button>`
-  ).join('');
-}
-
-function render(){
-  const c=cur(),L=c?c.msgs:[];
-  $('#pill').textContent=MODES[S.mode][2];
-  $('#in').placeholder=MODES[S.mode][3];
+    return `<a href="${esc(s.u)}" target="_blank" rel="noopener"><span class="site-log
+    $('#in').placeholder=MODES[S.mode][3];
   $('#tn').textContent=S.tone;
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
@@ -549,9 +525,10 @@ function studioInstruction(mode){
   ].join('\n');
 
   if(mode==='game') return common+'\n'+[
-    'OYUN STÜDYOSU: Tarayıcıda gerçekten oynanabilen bir oyun üret.',
-    '- Kullanıcının tarifine göre 2D veya 3D seç; 2D oyun isteğinde Three.js kullanma.',
-    '- Tercihen tek dosyalık HTML/CSS/JS üret; gereksiz harici kütüphane kullanma.',
+    '2D OYUN STÜDYOSU: Tarayıcıda gerçekten oynanabilen, yalnızca 2D bir oyun üret.',
+    '- Daima yalnızca 2D oyun üret. 3D, WebGL veya Three.js kullanma.',
+    '- Çizim için HTML Canvas getContext(\'2d\') kullan; Three.js, WebGL veya 3D perspektif kullanma.',
+    '- Tercihen tek dosyalık HTML/CSS/JS üret; harici kütüphane kullanma.',
     '- Başlangıç ekranı, kontroller, oyun döngüsü, puan/ilerleme, oyun sonu ve yeniden başlatma ekle.',
     '- Hem klavye hem mobil/tablet dokunmatik kontrollerini destekle.',
     '- Hareket, çarpışma, skor ve oyun sonu mantığı gerçekten çalışmalı.',
