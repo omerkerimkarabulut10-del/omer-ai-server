@@ -16,8 +16,8 @@
 html,body{height:100%;height:100dvh}
 body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,sans-serif;display:flex;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-#nav{display:flex;flex-direction:column;gap:3px;flex-shrink:0}#sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s;z-index:20;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-
+#nav{display:flex;flex-direction:column;gap:4px;flex-shrink:0;position:relative;z-index:2}
+#sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s,transform .25s;z-index:30;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd);flex-shrink:0}
 .logo{width:46px;height:46px;background:radial-gradient(circle at 30% 30%,#112240,#070b19);border:1.5px solid #2b4c7e;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #00d2ff33;overflow:hidden;flex-shrink:0}
 .logo svg{width:86%;height:86%;display:block}
@@ -25,10 +25,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
 #new{display:flex;align-items:center;justify-content:center;width:100%;height:48px;min-height:48px;background:var(--g);border-radius:12px;padding:0 14px;font-weight:700;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0;white-space:nowrap}
 .lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between;flex-shrink:0}
-.nv{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%;flex-shrink:0}
+.nv{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%;flex-shrink:0;position:relative;z-index:3}
+.nv:hover{background:#191236}
 .nv.on{background:#241047;border-color:#5b3fc4}
-.nv span.i{width:22px;text-align:center;color:#8b7cf6}
-.nv em{margin-left:auto;font-style:normal;font-size:11px;background:#0f3a33;color:#5eead4;padding:2px 8px;border-radius:7px}
+.nv span.i{width:22px;text-align:center;color:#8b7cf6;pointer-events:none}
+.nv em{margin-left:auto;font-style:normal;font-size:11px;background:#0f3a33;color:#5eead4;padding:2px 8px;border-radius:7px;pointer-events:none}
 #hist{flex:1 1 auto;min-height:120px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .hi{flex-shrink:0;touch-action:pan-y;user-select:none;padding:10px 12px;border-radius:12px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid transparent}
 .hi.on{background:#241047;border-color:#5b3fc4}
@@ -73,7 +74,18 @@ pre{padding:12px;overflow:auto;font:13px/1.45 ui-monospace,Menlo,monospace;max-h
 .dots i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:50%;background:var(--p);animation:b 1s infinite}
 .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
 @keyframes b{50%{opacity:.2;transform:translateY(-4px)}}
-#bar{padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+#bar{padding:8px 16px calc(10px + env(safe-area-inset-bottom))}
+#studio-box{display:none;max-width:1100px;margin:0 auto 8px;background:#0d1026;border:1px solid #4c3b9e;border-radius:16px;padding:10px 12px;gap:8px;flex-direction:column}
+#studio-box.on{display:flex}
+.sb-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sb-title{font-size:13px;font-weight:700;color:#d8b4fe;display:flex;align-items:center;gap:6px}
+.sb-presets{display:flex;gap:6px;flex-wrap:wrap}
+.sb-preset{font-size:12px;padding:4px 9px;border-radius:9px;background:#171638;border:1px solid #352e6b;color:#e0d7ff}
+.sb-preset:hover{border-color:#a855f7}
+.sb-row{display:flex;gap:8px;align-items:center}
+#studio-in{flex:1;min-width:0;background:#070717;border:1px solid #2b2559;border-radius:12px;padding:9px 12px;color:var(--tx);font:14px/1.4 system-ui,-apple-system,sans-serif;outline:0}
+#studio-in:focus{border-color:#a855f7}
+#studio-send{background:var(--g);border-radius:11px;padding:0 16px;height:38px;font-weight:700;font-size:13px;flex-shrink:0}
 #box{max-width:1100px;margin:auto;display:flex;gap:10px;align-items:flex-end;background:#0a0a1f;border:1px solid var(--bd);border-radius:20px;padding:10px}
 #box .ib{background:#14122e;flex-shrink:0;width:44px;height:44px}
 #mic.on{background:#b91c1c}
@@ -96,7 +108,7 @@ pre{padding:12px;overflow:auto;font:13px/1.45 ui-monospace,Menlo,monospace;max-h
 #dg input[type=checkbox]{width:22px;height:22px;accent-color:#a855f7}
 button{transition:transform .12s,filter .15s,box-shadow .2s;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
 button:active{transform:scale(.94);filter:brightness(1.25)}
-#new:hover,#go:hover{box-shadow:0 6px 24px #7c3aed99}
+#new:hover,#go:hover,#studio-send:hover{box-shadow:0 6px 24px #7c3aed99}
 .rp{position:absolute;border-radius:50%;background:#ffffff40;transform:scale(0);animation:rp .55s ease-out;pointer-events:none}
 @keyframes rp{to{transform:scale(4);opacity:0}}
 #msgs .m:last-child{animation:mi .3s ease-out}
@@ -106,16 +118,16 @@ button:active{transform:scale(.94);filter:brightness(1.25)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 body{padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
 #sb button,.cd,.lb{unicode-bidi:plaintext}
-.m,#in{unicode-bidi:plaintext}
+.m,#in,#studio-in{unicode-bidi:plaintext}
 pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
 .rtl #sb,.rtl #dg>div,.rtl #wel{direction:rtl}
-#bk{display:none;position:fixed;inset:0;background:#000a;z-index:15}
+#bk{display:none;position:fixed;inset:0;background:#000a;z-index:20}
 @media(min-width:901px){#sb.c{margin-left:-290px}}
-@media(max-width:900px){#sb{position:fixed;top:0;bottom:0;left:0;width:min(290px,86vw);transform:translateX(-100%);transition:transform .25s;padding-top:calc(14px + env(safe-area-inset-top));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}#sb.o{transform:none}#sb.o+#bk{display:block}}
+@media(max-width:900px){#sb{position:fixed;top:0;bottom:0;left:0;width:min(290px,86vw);transform:translateX(-100%);padding-top:calc(14px + env(safe-area-inset-top));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}#sb.o{transform:none}#sb.o+#bk{display:block}}
 @media(max-width:600px){header{padding:10px 12px;gap:8px}header h1{font-size:19px}.chip,.hint{display:none}.m{max-width:97%}#chat{padding:12px 10px}#bar{padding:8px 10px calc(8px + env(safe-area-inset-bottom))}#box{padding:6px;gap:6px;border-radius:18px}#box .ib{width:40px;height:40px}#go{padding:0 14px;height:40px}#wel{padding:10px 2px}#wel .logo{width:72px;height:72px;margin-bottom:14px}#wel p{margin:10px 0 18px;font-size:15px}}
 @media(max-height:520px){#wel .logo,#wel p,.hint{display:none}}
 @media(min-width:1300px){#msgs{max-width:980px}}
-@media(pointer:coarse){.ib{min-width:44px;min-height:44px}.nv,.hi{padding:12px}#in{font-size:16px!important}}
+@media(pointer:coarse){.ib{min-width:44px;min-height:44px}.nv,.hi{padding:12px}#in,#studio-in{font-size:16px!important}}
 </style></head><body>
 <aside id="sb">
  <div class="brand"><div class="logo" id="sb-logo"></div>
@@ -137,7 +149,18 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
    <div class="cards" id="cards"></div></div>
   <div id="msgs"></div>
  </div>
- <div id="bar"><div id="prev"></div>
+ <div id="bar">
+  <div id="prev"></div>
+  <div id="studio-box">
+   <div class="sb-top">
+    <span class="sb-title" id="sb-label">🎮 3D Oyun Mesaj Kutusu</span>
+    <div class="sb-presets" id="sb-presets"></div>
+   </div>
+   <div class="sb-row">
+    <input type="text" id="studio-in" placeholder="Nasıl bir 3D oyun yapalım?">
+    <button id="studio-send" type="button">Oluştur ➤</button>
+   </div>
+  </div>
   <div id="box"><input type="file" id="file" accept="image/*" hidden>
    <button class="ib" id="att" type="button" title="Görsel ekle">📎</button><button class="ib" id="mic" type="button" title="Sesle yaz">🎙️</button>
    <textarea id="in" rows="1"></textarea><button id="go" type="button">Gönder ➤</button></div>
@@ -170,14 +193,14 @@ const OMER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 
     <circle cx="84" cy="36" r="7.5" stroke="#00f2fe" stroke-width="4.5"/>
     <circle cx="116" cy="36" r="7.5" stroke="#fb923c" stroke-width="4.5"/>
     <line x1="92" y1="36" x2="108" y2="36" stroke="url(#neon-grad)" stroke-width="4"/>
-    <circle cx="129" cy="24" r="2.2" fill="#fb923c" stroke="none"/>
-    <line x1="122" y1="31" x2="127" y2="26" stroke="#fb923c" stroke-width="2.5"/>
+    <circle cx="129" cy="24" r="2.2" fill="#fbbf24" stroke="none"/>
+    <line x1="122" y1="31" x2="127" y2="26" stroke="#fbbf24" stroke-width="2.5"/>
     <path d="M 129 63 A 52 52 0 1 0 144 82" stroke="url(#neon-grad)" stroke-width="6.5"/>
     <path d="M 119 73 A 37 37 0 1 0 132 92" stroke="url(#neon-grad)" stroke-width="4.5" opacity="0.9"/>
     <path d="M 52 152 L 84 102 L 103 119 L 154 46 L 114 134 L 96 117 L 64 156 Z" fill="#071326" stroke="url(#neon-grad)" stroke-width="4.5"/>
     <path d="M 103 119 L 154 46 L 114 134" stroke="url(#orange-accent)" stroke-width="4.5"/>
-    <circle cx="143" cy="68" r="3" fill="#fb923c" stroke="none"/>
-    <line x1="133" y1="78" x2="141" y2="70" stroke="#fb923c" stroke-width="2.5"/>
+    <circle cx="143" cy="68" r="3" fill="#fbbf24" stroke="none"/>
+    <line x1="133" y1="78" x2="141" y2="70" stroke="#fbbf24" stroke-width="2.5"/>
   </g>
 </svg>`;
 
@@ -247,12 +270,33 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
 })();
 
 const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı','Profesyonel','Kısa & net'];
-const MODES={chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
-code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
-project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
-game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']};
+const MODES={
+  chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
+  code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
+  project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.'],
+  game:['🎮','3D Oyun Stüdyosu','3D Oyun','Nasıl bir 3D oyun yapalım?','3D Oyun Stüdyosu','Three.js ile tarayıcıda oynanabilir 3D oyunlar yapın.']
+};
+const STUDIO_META={
+  code:{
+    label:'</> Kodlama Mesaj Kutusu',
+    placeholder:'Hangi dilde kod veya hata ayıklama istiyorsun? Örn: Python ile görev takip scripti yaz',
+    presets:['Python API sunucusu','JavaScript oyun döngüsü','SQL tablo ve sorgu','Hata ayıkla']
+  },
+  project:{
+    label:'🧱 Proje Mesaj Kutusu',
+    placeholder:'Nasıl bir tek sayfalık site veya araç istiyorsun? Örn: Neon temalı pomodoro ve not uygulaması',
+    presets:['Pomodoro & Görev Sitesi','Hesap Makinesi Aracı','Kişisel Portföy Sayfası','Hava / Saat Paneli']
+  },
+  game:{
+    label:'🎮 3D Oyun Mesaj Kutusu',
+    placeholder:'Nasıl bir 3D oyun yapalım? Örn: Uzayda engellerden kaçmalı 3D koşu oyunu',
+    presets:['3D Labirent Oyunu','3D Uzay Koşusu','3D Araba / Parkur','3D Top Sektirme']
+  }
+};
+
 let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
+if(!MODES[S.mode])S.mode='chat';
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cur=()=>S.chats.find(c=>c.id===S.cur)||null;
@@ -334,7 +378,7 @@ const tt=s=>LG==='tr'?s:((D[LG]&&D[LG][s])||s);
 const vl=()=>({tr:'tr-TR',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR',ar:'ar-SA',ru:'ru-RU'})[S.lang]||navigator.language||'tr-TR';
 const tr1=v=>{const k=ANY[v];return k?(LG==='tr'?k:D[LG][k]):null};
 function trAll(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),L=[];let n;while(n=w.nextNode())L.push(n);
- L.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|PRE|CODE|TEXTAREA)$/.test(p.tagName)||(p.closest('.m')&&!p.closest('.ch,.im')))return;const v=n.nodeValue.trim(),r=tr1(v);if(r&&r!==v)n.nodeValue=n.nodeValue.replace(v,r)});
+ L.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|PRE|CODE|TEXTAREA|INPUT)$/.test(p.tagName)||(p.closest('.m')&&!p.closest('.ch,.im')))return;const v=n.nodeValue.trim(),r=tr1(v);if(r&&r!==v)n.nodeValue=n.nodeValue.replace(v,r)});
  document.querySelectorAll('[placeholder],[title]').forEach(e=>['placeholder','title'].forEach(a=>{const v=e.getAttribute(a),r=v&&tr1(v);if(r&&r!==v)e.setAttribute(a,r)}))}
 function applyLang(){const a=S.lang==='auto'?(navigator.language||'en').slice(0,2).toLowerCase():S.lang;LG=a==='tr'||D[a]?a:'en';document.documentElement.lang=LG;document.body.classList.toggle('rtl',LG==='ar');trAll()}
 
@@ -352,20 +396,20 @@ function newChat(forceNew=false){
 function stripLatex(str){
   let out = String(str || '');
   out = out
-    .replace(/\\begin\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix)\}/g, '')
-    .replace(/\\end\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix)\}/g, '')
+      .replace(/\\begin\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix|cases)\}/g, '')
+    .replace(/\\end\{(aligned|align\*?|equation\*?|gather\*?|array|pmatrix|bmatrix|cases)\}/g, '')
     .replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, '');
 
-  for(let i=0; i<6; i++){
+  for(let i=0; i<8; i++){
     const next = out
       .replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
       .replace(/\\dfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
       .replace(/\\tfrac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+      .replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^{}]+)\}/g, '($1. dereceden kök: $2)')
       .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'karekök($1)')
-      .replace(/\\text\s*\{([^{}]+)\}/g, '$1')
-      .replace(/\\mathrm\s*\{([^{}]+)\}/g, '$1')
-      .replace(/\\mathbf\s*\{([^{}]+)\}/g, '$1')
-      .replace(/\\operatorname\s*\{([^{}]+)\}/g, '$1');
+      .replace(/\\(text|mathrm|mathbf|mathit|mathsf|mathtt|operatorname|textbf|textit)\s*\{([^{}]+)\}/g, '$2')
+      .replace(/\^\{([^{}]+)\}/g, '^($1)')
+      .replace(/_\{([^{}]+)\}/g, '_($1)');
     if(next === out) break;
     out = next;
   }
@@ -373,10 +417,10 @@ function stripLatex(str){
   const symMap = {
     '\\zeta':'ζ', '\\eta':'η', '\\gamma':'γ', '\\Gamma':'Γ', '\\lambda':'λ', '\\Lambda':'Λ',
     '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
-    '\\epsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ', '\\rho':'ρ',
-    '\\sigma':'σ', '\\Sigma':'Σ', '\\tau':'τ', '\\phi':'φ', '\\Phi':'Φ', '\\psi':'ψ',
-    '\\omega':'ω', '\\Omega':'Ω', '\\infty':'∞', '\\sum':'Σ', '\\prod':'Π', '\\int':'∫',
-    '\\partial':'∂', '\\nabla':'∇', '\\cdot':'·', '\\times':'×', '\\div':'÷',
+    '\\epsilon':'ε', '\\varepsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ',
+    '\\rho':'ρ', '\\sigma':'σ', '\\Sigma':'Σ', '\\tau':'τ', '\\phi':'φ', '\\varphi':'φ',
+    '\\psi':'ψ', '\\omega':'ω', '\\Omega':'Ω', '\\infty':'∞', '\\sum':'Σ', '\\prod':'Π',
+    '\\int':'∫', '\\partial':'∂', '\\nabla':'∇', '\\cdot':'·', '\\times':'×', '\\div':'÷',
     '\\pm':'±', '\\mp':'∓', '\\leq':'≤', '\\geq':'≥', '\\neq':'≠', '\\approx':'≈',
     '\\equiv':'≡', '\\sim':'~', '\\rightarrow':'→', '\\leftarrow':'←', '\\Rightarrow':'⇒',
     '\\Leftarrow':'⇐', '\\left':'', '\\right':'', '\\Bigl':'', '\\Bigr':'', '\\bigl':'', '\\bigr':'',
@@ -388,6 +432,7 @@ function stripLatex(str){
 
   out = out
     .replace(/\\[a-zA-Z]+/g, '')
+    .replace(/\\/g, '')
     .replace(/&/g, ' ')
     .replace(/\[[0-9.]+\s*(?:pt|em|ex|cm|mm)\]/g, '')
     .replace(/[{}]/g, '')
@@ -396,11 +441,13 @@ function stripLatex(str){
   return out;
 }
 
-function code(l,c){const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c);
- return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
+function code(l,c){
+  const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c)||/<html[\s>]/i.test(c)||/<canvas[\s>]/i.test(c);
+  return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`;
+}
 
 function md(t){
-   const B=[];
+  const B=[];
   t=String(t||'').replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
   t=stripLatex(t);
   t=esc(t)
@@ -409,8 +456,7 @@ function md(t){
     .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
     .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-    .replace(/[*#~`$]/g,'')
-    .replace(/\?{2,}/g,'?')
+    .replace(/[*#~`$?]/g,'')
     .replace(/\n/g,'<br>');
   return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
 }
@@ -426,50 +472,143 @@ function renderSrc(srcs){
   }).join('') + '</div>';
 }
 
-function render(){const c=cur(),L=c?c.msgs:[];
- $('#pill').textContent=MODES[S.mode][2];$('#in').placeholder=MODES[S.mode][3];$('#tn').textContent=S.tone;
- $('#wel').style.display=L.length?'none':'flex';
- $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
-  :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${renderSrc(x.src)}</div>`).join('');
- $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span>${v[1]}${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
- $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
- $('#cnt').textContent=S.chats.length;
- $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
- $('#chat').scrollTop=1e9;trAll()}
+function renderStudioBox(){
+  const box = $('#studio-box');
+  const meta = STUDIO_META[S.mode];
+  if(!meta){
+    box.classList.remove('on');
+    return;
+  }
+  box.classList.add('on');
+  $('#sb-label').textContent = meta.label;
+  $('#studio-in').placeholder = meta.placeholder;
+  $('#sb-presets').innerHTML = meta.presets.map(p =>
+    `<button type="button" class="sb-preset" data-preset="${esc(p)}">${esc(p)}</button>`
+  ).join('');
+}
+
+function render(){
+  const c=cur(),L=c?c.msgs:[];
+  $('#pill').textContent=MODES[S.mode][2];
+  $('#in').placeholder=MODES[S.mode][3];
+  $('#tn').textContent=S.tone;
+  $('#wel').style.display=L.length?'none':'flex';
+  $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
+   :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${renderSrc(x.src)}</div>`).join('');
+  $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span><span>${v[1]}</span>${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
+  $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
+  $('#cnt').textContent=S.chats.length;
+  $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
+  renderStudioBox();
+  $('#chat').scrollTop=1e9;
+  trAll();
+}
 
 function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
 
-async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
- let c=cur();
- if(!c) c=newChat(true);
- if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
- c.mode=S.mode;
- if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
- c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
+async function sendWithText(customText){
+  const t = typeof customText === 'string' ? customText.trim() : $('#in').value.trim();
+  if((!t&&!img)||busy)return;
+  let c=cur();
+  if(!c) c=newChat(true);
+  if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
+  c.mode=S.mode;
+  if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
+  c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
 
- const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or repeated ??? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
- const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
- historyMsgs.unshift({role:'user',text:cleanDirective});
+  const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or ? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
+  const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
+  historyMsgs.unshift({role:'user',text:cleanDirective});
 
- const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
- if(S.mode==='game'){
-   p.messages.push({
-     role:'user',
-     text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw LaTeX or # or * symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
-   });
+  const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
+  if(S.mode==='game'){
+    p.messages.push({
+      role:'user',
+      text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw LaTeX or # or * or ? symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
+    });
+  } else if(S.mode==='project'){
+    p.messages.push({
+      role:'user',
+      text:'PROJECT BUILDER DIRECTIVE: Create a complete, clean, working single-file HTML/CSS/JS project that can be run immediately in the browser preview. Include clear UI, responsive layout, interactive functionality, and zero raw LaTeX or # or * or ? symbols in your explanation.'
+    });
+  } else if(S.mode==='code'){
+    p.messages.push({
+      role:'user',
+      text:'CODING STUDIO DIRECTIVE: Provide clean, well-structured, runnable code with clear step-by-step notes. Never output raw LaTeX commands or # or * or ? characters in explanations.'
+    });
+  }
+
+  if(img)p.image=img;img=null;$('#prev').innerHTML='';
+  if(!customText){$('#in').value='';fit();}
+  const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
+  try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
+  catch(e){ai.t='⚠️ '+e.message}
+  delete ai.load;busy=false;$('#go').disabled=false;$('#studio-send').disabled=false;save();render();
+  if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}
+}
+
+function send(){return sendWithText();}
+
+function setMode(m){
+  if(!MODES[m])return;
+  S.mode=m;
+  const c=cur();
+  if(c&&!c.msgs.length)c.mode=m;
+  save();
+  render();
+  closeSb();
+  const stIn=$('#studio-in');
+  if(STUDIO_META[m] && stIn){
+    stIn.focus();
+  } else {
+    $('#in').focus();
  }
- if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
- const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;render();
- try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
-  const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
- catch(e){ai.t='⚠️ '+e.message}
- delete ai.load;busy=false;$('#go').disabled=false;save();render();
- if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
+}
 
-function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();closeSb();$('#in').focus()}
+$('#nav').addEventListener('click',e=>{
+  const m=e.target.closest('[data-m]');
+  if(m){
+    e.preventDefault();
+    e.stopPropagation();
+    setMode(m.dataset.m);
+  }
+});
+
+$('#cards').addEventListener('click',e=>{
+  const m=e.target.closest('[data-m]');
+  if(m){
+    e.preventDefault();
+    e.stopPropagation();
+    setMode(m.dataset.m);
+  }
+});
+
+$('#sb-presets').addEventListener('click',e=>{
+  const p=e.target.closest('[data-preset]');
+  if(!p)return;
+  const val=p.dataset.preset;
+  const stIn=$('#studio-in');
+  stIn.value = stIn.value ? `${stIn.value} - ${val}` : val;
+  stIn.focus();
+});
+
+$('#studio-send').onclick=()=>{
+  const stIn=$('#studio-in');
+  const txt=stIn.value.trim();
+  if(!txt || busy)return;
+  stIn.value='';
+  sendWithText(txt);
+};
+
+$('#studio-in').onkeydown=e=>{
+  if(e.key==='Enter' && !e.shiftKey){
+    e.preventDefault();
+    $('#studio-send').click();
+  }
+};
 
 document.addEventListener('click',e=>{
- const m=e.target.closest('[data-m]');if(m)return setMode(m.dataset.m);
  const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;const found=cur();if(found)S.mode=found.mode||'chat';save();render();closeSb();return}
  const b=e.target.closest('[data-a]');if(!b)return;const cd=b.closest('.cb').querySelector('code').textContent,a=b.dataset.a;
  if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent=tt('✓ Kopyalandı')}
