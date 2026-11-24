@@ -2,7 +2,14 @@
 <html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ÖMER AI Ultimate</title>
-<link rel="manifest" href="/Manifest.json"><link rel="icon" href="icon-192.png"><meta name="theme-color" content="#05050f">
+<meta name="theme-color" content="#05050f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ÖMER AI">
+<link id="pwa-manifest" rel="manifest">
+<link id="pwa-icon" rel="icon" type="image/png">
+<link id="pwa-apple-icon" rel="apple-touch-icon">
 <style>
 *{box-sizing:border-box;margin:0}
 :root{--bg:#05050f;--sb:#080716;--card:#0c1124;--bd:#26214d;--tx:#e8e6f5;--mu:#8f8ca8;--p:#a855f7;--g:linear-gradient(90deg,#9333ea,#5b4fe8)}
@@ -12,7 +19,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #nav{display:flex;flex-direction:column;gap:3px;flex-shrink:0}#sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s;z-index:20;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 
 .brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd)}
-.logo{width:46px;height:46px;border:2px solid #7c3aed;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #7c3aed55}
+.logo{width:46px;height:46px;background:radial-gradient(circle at 30% 30%,#112240,#070b19);border:1.5px solid #2b4c7e;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #00d2ff33;overflow:hidden;flex-shrink:0}
+.logo svg{width:86%;height:86%;display:block}
 .brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
 .tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
 #new{display:block;width:100%;min-height:54px;background:var(--g);border-radius:12px;padding:12px;font-weight:700;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0;white-space:nowrap;overflow:visible}
@@ -36,7 +44,7 @@ header h1{font-size:22px}
 .ib{width:38px;height:38px;border-radius:10px;font-size:19px}
 #chat{flex:1;overflow:auto;padding:16px;position:relative}
 #wel{flex-direction:column;align-items:center;text-align:center;padding:24px 8px;max-width:1000px;margin:auto}
-#wel .logo{width:96px;height:96px;border-radius:24px;border-width:4px;margin-bottom:22px}
+#wel .logo{width:96px;height:96px;border-radius:24px;border-width:2px;margin-bottom:22px;box-shadow:0 0 32px #00d2ff44,0 0 24px #ff6a0022}
 #wel h2{font-size:clamp(26px,5vw,44px);line-height:1.15}
 #wel h2 span{background:linear-gradient(90deg,#fff,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent}
 #wel p{color:var(--mu);margin:14px 0 26px;max-width:760px}
@@ -107,7 +115,7 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
 @media(pointer:coarse){.ib{min-width:44px;min-height:44px}.nv,.hi{padding:12px}#in{font-size:16px!important}}
 </style></head><body>
 <aside id="sb">
- <div class="brand"><div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.6"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 9v3"/></svg></div>
+ <div class="brand"><div class="logo" id="sb-logo"></div>
  <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
  <button id="new">＋ Yeni Sohbet</button>
  <div class="lb">ÇALIŞMA ALANLARI</div><div id="nav"></div>
@@ -120,7 +128,7 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
  <button class="chip" id="tone"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
  <button class="ib" id="edit" title="Yeni sohbet">✎</button><button class="ib" id="menu" title="Ayarlar">⋮</button></header>
  <div id="chat">
-  <div id="wel"><div class="logo"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.4"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/><circle cx="12" cy="13" r="3.5"/><path d="M12 9v3"/></svg></div>
+  <div id="wel"><div class="logo" id="wel-logo"></div>
    <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
    <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza sistemi, sesli komutlar, kodlama stüdyosu ve Three.js tabanlı 3D oyun motoru elinizin altında.</p>
    <div class="cards" id="cards"></div></div>
@@ -135,6 +143,106 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
 <div id="dg"><div><h3 id="dgt"></h3><div class="bd" id="dgb"></div><div class="bt" id="dgs"></div></div></div>
 <div id="pv"><button id="cl">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
 <script>
+const OMER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="neon-grad" x1="15%" y1="15%" x2="85%" y2="85%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="52%" stop-color="#38bdf8"/>
+      <stop offset="68%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ff512f"/>
+    </linearGradient>
+    <linearGradient id="orange-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <filter id="neon-glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="3.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#neon-glow)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="84" cy="36" r="7.5" stroke="#00f2fe" stroke-width="4.5"/>
+    <circle cx="116" cy="36" r="7.5" stroke="#fb923c" stroke-width="4.5"/>
+    <line x1="92" y1="36" x2="108" y2="36" stroke="url(#neon-grad)" stroke-width="4"/>
+    <circle cx="129" cy="24" r="2.2" fill="#fb923c" stroke="none"/>
+    <line x1="122" y1="31" x2="127" y2="26" stroke="#fb923c" stroke-width="2.5"/>
+    <path d="M 129 63 A 52 52 0 1 0 144 82" stroke="url(#neon-grad)" stroke-width="6.5"/>
+    <path d="M 119 73 A 37 37 0 1 0 132 92" stroke="url(#neon-grad)" stroke-width="4.5" opacity="0.9"/>
+    <path d="M 52 152 L 84 102 L 103 119 L 154 46 L 114 134 L 96 117 L 64 156 Z" fill="#071326" stroke="url(#neon-grad)" stroke-width="4.5"/>
+    <path d="M 103 119 L 154 46 L 114 134" stroke="url(#orange-accent)" stroke-width="4.5"/>
+    <circle cx="143" cy="68" r="3" fill="#fb923c" stroke="none"/>
+    <line x1="133" y1="78" x2="141" y2="70" stroke="#fb923c" stroke-width="2.5"/>
+  </g>
+</svg>`;
+
+document.getElementById('sb-logo').innerHTML = OMER_LOGO_SVG;
+document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
+
+(function initPWA() {
+  const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+      <radialGradient id="bg" cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#112240"/>
+        <stop offset="100%" stop-color="#05050f"/>
+      </radialGradient>
+    </defs>
+    <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+    <g transform="translate(56,56) scale(2)">
+      ${OMER_LOGO_SVG.replace(/<svg[^>]*>|<\/svg>/g, '')}
+    </g>
+  </svg>`;
+
+  const img = new Image();
+  img.onload = () => {
+    const makeIcon = (size) => {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      c.getContext('2d').drawImage(img, 0, 0, size, size);
+      return c.toDataURL('image/png');
+    };
+    const icon192 = makeIcon(192);
+    const icon512 = makeIcon(512);
+    document.getElementById('pwa-icon').href = icon192;
+    document.getElementById('pwa-apple-icon').href = icon192;
+
+    const manifest = {
+      name: 'ÖMER AI Ultimate',
+      short_name: 'ÖMER AI',
+      description: 'Ultimate Yapay Zekâ & Stüdyo',
+      start_url: './',
+      scope: './',
+      display: 'standalone',
+      orientation: 'any',
+      background_color: '#05050f',
+      theme_color: '#05050f',
+      icons: [
+        { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+      ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
+  };
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    const swCode = `
+      const CACHE = 'omer-ai-v3';
+      self.addEventListener('install', e => { self.skipWaiting(); });
+      self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+      self.addEventListener('fetch', e => {
+        if (e.request.method !== 'GET') return;
+        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+      });
+    `;
+    const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  }
+})();
+
 const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı','Profesyonel','Kısa & net'];
 const MODES={chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
 code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
@@ -314,4 +422,4 @@ fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<
 applyFs();applyLang();if(!cur())newChat();render();
 </script>
 </body>
-</html> 
+</html>
