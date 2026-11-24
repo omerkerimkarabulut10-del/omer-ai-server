@@ -18,21 +18,21 @@ body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #nav{display:flex;flex-direction:column;gap:3px;flex-shrink:0}#sb{width:290px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:14px;gap:8px;transition:margin .2s;z-index:20;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 
-.brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.brand{display:flex;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--bd);flex-shrink:0}
 .logo{width:46px;height:46px;background:radial-gradient(circle at 30% 30%,#112240,#070b19);border:1.5px solid #2b4c7e;border-radius:12px;display:grid;place-items:center;box-shadow:0 0 18px #00d2ff33;overflow:hidden;flex-shrink:0}
 .logo svg{width:86%;height:86%;display:block}
 .brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
 .tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
-#new{display:block;width:100%;min-height:54px;background:var(--g);border-radius:12px;padding:12px;font-weight:700;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0;white-space:nowrap;overflow:visible}
-.lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between}
-.nv{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%}
+#new{display:flex;align-items:center;justify-content:center;width:100%;height:48px;min-height:48px;background:var(--g);border-radius:12px;padding:0 14px;font-weight:700;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0;white-space:nowrap}
+.lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between;flex-shrink:0}
+.nv{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%;flex-shrink:0}
 .nv.on{background:#241047;border-color:#5b3fc4}
 .nv span.i{width:22px;text-align:center;color:#8b7cf6}
 .nv em{margin-left:auto;font-style:normal;font-size:11px;background:#0f3a33;color:#5eead4;padding:2px 8px;border-radius:7px}
 #hist{flex:1 1 auto;min-height:120px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .hi{flex-shrink:0;touch-action:pan-y;user-select:none;padding:10px 12px;border-radius:12px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid transparent}
 .hi.on{background:#241047;border-color:#5b3fc4}
-.ft{display:flex;justify-content:space-between;font-size:14px;color:var(--mu);border-top:1px solid var(--bd);padding-top:12px}
+.ft{display:flex;justify-content:space-between;font-size:14px;color:var(--mu);border-top:1px solid var(--bd);padding-top:12px;flex-shrink:0}
 .ft button{border:1px solid var(--bd);border-radius:10px;padding:5px 10px;color:var(--tx)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#34d399;margin-right:7px}.dot.off{background:#f87171}
 #main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
@@ -58,10 +58,13 @@ header h1{font-size:22px}
 .m.u{align-self:flex-end;background:linear-gradient(90deg,#7c3aed,#5b4fe8)}
 .m.a{align-self:flex-start;background:var(--card);border:1px solid var(--bd)}
 .m code{background:#1a1740;padding:1px 6px;border-radius:6px;font-size:.9em}
-.m h4{margin:8px 0 2px}.m li{margin-left:20px;list-style:disc}.m a{color:#c4b5fd}
+.m h4{margin:10px 0 4px;color:#d8b4fe;font-size:1.05em}.m li{margin-left:20px;list-style:disc;margin-bottom:3px}.m a{color:#c4b5fd}
 .im{font-size:13px;opacity:.85;margin-bottom:4px}
-.src{margin-top:10px;padding-top:8px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;font-size:12px}
-.src a{border:1px solid var(--bd);border-radius:8px;padding:2px 8px;text-decoration:none;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;font-size:12px}
+.src a{display:inline-flex;align-items:center;gap:6px;border:1px solid #352e6b;background:#121631;border-radius:10px;padding:4px 10px;text-decoration:none;max-width:230px;color:#e0d7ff;transition:border-color .15s,background .15s}
+.src a:hover{border-color:#7c3aed;background:#1b1f44}
+.src a img{width:15px;height:15px;border-radius:4px;flex-shrink:0;object-fit:contain;background:#fff1}
+.src a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
 .ch{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#15123a;font-size:12px;color:var(--mu)}
 .ch button{margin-left:8px;border:1px solid #4b3a99;border-radius:8px;padding:2px 9px;color:var(--tx);font-size:12px}
@@ -117,16 +120,16 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
 <aside id="sb">
  <div class="brand"><div class="logo" id="sb-logo"></div>
  <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
- <button id="new">＋ Yeni Sohbet</button>
+ <button id="new" type="button">＋ Yeni Sohbet</button>
  <div class="lb">ÇALIŞMA ALANLARI</div><div id="nav"></div>
  <div class="lb" style="border-top:1px solid var(--bd);padding-top:12px">SOHBET GEÇMİŞİ <span id="cnt"></span></div>
  <div id="hist"></div>
- <div class="ft"><button id="memb"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
+ <div class="ft"><button id="memb" type="button"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
 </aside><div id="bk"></div>
 <div id="main">
- <header><button class="ib" id="burger">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
- <button class="chip" id="tone"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
- <button class="ib" id="edit" title="Yeni sohbet">✎</button><button class="ib" id="menu" title="Ayarlar">⋮</button></header>
+ <header><button class="ib" id="burger" type="button">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
+ <button class="chip" id="tone" type="button"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
+ <button class="ib" id="edit" type="button" title="Yeni sohbet">✎</button><button class="ib" id="menu" type="button" title="Ayarlar">⋮</button></header>
  <div id="chat">
   <div id="wel"><div class="logo" id="wel-logo"></div>
    <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
@@ -136,12 +139,12 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
  </div>
  <div id="bar"><div id="prev"></div>
   <div id="box"><input type="file" id="file" accept="image/*" hidden>
-   <button class="ib" id="att" title="Görsel ekle">📎</button><button class="ib" id="mic" title="Sesle yaz">🎙️</button>
-   <textarea id="in" rows="1"></textarea><button id="go">Gönder ➤</button></div>
+   <button class="ib" id="att" type="button" title="Görsel ekle">📎</button><button class="ib" id="mic" type="button" title="Sesle yaz">🎙️</button>
+   <textarea id="in" rows="1"></textarea><button id="go" type="button">Gönder ➤</button></div>
   <div class="hint"><span>Enter: Gönder • Shift+Enter: Alt satır</span><span>ÖMER AI v3.0 Ultimate + Vision &amp; WebGL 3D</span></div></div>
 </div>
 <div id="dg"><div><h3 id="dgt"></h3><div class="bd" id="dgb"></div><div class="bt" id="dgs"></div></div></div>
-<div id="pv"><button id="cl">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
+<div id="pv"><button id="cl" type="button">✕ Kapat</button><iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-forms"></iframe></div>
 <script>
 const OMER_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
   <defs>
@@ -252,7 +255,7 @@ let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const cur=()=>S.chats.find(c=>c.id===S.cur);
+const cur=()=>S.chats.find(c=>c.id===S.cur)||null;
 let LG='tr';
 const LGS=[['auto','Otomatik / Auto'],['tr','Türkçe'],['en','English'],['de','Deutsch'],['es','Español'],['fr','Français'],['ar','العربية'],['ru','Русский']];
 const T=[
@@ -334,50 +337,104 @@ function trAll(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW
  L.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|PRE|CODE|TEXTAREA)$/.test(p.tagName)||(p.closest('.m')&&!p.closest('.ch,.im')))return;const v=n.nodeValue.trim(),r=tr1(v);if(r&&r!==v)n.nodeValue=n.nodeValue.replace(v,r)});
  document.querySelectorAll('[placeholder],[title]').forEach(e=>['placeholder','title'].forEach(a=>{const v=e.getAttribute(a),r=v&&tr1(v);if(r&&r!==v)e.setAttribute(a,r)}))}
 function applyLang(){const a=S.lang==='auto'?(navigator.language||'en').slice(0,2).toLowerCase():S.lang;LG=a==='tr'||D[a]?a:'en';document.documentElement.lang=LG;document.body.classList.toggle('rtl',LG==='ar');trAll()}
-function newChat(){let c=cur();if(c&&!c.msgs.length)return c;c={id:Date.now(),title:'Yeni Sohbet',mode:S.mode,msgs:[]};S.chats.unshift(c);S.cur=c.id;return c}
+
+function newChat(forceNew=false){
+  let c=cur();
+  if(c && !c.msgs.length) return c;
+  if(!forceNew && c && c.msgs.length) return c;
+  c={id:Date.now()+Math.floor(Math.random()*1000),title:'Yeni Sohbet',mode:S.mode,msgs:[]};
+  S.chats.unshift(c);
+  S.cur=c.id;
+  save();
+  return c;
+}
+
 function code(l,c){const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c);
- return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button data-a="copy">Kopyala</button>${h?'<button data-a="dl">İndir</button><button class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
-function md(t){const B=[];t=t.replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
- t=esc(t).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>').replace(/^#{1,4} (.+)$/gm,'<h4>$1</h4>').replace(/^[-*] (.+)$/gm,'<li>$1</li>')
- .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
- return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i])}
+ return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`}
+
+function md(t){
+  const B=[];
+  t=t.replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
+  t=esc(t)
+    .replace(/`([^`\n]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>')
+    .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
+    .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/[*#~`]/g,'')
+    .replace(/\?{2,}/g,'?')
+    .replace(/\n/g,'<br>');
+  return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
+}
+
+function renderSrc(srcs){
+  if(!srcs || !srcs.length) return '';
+  return '<div class="src">' + srcs.map(s=>{
+    let host = '';
+    try { host = new URL(s.u).hostname; } catch(e) {}
+    const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32` : '';
+    const label = s.t || host || 'Kaynak';
+    return `<a href="${esc(s.u)}" target="_blank" rel="noopener">${fav?`<img src="${fav}" alt="" onerror="this.style.display='none'">`:''}<span>${esc(label)}</span></a>`;
+  }).join('') + '</div>';
+}
+
 function render(){const c=cur(),L=c?c.msgs:[];
  $('#pill').textContent=MODES[S.mode][2];$('#in').placeholder=MODES[S.mode][3];$('#tn').textContent=S.tone;
  $('#wel').style.display=L.length?'none':'flex';
  $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
-  :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${x.src&&x.src.length?'<div class="src">'+x.src.map(s=>`<a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t||'Kaynak')}</a>`).join('')+'</div>':''}</div>`).join('');
- $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span>${v[1]}${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
- $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
+  :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${renderSrc(x.src)}</div>`).join('');
+ $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span>${v[1]}${k==='game'?'<em>WebGL</em>':''}</button>`).join('');
+ $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
  $('#cnt').textContent=S.chats.length;
- $('#hist').innerHTML=S.chats.map(h=>`<button class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
+ $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
  $('#chat').scrollTop=1e9;trAll()}
+
 function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
+
 async function send(){const t=$('#in').value.trim();if((!t&&!img)||busy)return;
- const c=newChat();
+ let c=cur();
+ if(!c) c=newChat(true);
  if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
- c.mode=S.mode;if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
+ c.mode=S.mode;
+ if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
  c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
- const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}))};
- if(S.mode==='game')p.messages.push({role:'user',text:'GAME ENGINE QUALITY DIRECTIVE: Create a polished, genuinely playable game, not a static mockup. Choose the right technology for the requested game (Canvas 2D for lightweight 2D games, Three.js for 3D). Deliver complete runnable code in one HTML file with embedded CSS/JS and no missing assets or placeholder functions. Include a clear objective, responsive controls with touch/mobile support and keyboard support where appropriate, a game loop, collision/physics that fit the game, score or progress, difficulty/feedback, start and restart controls, readable HUD, attractive effects/animation, and graceful performance on mobile tablets. Keep the code self-contained; use external libraries only when truly needed and load them reliably. Explain controls briefly, then provide the full code.'});
+
+  const cleanDirective = 'FORMAT RULE: Never use raw markdown symbols like #, ##, ###, *, **, ***, or repeated ??? in your text responses. Write clean, natural paragraphs and plain sentences without asterisks or hash symbols.';
+ const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
+ historyMsgs.unshift({role:'user',text:cleanDirective});
+
+ const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
+ if(S.mode==='game'){
+   p.messages.push({
+     role:'user',
+     text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw # or * symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
+   });
+ }
  if(img)p.image=img;img=null;$('#prev').innerHTML='';$('#in').value='';fit();
  const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;render();
  try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=d.text;ai.src=d.sources}
  catch(e){ai.t='⚠️ '+e.message}
  delete ai.load;busy=false;$('#go').disabled=false;save();render();
- if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
+ if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?]/g,''));u.lang=vl();speechSynthesis.speak(u)}}
+
 function setMode(m){S.mode=m;const c=cur();if(c&&!c.msgs.length)c.mode=m;save();render();closeSb();$('#in').focus()}
+
 document.addEventListener('click',e=>{
  const m=e.target.closest('[data-m]');if(m)return setMode(m.dataset.m);
- const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;S.mode=cur().mode||'chat';save();render();closeSb()}
+ const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;const found=cur();if(found)S.mode=found.mode||'chat';save();render();closeSb();return}
  const b=e.target.closest('[data-a]');if(!b)return;const cd=b.closest('.cb').querySelector('code').textContent,a=b.dataset.a;
  if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent=tt('✓ Kopyalandı')}
  if(a==='run'){$('#fr').srcdoc=cd;$('#pv').style.display='flex'}
  if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([cd],{type:'text/html'}));l.download='proje.html';l.click()}});
+
 $('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
 const closeSb=()=>$('#sb').classList.remove('o');
-$('#burger').onclick=()=>$('#sb').classList.toggle(innerWidth>900?'c':'o');$('#bk').onclick=closeSb;
-function delChat(id){S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id){S.cur=S.chats[0]?S.chats[0].id:null;if(S.cur)S.mode=cur().mode||'chat'}if(!cur())newChat();save();render()}
+$('#burger').onclick=e=>{e.stopPropagation();$('#sb').classList.toggle(innerWidth>900?'c':'o')};
+$('#bk').onclick=closeSb;
+$('#sb').addEventListener('click',e=>{e.stopPropagation()});
+
+function delChat(id){S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id){S.cur=S.chats[0]?S.chats[0].id:null;if(S.cur)S.mode=cur().mode||'chat'}if(!cur())newChat(true);save();render()}
 let sw=null,swd=false;
 $('#hist').addEventListener('pointerdown',e=>{const h=e.target.closest('.hi');if(h){sw={h,x:e.clientX,y:e.clientY,dx:0};swd=false}});
 addEventListener('pointermove',e=>{if(!sw)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
@@ -389,10 +446,20 @@ function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transitio
 addEventListener('pointerup',swEnd);addEventListener('pointercancel',swEnd);
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement('span');
  d.className='rp';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
-$('#new').onclick=$('#edit').onclick=()=>{newChat();render();$('#in').focus()};
+
+function startFreshChat(e){
+  if(e) e.stopPropagation();
+  newChat(true);
+  render();
+  closeSb();
+  $('#in').focus();
+}
+$('#new').onclick=startFreshChat;
+$('#edit').onclick=startFreshChat;
+
 function dlg(t,b,btns){$('#dgt').textContent=t;$('#dgb').textContent=b;$('#dgs').innerHTML='';
- btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex';trAll()}
-function clearAll(){dlg('Sohbet geçmişi','Tüm sohbetler silinsin mi?',[['Vazgeç',settings],['Hepsini sil',()=>{S.chats=[];S.cur=null;newChat();save();render()},1]])}
+ btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.type='button';x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex';trAll()}
+function clearAll(){dlg('Sohbet geçmişi','Tüm sohbetler silinsin mi?',[['Vazgeç',settings],['Hepsini sil',()=>{S.chats=[];S.cur=null;newChat(true);save();render()},1]])}
 function clearMem(){dlg('Hafıza','Kayıtlı tüm notlar silinsin mi?',[['Vazgeç',settings],['Sil',()=>{S.mem=[];save()},1]])}
 function applyFs(){$('#msgs').style.fontSize=$('#in').style.fontSize=S.fs+'px'}
 function settings(){const o=(a,v)=>a.map(x=>`<option value="${x}"${x==v?' selected':''}>${x}</option>`).join('');
@@ -412,14 +479,14 @@ $('#att').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image,u=URL.createObjectURL(f);
  im.onload=()=>{const k=Math.min(1,1400/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;
   cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);img={data:cv.toDataURL('image/jpeg',.88).split(',')[1],mime:'image/jpeg'};
-  $('#prev').innerHTML=`<img src="${u}"><button onclick="img=null;$('#prev').innerHTML=''">✕</button>`};im.src=u;e.target.value=''};
+  $('#prev').innerHTML=`<img src="${u}"><button type="button" onclick="img=null;$('#prev').innerHTML=''">✕</button>`};im.src=u;e.target.value=''};
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 $('#mic').onclick=()=>{if(!SR)return dlg('Ses tanıma','Bu tarayıcı sesle yazmayı desteklemiyor. Chrome ile açmayı dene.',[['Tamam',null,1]]);if(rec)return rec.stop();
  rec=new SR;rec.lang=vl();rec.interimResults=true;rec.onresult=e=>{$('#in').value=[...e.results].map(r=>r[0].transcript).join('');fit()};
  rec.onend=()=>{rec=null;$('#mic').classList.remove('on')};$('#mic').classList.add('on');rec.start()};
 fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok';trAll()}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı';trAll()});
 
-applyFs();applyLang();if(!cur())newChat();render();
+applyFs();applyLang();if(!cur())newChat(true);render();
 </script>
 </body>
 </html>
