@@ -78,6 +78,10 @@ pre{padding:12px;overflow:auto;font:13px/1.45 ui-monospace,Menlo,monospace;max-h
 #bar{padding:8px 16px calc(10px + env(safe-area-inset-bottom))}
 #studio-box{display:none;max-width:1100px;margin:0 auto 8px;background:#0d1026;border:1px solid #4c3b9e;border-radius:16px;padding:10px 12px;gap:8px;flex-direction:column}
 #studio-box.on{display:flex}
+#bar.studio-active #box{display:none}
+#bar.studio-active .hint{display:none}
+#studio-box{width:100%}
+#studio-in{min-height:42px}
 .sb-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .sb-title{font-size:13px;font-weight:700;color:#d8b4fe;display:flex;align-items:center;gap:6px}
 .sb-presets{display:flex;gap:6px;flex-wrap:wrap}
@@ -255,7 +259,7 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
   };
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
 
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     const swCode = `
       const CACHE = 'omer-ai-v3';
       self.addEventListener('install', e => { self.skipWaiting(); });
@@ -411,9 +415,9 @@ function stripLatex(str){
       .replace(/_\{([^{}]+)\}/g, '_($1)');
     if(next === out) break;
     out = next;
-  }
+ }
 
-  const symMap = {
+ const symMap = {
     '\\zeta':'ζ', '\\eta':'η', '\\gamma':'γ', '\\Gamma':'Γ', '\\lambda':'λ', '\\Lambda':'Λ',
     '\\pi':'π', '\\Pi':'Π', '\\alpha':'α', '\\beta':'β', '\\delta':'δ', '\\Delta':'Δ',
     '\\epsilon':'ε', '\\varepsilon':'ε', '\\theta':'θ', '\\mu':'μ', '\\nu':'ν', '\\xi':'ξ',
@@ -441,7 +445,7 @@ function stripLatex(str){
 }
 
 function code(l,c){
-  const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c)||/<html[\s>]/i.test(c)||/<canvas[\s>]/i.test(c);
+  const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c)||/<html[\s>]/i.test(c)||/<canvas[\s>]/i.test(c)||(/<\s*(?:script|style|body|head)\b/i.test(c)&&/<\s*[a-z][^>]*>/i.test(c));
   return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`;
 }
 
@@ -486,11 +490,14 @@ function renderSrc(srcs){
 function renderStudioBox(){
   const box = $('#studio-box');
   const meta = STUDIO_META[S.mode];
+  const bar = $('#bar');
   if(!meta){
     box.classList.remove('on');
+    bar.classList.remove('studio-active');
     return;
   }
   box.classList.add('on');
+  bar.classList.add('studio-active');
   $('#sb-label').textContent = meta.label;
   $('#studio-in').placeholder = meta.placeholder;
   $('#sb-presets').innerHTML = meta.presets.map(p =>
@@ -517,48 +524,104 @@ function render(){
 
 function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
 
+
+function shouldSearchWeb(text){
+  const q=String(text||'').toLocaleLowerCase('tr-TR');
+  const patterns=[
+    /\b(webde|internette|internetten|google'da|internetten ara|web araması|kaynak bul|kaynak göster|link bul|site bul)\b/,
+    /\b(güncel|şu an|şimdi|bugün|dün|yarın|son dakika|en son|202[5-9]|202\d)\b/,
+    /\b(fiyatı|fiyatlar|kaç tl|ne kadar|stokta|satın al|karşılaştır|yorumları)\b/,
+    /\b(hava durumu|maç sonucu|puan durumu|fikstür|haberleri|haber)\b/,
+    /\b(yakınımda|yakınımdaki|en yakın|nerede bulunur|adres|açık mı|çalışma saatleri)\b/,
+    /\b(kaynaklara göre|kanıtla|doğrula|araştır|incele)\b/
+  ];
+  return patterns.some(rx=>rx.test(q));
+}
+
+function studioInstruction(mode){
+  const common = [
+    'TESLİMAT KURALLARI:',
+    '- İstenen işi gerçekten tamamla; taslak, sözde kod, TODO, placeholder veya çalışmayan buton bırakma.',
+    '- Belirsiz olmayan konularda gereksiz soru sorma.',
+    '- Çıktıyı çalıştırılabilir ve tutarlı üret. Değişken, dosya, olay ve fonksiyon adlarını kontrol et.',
+    '- Gerekli tüm kodu eksiksiz ver. Kodları tek bir uygun kod bloğunda sun.',
+    '- Kullanıcı Türkçe yazdıysa Türkçe yanıtla.'
+  ].join('\n');
+
+  if(mode==='game') return common+'\n'+[
+    'OYUN STÜDYOSU: Tarayıcıda gerçekten oynanabilen bir oyun üret.',
+    '- Kullanıcının tarifine göre 2D veya 3D seç; 2D oyun isteğinde Three.js kullanma.',
+    '- Tercihen tek dosyalık HTML/CSS/JS üret; gereksiz harici kütüphane kullanma.',
+    '- Başlangıç ekranı, kontroller, oyun döngüsü, puan/ilerleme, oyun sonu ve yeniden başlatma ekle.',
+    '- Hem klavye hem mobil/tablet dokunmatik kontrollerini destekle.',
+    '- Hareket, çarpışma, skor ve oyun sonu mantığı gerçekten çalışmalı.',
+    '- Responsive tasarla; eksik fonksiyon, sahte buton veya harici dosya bağımlılığı bırakma.',
+    '- Tam kodu tek bir ```html kod bloğunda ver. Kod bloğunun dışında kontrolleri kısaca açıkla.'
+  ].join('\n');
+
+  if(mode==='project') return common+'\n'+[
+    'PROJE OLUŞTURUCU: İstenen projeyi bitmiş, kullanılabilir web uygulaması olarak oluştur.',
+    '- Tek dosyalık HTML/CSS/JS çözümü tercih et; framework ancak gerçekten gerekliyse kullan.',
+    '- Tasarım profesyonel, tutarlı, mobil/tablet uyumlu ve erişilebilir olsun.',
+    '- Her buton, form, filtre, sekme ve etkileşim gerçek işlev yapsın.',
+    '- Gerekirse verileri localStorage ile sakla; boş durum, hata durumu ve doğrulama ekle.',
+    '- Element ID, event listener ve değişkenlerin uyumunu kontrol et.',
+    '- Tam çalışan kodu tek bir ```html kod bloğunda ver.'
+  ].join('\n');
+
+  if(mode==='code') return common+'\n'+[
+    'KODLAMA STÜDYOSU: İstenen dil ve ortam için doğru, temiz, bakımı kolay kod yaz.',
+    '- Kullanıcının mevcut kodu varsa önce onu incele; istenmeyen bölümleri yeniden yazma.',
+    '- Hata ayıklamada hatanın nedenini açıkla ve düzeltilmiş tam kodu veya net değişiklik bloğunu ver.',
+    '- Dil, sürüm, bağımlılık ve çalıştırma komutlarını belirt. Gereksiz kütüphane ekleme.',
+    '- Güvenlik, hata yönetimi ve kenar durumlarını dikkate al.',
+    '- TODO, sahte fonksiyon veya eksik bölüm bırakma.'
+  ].join('\n');
+
+  return common;
+}
+
 async function sendWithText(customText){
   const t = typeof customText === 'string' ? customText.trim() : $('#in').value.trim();
   if((!t&&!img)||busy)return;
   let c=cur();
-  if(!c) c=newChat(true);
+  if(!c)c=newChat(true);
   if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
   c.mode=S.mode;
   if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
   c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
 
-  const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or ? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
-  const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
-  historyMsgs.unshift({role:'user',text:cleanDirective});
-
-  const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
-  if(S.mode==='game'){
-    p.messages.push({
-      role:'user',
-      text:'ADVANCED GAME ENGINE DIRECTIVE: Build a complete, genuinely fun, AAA-style browser game in a single self-contained HTML file. Use Three.js (loaded reliably from https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js) for 3D games or high-FPS Canvas 2D for 2D games. MUST INCLUDE: 1) Rich 3D environment/lighting, shadows, particle explosions/trails, and smooth 60fps requestAnimationFrame loop. 2) Synthesized sound effects using Web Audio API (no external mp3 files). 3) Full responsive controls supporting BOTH keyboard (WASD/Arrows/Space) AND sleek on-screen mobile/tablet touch controls (virtual joystick + action buttons). 4) Clear Start screen, live HUD (score, health/lives, level/combo), progressive difficulty, and Game Over / Restart screen. 5) Zero placeholder functions, zero missing external assets, zero raw LaTeX or # or * or ? symbols in your explanation. Briefly explain controls in clean text, then provide the full runnable HTML code block.'
-    });
-  } else if(S.mode==='project'){
-    p.messages.push({
-      role:'user',
-      text:'PROJECT BUILDER DIRECTIVE: Create a complete, clean, working single-file HTML/CSS/JS project that can be run immediately in the browser preview. Include clear UI, responsive layout, interactive functionality, and zero raw LaTeX or # or * or ? symbols in your explanation.'
-    });
-  } else if(S.mode==='code'){
-    p.messages.push({
-      role:'user',
-      text:'CODING STUDIO DIRECTIVE: Provide clean, well-structured, runnable code with clear step-by-step notes. Never output raw LaTeX commands or # or * or ? characters in explanations.'
-    });
-  }
-
-  if(img)p.image=img;img=null;$('#prev').innerHTML='';
+  const historyMsgs=c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20)
+    .map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
+  const wantsWeb=S.search!==false&&shouldSearchWeb(t);
+  const p={
+    mode:S.mode,tone:S.tone,search:wantsWeb,searchMode:'auto',
+    webSearchIntent:wantsWeb,lang:S.lang,memory:S.mem,
+    instructions:studioInstruction(S.mode),messages:historyMsgs
+  };
+  if(img)p.image=img;
+  img=null;
+  $('#prev').innerHTML='';
   if(!customText){$('#in').value='';fit();}
-  const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
-  try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
-   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=stripLatex(d.text||'');ai.src=normalizeSources(d)}
-  catch(e){ai.t='⚠️ '+e.message}
-  delete ai.load;busy=false;$('#go').disabled=false;$('#studio-send').disabled=false;save();render();
-  if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}
-}
 
+  const ai={r:'ai',t:'',load:true};
+  c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||`Sunucu hatası (${r.status})`);
+    ai.t=String(d.text||d.answer||d.reply||'Yanıt boş döndü.');
+    ai.src=normalizeSources(d);
+    if(wantsWeb&&!ai.src.length)ai.t+='\n\nNot: Web araması istendi ancak sunucu kaynak döndürmedi. Gerçek internet araması için server.js tarafında arama sağlayıcısı entegrasyonu gerekiyor.';
+  }catch(e){ai.t='⚠️ '+(e.message||'İstek başarısız oldu');}
+  delete ai.load;busy=false;$('#go').disabled=false;$('#studio-send').disabled=false;save();render();
+
+  if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(ai.t.replace(/```[\s\S]*?```/g,' kod bloğu '));
+    u.lang=vl();speechSynthesis.speak(u);
+  }
+}
 function send(){return sendWithText();}
 
 function setMode(m){
