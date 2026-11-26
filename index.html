@@ -521,7 +521,7 @@ async function sendWithText(customText){
   const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
   historyMsgs.unshift({role:'user',text:cleanDirective});
 
-  const p={mode:S.mode,tone:S.tone,search:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
+  const p={mode:S.mode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
   if(S.mode==='project'){
     p.messages.push({
       role:'user',
