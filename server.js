@@ -243,14 +243,14 @@ http.createServer(async (req, res) => {
 
       const requestBody = JSON.parse(await readBody(req));
       const {
-        mode = 'chat',
-        tone,
-        search,
-        lang,
-        memory = [],
-        messages = [],
-        image
-      } = requestBody;
+  mode = 'chat',
+  tone,
+  searchEnabled = true,
+  lang,
+  memory = [],
+  messages = [],
+  image
+} = requestBody;
 
       if (!Array.isArray(messages)) {
         throw new Error('Mesaj biçimi geçersiz.');
@@ -277,10 +277,10 @@ http.createServer(async (req, res) => {
       let searchDecision = 'not-needed';
 
       if (!hasImage) {
-        if (search === true || explicitlyRequestsWebSearch(lastUserText)) {
-          shouldSearch = true;
-          searchDecision = 'explicit';
-        } else {
+        if (explicitlyRequestsWebSearch(lastUserText)) {
+  shouldSearch = true;
+  searchDecision = 'explicit';
+} else if (searchEnabled !== false) {
           try {
             const decision = await decideWebSearch(chatMessages);
             shouldSearch = decision.search;
