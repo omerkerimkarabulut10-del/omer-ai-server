@@ -36,7 +36,7 @@ DOĞRULUK VE GÜVENİLİRLİK:
 - Kaynaklar çelişiyorsa bunu açıkça söyle ve hangi bilginin hangi kaynağa dayandığını belirt.
 - Sonuç yoksa, arama başarısızsa veya kanıt yetersizse bunu dürüstçe açıkla; asla haber, tarih, sayı, kişi, kaynak veya bağlantı uydurma.
 - Bir olayın doğrulanmaması, olayın kesinlikle yaşanmadığının kanıtı değildir.
-- Kaynak kullandığında başlık ve tam URL ver.
+- Kaynak kullandığında kaynak bağlantılarını cevabın içine yazma; arayüz gerçek kaynak bağlantılarını cevabın altında ayrı gösterecek.
 - Kısa, anlaşılır ve düzenli cevap ver.`;
 
 const EXTRA = {
@@ -198,13 +198,26 @@ async function searchWeb(query) {
 
   const data = await response.json();
   const results = Array.isArray(data.results) ? data.results : [];
-  return results.slice(0, 10).map(item => ({
+  const mapped = results.map(item => ({
     title: String(item.title || 'Başlıksız sonuç').slice(0, 300),
     url: String(item.url || ''),
     content: String(item.content || '').slice(0, 1800),
     publishedDate: item.publishedDate || item.published_date || null,
     engine: item.engine || null
   })).filter(item => /^https?:\/\//i.test(item.url));
+
+  // Aynı bağlantı farklı arama motorlarından geldiyse tek kaynak olarak göster.
+  const seen = new Set();
+  return mapped.filter(item => {
+    try {
+      const normalized = new URL(item.url).href;
+      if (seen.has(normalized)) return false;
+      seen.add(normalized);
+      return true;
+    } catch {
+      return false;
+    }
+  }).slice(0, 10);
 }
 
 http.createServer(async (req, res) => {
@@ -313,7 +326,7 @@ http.createServer(async (req, res) => {
           webResults.map((item, i) =>
             `[${i + 1}] ${item.title}\nURL: ${item.url}\nTarih: ${item.publishedDate || 'Belirtilmemiş'}\nKaynak motoru: ${item.engine || 'Belirtilmemiş'}\nÖzet: ${item.content}`
           ).join('\n\n') +
-          `\n\nBu kaynakları karşılaştır. Tarihleri ve kaynak güvenilirliğini değerlendir. Tek kaynağa dayanarak kesin hüküm verme. Kaynaklar çelişirse belirt. Yanıtın sonunda kullandığın gerçek URL'leri ver.`;
+          `\n\nBu kaynakları karşılaştır. Tarihleri ve kaynak güvenilirliğini değerlendir. Tek kaynağa dayanarak kesin hüküm verme. Kaynaklar çelişirse belirt. Cevap metninde URL, bağlantı veya kaynakça listesi yazma; kullanılan gerçek kaynak bağlantıları arayüzde cevabın altında ayrı gösterilecek.`;
       } else if (shouldSearch) {
         searchContext =
           `\n\nWEB ARAMA DENEMESİ: Arama sonuç vermedi veya servis hata verdi. Hata: ${webSearchError || 'Sonuç bulunamadı.'}\nArama yapmış gibi davranma. Güncel iddiayı doğrulanmış gibi sunma; arama yapılamadığını açıkça söyle.`;
