@@ -61,7 +61,7 @@ header h1{font-size:22px}
 .m code{background:#1a1740;padding:1px 6px;border-radius:6px;font-size:.9em}
 .m h4{margin:10px 0 4px;color:#d8b4fe;font-size:1.05em}.m li{margin-left:20px;list-style:disc;margin-bottom:3px}.m a{color:#c4b5fd}
 .im{font-size:13px;opacity:.85;margin-bottom:4px}
-.src{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;font-size:12px}
+.src{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;font-size:12px}.src-title{width:100%;color:#c4b5fd;font-weight:700;font-size:13px;margin-bottom:2px}
 .src a{display:inline-flex;align-items:center;gap:7px;border:1px solid #352e6b;background:#121631;border-radius:10px;padding:5px 10px;text-decoration:none;max-width:250px;color:#e0d7ff;transition:border-color .15s,background .15s}
 .src a:hover{border-color:#7c3aed;background:#1b1f44}
 .src .site-logo{width:18px;height:18px;border-radius:5px;flex-shrink:0;display:grid;place-items:center;background:#1e244d;color:#67e8f9;font-weight:700;font-size:11px;overflow:hidden;position:relative}
@@ -265,7 +265,7 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
         e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
       });
     `;
-    const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
+   const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
     navigator.serviceWorker.register(swUrl).catch(() => {});
   }
 })();
@@ -399,7 +399,7 @@ function stripLatex(str){
       .replace(/\\(?:text|mathrm|mathbf|mathit|mathsf|mathtt|operatorname|textbf|textit|textrm|emph)\s*\{([^{}]+)\}/g, '$1')
       .replace(/\^\{([^{}]+)\}/g, '^($1)')
       .replace(/_\{([^{}]+)\}/g, '_($1)');
-    if(next === out) break;
+   if(next === out) break;
     out = next;
   }
 
@@ -453,23 +453,48 @@ function md(t){
 function normalizeSources(d){
   const raw = d?.sources || d?.citations || d?.webSources || d?.searchResults || d?.results || [];
   if(!Array.isArray(raw)) return [];
+  const seen = new Set();
   return raw.map(item=>{
     if(typeof item === 'string') return { u: item, t: item };
     const u = item.u || item.url || item.link || item.uri || '';
     const t = item.t || item.title || item.name || item.source || '';
-    return u ? { u, t } : null;
-  }).filter(Boolean);
+    return u ? { u: String(u), t: String(t || 'Kaynak') } : null;
+  }).filter(item=>{
+    if(!item) return false;
+    try {
+      const parsed = new URL(item.u);
+      if(!['http:','https:'].includes(parsed.protocol) || seen.has(parsed.href)) return false;
+      seen.add(parsed.href);
+      return true;
+    } catch(e) { return false; }
+  }).slice(0,10);
+}
+
+// Arama yapıldığında bağlantılar cevap metninde tekrarlanmasın.
+// Kod bloklarının içeriği korunur.
+function stripAnswerLinks(text){
+  const blocks = [];
+  let out = String(text || '').replace(/```[\s\S]*?```/g, block=>{
+    blocks.push(block);
+    return `\u0002${blocks.length-1}\u0002`;
+  });
+  out = out
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/gi, '$1')
+    .replace(/https?:\/\/[^\s<>()]+/gi, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\s+([.,;:])/g, '$1');
+  return out.replace(/\u0002(\d+)\u0002/g, (_, i)=>blocks[Number(i)]);
 }
 
 function renderSrc(srcs){
   if(!srcs || !srcs.length) return '';
-  return '<div class="src">' + srcs.map(s=>{
+  return '<div class="src"><div class="src-title">Kaynaklar (' + (srcs.length >= 5 ? '5+' : srcs.length) + ')</div>' + srcs.map(s=>{
     let host = '';
     try { host = new URL(s.u).hostname.replace(/^www\./,''); } catch(e) {}
     const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64` : '';
     const letter = (host || s.t || 'W').charAt(0).toUpperCase();
     const label = s.t || host || 'Kaynak';
-    return `<a href="${esc(s.u)}" target="_blank" rel="noopener"><span class="site-logo">${fav?`<img src="${fav}" alt="${esc(host)}" loading="lazy" onerror="this.remove()">`:''}<span>${esc(letter)}</span></span><span class="stitle">${esc(label)}</span></a>`;
+    return `<a href="${esc(s.u)}" target="_blank" rel="noopener noreferrer"><span class="site-logo">${fav?`<img src="${fav}" alt="${esc(host)}" loading="lazy" onerror="this.remove()">`:''}<span>${esc(letter)}</span></span><span class="stitle">${esc(label)}</span></a>`;
   }).join('') + '</div>';
 }
 
@@ -495,7 +520,7 @@ function render(){
   $('#tn').textContent=S.tone;
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
-   :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.t)}${renderSrc(x.src)}</div>`).join('');
+   :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.src?.length ? stripAnswerLinks(x.t) : x.t)}${renderSrc(x.src)}</div>`).join('');
   $('#nav').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="nv ${k===S.mode?'on':''}" data-m="${k}"><span class="i">${v[0]}</span><span>${v[1]}</span></button>`).join('');
   $('#cards').innerHTML=Object.entries(MODES).map(([k,v])=>`<button type="button" class="cd" data-m="${k}"><h3><i>${v[0]}</i>${v[4]}</h3><p>${v[5]}</p></button>`).join('');
   $('#cnt').textContent=S.chats.length;
@@ -555,7 +580,7 @@ function setMode(m){
   render();
   closeSb();
   const stIn=$('#studio-in');
-  if(STUDIO_META[m] && stIn){
+   if(STUDIO_META[m] && stIn){
     stIn.focus();
   } else {
     $('#in').focus();
