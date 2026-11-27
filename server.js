@@ -197,7 +197,8 @@ async function searchWeb(query) {
       query: q,
       search_depth: 'basic',
       topic: isCurrentNews ? 'news' : 'general',
-      max_results: 10,
+time_range: isCurrentNews ? 'week' : 'month',
+max_results: 10,
       include_answer: false,
       include_raw_content: false,
       include_images: false
