@@ -131,7 +131,15 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
 @media(max-height:520px){#wel .logo,#wel p,.hint{display:none}}
 @media(min-width:1300px){#msgs{max-width:980px}}
 @media(pointer:coarse){.ib{min-width:44px;min-height:44px}.nv,.hi{padding:12px}#in,#studio-in{font-size:16px!important}}
-</style></head><body>
+.m mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 0;color:inherit}
+.m mjx-container[display="true"]{margin:12px 0!important}
+#hist{overscroll-behavior:contain;touch-action:pan-y}
+.hi{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+@media(max-width:600px){#sb{width:min(300px,88vw)}#hist{min-height:100px}.m{font-size:15px;line-height:1.65}}
+</style>
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"],["$$","$$"]],processEscapes:true},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head><body>
 <aside id="sb">
  <div class="brand"><div class="logo" id="sb-logo"></div>
  <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
@@ -393,7 +401,7 @@ function stripLatex(str){
     '\\equiv':'≡', '\\sim':'~', '\\rightarrow':'→', '\\leftarrow':'←', '\\Rightarrow':'⇒',
     '\\Leftarrow':'⇐', '\\left':'', '\\right':'', '\\Bigl':'', '\\Bigr':'', '\\bigl':'', '\\bigr':'',
     '\\qquad':' ', '\\quad':' ', '\\!':'', '\\,':' ', '\\;':' ', '\\\\':'\n'
-  };
+   };
   for(const [k,v] of Object.entries(symMap)){
     out = out.split(k).join(v);
   }
@@ -407,7 +415,7 @@ function stripLatex(str){
     .replace(/[ \t]{2,}/g, ' ');
 
   return out;
- }
+}
 
 function code(l,c){
   const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c)||/<html[\s>]/i.test(c)||/<canvas[\s>]/i.test(c);
@@ -417,14 +425,13 @@ function code(l,c){
 function md(t){
   const B=[];
   t=String(t||'').replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
-  t=stripLatex(t);
   t=esc(t)
     .replace(/`([^`\n]+)`/g,'<code>$1</code>')
     .replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>')
     .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
     .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-        .replace(/[*#~`$?]/g,'')
+        .replace(/[*#~`]/g,'')
     .replace(/\n/g,'<br>');
   return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
 }
@@ -485,7 +492,8 @@ function render(){
   $('#tn').textContent=S.tone;
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
-   :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.src?.length ? stripAnswerLinks(x.t) : x.t)}${renderSrc(x.src)}</div>`).join('');
+   :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.src?.length ? stripAnswerLinks(x.t) : x.t)}${x.searchError?`<div class="im">Web araması notu: ${esc(x.searchError)}</div>`:''}${renderSrc(x.src)}</div>`).join('');
+  if(window.MathJax?.typesetPromise){try{MathJax.typesetClear?.([$('#msgs')]);MathJax.typesetPromise([$('#msgs')]).catch(()=>{});}catch(e){}}
   $('#cnt').textContent=S.chats.length;
   $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
   renderStudioBox();
@@ -498,9 +506,9 @@ function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.
 function shouldShowSearch(text){
   const t=String(text||'').trim().toLocaleLowerCase('tr-TR');
   if(!t || t.length<4)return false;
-  if(/^(merhaba|selam|sa|as|hey|hi|hello|günaydın|iyi akşamlar|iyi geceler|nasılsın|naber|teşekkürler|sağol|eyvallah|tamam|tmm|okey|ok|güle güle|bay bay)[.!?\s]*$/i.test(t))return false;
+  if(/^(merhaba|selam|sa|as|hey|hi|hello|günaydın|iyi akşamlar|iyi geceler|nasılsın|naber|teşekkürler|sağ ol|sağol|eyvallah|tamam|tmm|okey|ok|güle güle|bay bay)[.!?\s]*$/i.test(t))return false;
   if(/^(hatırla|remember)[:,\s]/i.test(t))return false;
-  return /(araştır|internette ara|web.?arama|kaynak|güncel|son dakika|en son|bugün|şu an|şimdi|haber|fiyat|kaç tl|ne zaman|fikstür|maç|skor|puan durumu|hava durumu|deprem|kim kazandı|nedir|kimdir|nasıl çalışır)/i.test(t) || t.split(/\s+/).length>=4 || /[?？]/.test(t);
+  return /(internette|web.?de|web arama|araştır|kaynak|güncel|son dakika|en son|bugün|şu an|şimdi|haber|fiyat|kaç tl|ne zaman|fikstür|maç|skor|puan durumu|hava durumu|deprem|kim kazandı|kimdir|kaç yaşında|hangi tarihte|takvim|programı|sonuçları|istatistik)/i.test(t) || (t.split(/\s+/).length>=5 && /[?？]/.test(t));
 }
 
 async function sendWithText(customText){
@@ -515,7 +523,6 @@ async function sendWithText(customText){
 
   const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or ? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
   const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
-  historyMsgs.unshift({role:'user',text:cleanDirective});
 
   const p={mode:S.mode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
 
@@ -527,7 +534,7 @@ async function sendWithText(customText){
   const likelySearch=S.search!==false && shouldShowSearch(t) && !hadImage;
   status.classList.toggle('on',likelySearch);render();
   try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
-   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=stripLatex(d.text||'');ai.src=normalizeSources(d);if(d.webSearch?.error)ai.searchError=d.webSearch.error}
+   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=String(d.text||'');ai.src=normalizeSources(d);if(d.webSearch?.error)ai.searchError=d.webSearch.error}
   catch(e){ai.t='⚠️ '+e.message}
   delete ai.load;busy=false;$('#go').disabled=false;status.classList.remove('on');save();render();
   if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}
@@ -546,20 +553,34 @@ document.addEventListener('click',e=>{
 
 $('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
 const closeSb=()=>$('#sb').classList.remove('o');
-let touchStartX=0,touchStartY=0;
-document.addEventListener('touchstart',e=>{const t=e.touches[0];touchStartX=t.clientX;touchStartY=t.clientY},{passive:true});
-document.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;if(innerWidth<=900&&Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)){if(dx>0&&touchStartX<35)$('#sb').classList.add('o');else if(dx<0&&$('#sb').classList.contains('o'))closeSb()}},{passive:true});
+let menuTouch=null;
+document.addEventListener('touchstart',e=>{
+ const target=e.target;
+ // Sohbet satırlarının sola kaydırarak silme hareketi menü hareketinden ayrıdır.
+ if(target.closest('.hi')||target.closest('#burger')){menuTouch=null;return;}
+ const t=e.changedTouches[0];
+ menuTouch={x:t.clientX,y:t.clientY,target};
+},{passive:true});
+document.addEventListener('touchend',e=>{
+ if(!menuTouch)return;
+ const start=menuTouch;menuTouch=null;
+ const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y;
+ if(innerWidth>900||Math.abs(dx)<70||Math.abs(dx)<=Math.abs(dy))return;
+ // Menüyü yalnızca ana sohbet alanının sol kenarından aç; açık menü içinden sola kaydırarak kapat.
+ if(dx>0&&start.x<30&&start.target.closest('#main'))$('#sb').classList.add('o');
+ else if(dx<0&&$('#sb').classList.contains('o')&&start.target.closest('#sb')&&!start.target.closest('.hi'))closeSb();
+},{passive:true});
 $('#burger').onclick=e=>{e.stopPropagation();$('#sb').classList.toggle(innerWidth>900?'c':'o')};
 $('#bk').onclick=closeSb;
 $('#sb').addEventListener('click',e=>{e.stopPropagation()});
 
 function delChat(id){S.chats=S.chats.filter(c=>c.id!==id);if(S.cur===id){S.cur=S.chats[0]?S.chats[0].id:null;if(S.cur)S.mode=cur().mode||'chat'}if(!cur())newChat(true);save();render()}
 let sw=null,swd=false;
-$('#hist').addEventListener('pointerdown',e=>{const h=e.target.closest('.hi');if(h){sw={h,x:e.clientX,y:e.clientY,dx:0};swd=false}});
-addEventListener('pointermove',e=>{if(!sw)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
+$('#hist').addEventListener('pointerdown',e=>{const h=e.target.closest('.hi');if(h&&e.pointerType!=='mouse'){sw={h,x:e.clientX,y:e.clientY,dx:0,pointerId:e.pointerId};swd=false}});
+addEventListener('pointermove',e=>{if(!sw||e.pointerId!==sw.pointerId)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
  if(!swd&&Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy))swd=true;
  if(swd){sw.dx=Math.min(0,dx);const s=sw.h.style;s.transition='none';s.transform=`translateX(${sw.dx}px)`;s.background=`rgba(239,68,68,${Math.min(.55,-sw.dx/200)})`}});
-function swEnd(){if(!sw)return;const {h,dx}=sw;sw=null;if(swd){h.style.transition='transform .25s,opacity .25s,background .25s';
+function swEnd(e){if(!sw||(e&&e.pointerId!==sw.pointerId))return;const {h,dx}=sw;sw=null;if(swd){h.style.transition='transform .25s,opacity .25s,background .25s';
  if(dx<-90){h.style.transform='translateX(-110%)';h.style.opacity=0;setTimeout(()=>delChat(+h.dataset.h),230)}else{h.style.transform='';h.style.background=''}}
  setTimeout(()=>swd=false,60)}
 addEventListener('pointerup',swEnd);addEventListener('pointercancel',swEnd);
