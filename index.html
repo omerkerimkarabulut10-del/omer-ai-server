@@ -39,11 +39,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
 header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd)}
 header h1{font-size:22px}
-#pill{font-size:14px;color:#d8c8ff;background:#1c1140;border:1px solid #4b3a99;border-radius:14px;padding:2px 14px}
 .sp{flex:1}
 .chip{border:1px solid var(--bd);background:#0d0b2a;border-radius:16px;padding:6px 14px;font-size:14px}
 .ib{width:38px;height:38px;border-radius:10px;font-size:19px}
 #chat{flex:1;overflow:auto;padding:16px;position:relative}
+#search-status{display:none;position:sticky;top:4px;margin:0 auto 10px;width:max-content;max-width:90%;padding:5px 12px;border:1px solid #51428b;border-radius:999px;background:#17132dcc;color:#c4b5fd;font-size:12px;opacity:.68;backdrop-filter:blur(8px);z-index:5;animation:searchPulse 1.5s ease-in-out infinite}
+#search-status.on{display:block}
+@keyframes searchPulse{50%{opacity:.38}}
 #wel{flex-direction:column;align-items:center;text-align:center;padding:24px 8px;max-width:1000px;margin:auto}
 #wel .logo{width:96px;height:96px;border-radius:24px;border-width:2px;margin-bottom:22px;box-shadow:0 0 32px #00d2ff44,0 0 24px #ff6a0022}
 #wel h2{font-size:clamp(26px,5vw,44px);line-height:1.15}
@@ -61,11 +63,10 @@ header h1{font-size:22px}
 .m code{background:#1a1740;padding:1px 6px;border-radius:6px;font-size:.9em}
 .m h4{margin:10px 0 4px;color:#d8b4fe;font-size:1.05em}.m li{margin-left:20px;list-style:disc;margin-bottom:3px}.m a{color:#c4b5fd}
 .im{font-size:13px;opacity:.85;margin-bottom:4px}
-.src{margin:0 0 8px;padding:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;opacity:.78}
-.src-title{width:auto;color:var(--mu);font-weight:600;font-size:10px;margin:0 3px 0 0}
-.src a{display:inline-flex;align-items:center;gap:4px;border:1px solid #28264b;background:#101326;border-radius:8px;padding:3px 6px;text-decoration:none;max-width:132px;color:#c9c5df}
+.src{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px;font-size:12px}.src-title{width:100%;color:#c4b5fd;font-weight:700;font-size:13px;margin-bottom:2px}
+.src a{display:inline-flex;align-items:center;gap:7px;border:1px solid #352e6b;background:#121631;border-radius:10px;padding:5px 10px;text-decoration:none;max-width:250px;color:#e0d7ff;transition:border-color .15s,background .15s}
 .src a:hover{border-color:#7c3aed;background:#1b1f44}
-.src .site-logo{width:14px;height:14px;border-radius:4px;flex-shrink:0;display:grid;place-items:center;background:#1e244d;color:#67e8f9;font-weight:700;font-size:9px;overflow:hidden;position:relative}
+.src .site-logo{width:18px;height:18px;border-radius:5px;flex-shrink:0;display:grid;place-items:center;background:#1e244d;color:#67e8f9;font-weight:700;font-size:11px;overflow:hidden;position:relative}
 .src .site-logo img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
 .src a span.stitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
@@ -73,7 +74,7 @@ header h1{font-size:22px}
 .ch button{margin-left:8px;border:1px solid #4b3a99;border-radius:8px;padding:2px 9px;color:var(--tx);font-size:12px}
 .ch button.run{background:var(--g)}
 pre{padding:12px;overflow:auto;font:13px/1.45 ui-monospace,Menlo,monospace;max-height:420px}
-.activity{display:flex;align-items:center;gap:8px;color:#9691ae;font-size:12px;opacity:.72}.activity .dots{display:inline-flex;align-items:center}.activity .dots i{width:5px;height:5px;margin-right:3px;border-radius:50%;background:#a78bfa;animation:b 1s infinite}.activity .dots i:nth-child(2){animation-delay:.15s}.activity .dots i:nth-child(3){animation-delay:.3s}.dots i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:50%;background:var(--p);animation:b 1s infinite}
+.dots i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:50%;background:var(--p);animation:b 1s infinite}
 .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
 @keyframes b{50%{opacity:.2;transform:translateY(-4px)}}
 #bar{padding:8px 16px calc(10px + env(safe-area-inset-bottom))}
@@ -135,34 +136,24 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
  <div class="brand"><div class="logo" id="sb-logo"></div>
  <div><b>ÖMER AI</b><span class="tag">PRO v3</span><small>Ultimate Yapay Zekâ &amp; Stüdyo</small></div></div>
  <button id="new" type="button">＋ Yeni Sohbet</button>
- <div class="lb">ÇALIŞMA ALANLARI</div><div id="nav"></div>
  <div class="lb" style="border-top:1px solid var(--bd);padding-top:12px">SOHBET GEÇMİŞİ <span id="cnt"></span></div>
  <div id="hist"></div>
  <div class="ft"><button id="memb" type="button"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
 </aside><div id="bk"></div>
 <div id="main">
- <header><button class="ib" id="burger" type="button">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
+ <header><button class="ib" id="burger" type="button" aria-label="Menüyü aç veya kapat">☰</button><h1>ÖMER AI</h1><span class="sp"></span>
  <button class="chip" id="tone" type="button"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
- <button class="ib" id="edit" type="button" title="Yeni sohbet">✎</button><button class="ib" id="menu" type="button" title="Ayarlar">⋮</button></header>
+<button class="ib" id="menu" type="button" title="Ayarlar">⋮</button></header>
  <div id="chat">
+  <div id="search-status" role="status" aria-live="polite">Web'de aranıyor…</div>
   <div id="wel"><div class="logo" id="wel-logo"></div>
    <h2><span>ÖMER AI Ultimate'e Hoş Geldiniz</span></h2>
-   <p>Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza ve tek mesajla kod, proje ve oyun oluşturma.</p>
-   <div class="cards" id="cards"></div></div>
+   <p>Araştırma, analiz, kodlama, görsel inceleme ve fikir geliştirme: hepsi tek bir akıllı sohbette.</p>
+</div>
   <div id="msgs"></div>
  </div>
  <div id="bar">
   <div id="prev"></div>
-  <div id="studio-box">
-   <div class="sb-top">
-    <span class="sb-title" id="sb-label"></span>
-    <div class="sb-presets" id="sb-presets"></div>
-   </div>
-   <div class="sb-row">
-    <input type="text" id="studio-in" placeholder="">
-    <button id="studio-send" type="button">Oluştur ➤</button>
-   </div>
-  </div>
   <div id="box"><input type="file" id="file" accept="image/*" hidden>
    <button class="ib" id="att" type="button" title="Görsel ekle">📎</button><button class="ib" id="mic" type="button" title="Sesle yaz">🎙️</button>
    <textarea id="in" rows="1"></textarea><button id="go" type="button">Gönder ➤</button></div>
@@ -247,7 +238,7 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
       background_color: '#05050f',
       theme_color: '#05050f',
       icons: [
-           { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+               { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
         { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
       ]
     };
@@ -256,9 +247,9 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
   };
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
 
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     const swCode = `
-      const CACHE = 'omer-ai-v3';
+      const CACHE = 'omer-ai-v4';
       self.addEventListener('install', e => { self.skipWaiting(); });
       self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
       self.addEventListener('fetch', e => {
@@ -266,37 +257,25 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
         e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
       });
     `;
-   const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
+    const swUrl = URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }));
     navigator.serviceWorker.register(swUrl).catch(() => {});
   }
 })();
 
 const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı','Profesyonel','Kısa & net'];
 const MODES={
-  chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
-  code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
-  project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.']
+  chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI'ye bir mesaj yazın...",'Akıllı Sohbet & Araştırma','Sorular sorun, araştırma yapın, kod yazın ve projelerinizi tek sohbetten geliştirin.']
 };
-const STUDIO_META={
-  code:{
-    label:'</> Kodlama Mesaj Kutusu',
-    placeholder:'Hangi dilde kod veya hata ayıklama istiyorsun? Örn: Python ile görev takip scripti yaz',
-    presets:['Python API sunucusu','JavaScript oyun döngüsü','SQL tablo ve sorgu','Hata ayıkla']
-  },
-  project:{
-    label:'🧱 Proje Mesaj Kutusu',
-    placeholder:'Nasıl bir tek sayfalık site veya araç istiyorsun? Örn: Neon temalı pomodoro ve not uygulaması',
-    presets:['Pomodoro & Görev Sitesi','Hesap Makinesi Aracı','Kişisel Portföy Sayfası','Hava / Saat Paneli']
-  }
-};
+const STUDIO_META={};
 
 let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+if(!MODES[S.mode])S.mode='chat';
+const save=()=>{try{S.chats=S.chats.slice(0,100);localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cur=()=>S.chats.find(c=>c.id===S.cur)||null;
 let LG='tr';
-const LGS=[['auto','Otomatik / Auto'],['tr','Türkçe'],['en','English'],['de','Deutsch'],['fr','Français'],['ar','العربية'],['th','ไทย (Tayca)'],['he','עברית (İbranice)'],['hi','हिन्दी (Hintçe)'],['ru','Русский'],['zh','中文 (Çince)'],['es','Español']];
+const LGS=[['auto','Otomatik / Auto'],['tr','Türkçe'],['en','English'],['de','Deutsch'],['es','Español'],['fr','Français'],['ar','العربية'],['ru','Русский']];
 const T=[
 [`Ultimate Yapay Zekâ & Stüdyo`,`Ultimate AI & Studio`,`Ultimate KI & Studio`,`IA Ultimate y Estudio`,`IA Ultimate & Studio`,`الذكاء الاصطناعي والاستوديو`,`Ultimate ИИ и студия`],
 [`＋ Yeni Sohbet`,`＋ New chat`,`＋ Neuer Chat`,`＋ Nuevo chat`,`＋ Nouveau chat`,`＋ محادثة جديدة`,`＋ Новый чат`],
@@ -307,7 +286,7 @@ const T=[
 [`Çevrimdışı`,`Offline`,`Offline`,`Sin conexión`,`Hors ligne`,`غير متصل`,`Не в сети`],
 [`Anahtar yok`,`No API key`,`Kein API-Schlüssel`,`Sin clave API`,`Pas de clé API`,`لا يوجد مفتاح`,`Нет API-ключа`],
 [`ÖMER AI Ultimate'e Hoş Geldiniz`,`Welcome to ÖMER AI Ultimate`,`Willkommen bei ÖMER AI Ultimate`,`Bienvenido a ÖMER AI Ultimate`,`Bienvenue sur ÖMER AI Ultimate`,`مرحبًا بك في ÖMER AI Ultimate`,`Добро пожаловать в ÖMER AI Ultimate`],
-[`Gelişmiş yapay zekâ sohbeti, web araması, görsel analizi, akıllı hafıza ve tek mesajla kod, proje ve oyun oluşturma.`,`Advanced AI chat, web search, image analysis, smart memory, voice input and a coding studio at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe und Coding-Studio – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz y estudio de código, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales et studio de code, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية واستوديو برمجة بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод и студия кода — всё под рукой.`],
+[`Araştırma, analiz, kodlama, görsel inceleme ve fikir geliştirme: hepsi tek bir akıllı sohbette.`,`Advanced AI chat, web search, image analysis, smart memory, voice input and a coding studio at your fingertips.`,`Fortschrittlicher KI-Chat, Websuche, Bildanalyse, smartes Gedächtnis, Spracheingabe und Coding-Studio – alles in deiner Hand.`,`Chat con IA avanzado, búsqueda web, análisis de imágenes, memoria inteligente, voz y estudio de código, todo a tu alcance.`,`Chat IA avancé, recherche web, analyse d'images, mémoire intelligente, commandes vocales et studio de code, à portée de main.`,`دردشة ذكاء اصطناعي متقدمة، بحث على الويب، تحليل الصور، ذاكرة ذكية، أوامر صوتية واستوديو برمجة بين يديك.`,`Продвинутый ИИ-чат, поиск в интернете, анализ изображений, умная память, голосовой ввод и студия кода — всё под рукой.`],
 [`Yapay Zekâ Sohbet`,`AI Chat`,`KI-Chat`,`Chat con IA`,`Chat IA`,`دردشة الذكاء الاصطناعي`,`ИИ-чат`],
 [`Kodlama Stüdyosu`,`Coding Studio`,`Coding-Studio`,`Estudio de código`,`Studio de code`,`استوديو البرمجة`,`Студия кода`],
 [`Proje Oluşturucu`,`Project Builder`,`Projekt-Builder`,`Creador de proyectos`,`Créateur de projets`,`منشئ المشاريع`,`Конструктор проектов`],
@@ -362,19 +341,11 @@ const T=[
 [`🖼️ Görsel eklendi`,`🖼️ Image attached`,`🖼️ Bild angehängt`,`🖼️ Imagen adjunta`,`🖼️ Image jointe`,`🖼️ تم إرفاق صورة`,`🖼️ Фото прикреплено`],
 [`Görsel analizi`,`Image analysis`,`Bildanalyse`,`Análisis de imagen`,`Analyse d'image`,`تحليل صورة`,`Анализ фото`],
 [`Bu görseli detaylıca analiz et.`,`Analyze this image in detail.`,`Analysiere dieses Bild im Detail.`,`Analiza esta imagen en detalle.`,`Analyse cette image en détail.`,`حلّل هذه الصورة بالتفصيل.`,`Подробно проанализируй это изображение.`]];
-const CODES=['en','de','es','fr','ar','ru','th','he','hi','zh'],D={},ANY={};
+const CODES=['en','de','es','fr','ar','ru'],D={},ANY={};
 CODES.forEach(c=>D[c]={});
-T.forEach(r=>{ANY[r[0]]=r[0];CODES.slice(0,6).forEach((c,i)=>{D[c][r[0]]=r[i+1];ANY[r[i+1]]=r[0]})});
-// Core interface translations for Thai, Hebrew, Hindi and Chinese.
-const EXTRA={
- th:{'＋ Yeni Sohbet':'＋ แชตใหม่','SOHBET GEÇMİŞİ':'ประวัติแชต',"ÖMER AI Ultimate\'e bir mesaj yazın...":'พิมพ์ข้อความถึง ÖMER AI Ultimate...','Gönder ➤':'ส่ง ➤','Ayarlar':'การตั้งค่า','Ton':'โทน','Web araması':'ค้นหาเว็บ','Yanıtı sesli oku':'อ่านคำตอบออกเสียง','Yazı boyutu':'ขนาดตัวอักษร','Tamam':'ตกลง','Hafızayı sil':'ล้างความจำ','Geçmişi sil':'ล้างประวัติ','Görsel ekle':'เพิ่มรูปภาพ','Sesle yaz':'พิมพ์ด้วยเสียง','Kayıtlı hafıza notu':'บันทึกความจำ'},
- he:{'＋ Yeni Sohbet':'＋ צ׳אט חדש','SOHBET GEÇMİŞİ':'היסטוריית צ׳אט',"ÖMER AI Ultimate\'e bir mesaj yazın...":'כתבו הודעה ל‑ÖMER AI Ultimate...','Gönder ➤':'שליחה ➤','Ayarlar':'הגדרות','Ton':'סגנון','Web araması':'חיפוש באינטרנט','Yanıtı sesli oku':'הקראת התשובות','Yazı boyutu':'גודל טקסט','Tamam':'אישור','Hafızayı sil':'ניקוי זיכרון','Geçmişi sil':'ניקוי היסטוריה','Görsel ekle':'הוספת תמונה','Sesle yaz':'הכתבה קולית','Kayıtlı hafıza notu':'הערות זיכרון שמורות'},
- hi:{'＋ Yeni Sohbet':'＋ नई चैट','SOHBET GEÇMİŞİ':'चैट इतिहास',"ÖMER AI Ultimate\'e bir mesaj yazın...":'ÖMER AI Ultimate को संदेश लिखें...','Gönder ➤':'भेजें ➤','Ayarlar':'सेटिंग्स','Ton':'शैली','Web araması':'वेब खोज','Yanıtı sesli oku':'जवाब ज़ोर से पढ़ें','Yazı boyutu':'अक्षर आकार','Tamam':'ठीक है','Hafızayı sil':'मेमोरी मिटाएँ','Geçmişi sil':'इतिहास मिटाएँ','Görsel ekle':'चित्र जोड़ें','Sesle yaz':'बोलकर लिखें','Kayıtlı hafıza notu':'सहेजे गए मेमोरी नोट'},
- zh:{'＋ Yeni Sohbet':'＋ 新建聊天','SOHBET GEÇMİŞİ':'聊天记录',"ÖMER AI Ultimate\'e bir mesaj yazın...":'给 ÖMER AI Ultimate 发送消息...','Gönder ➤':'发送 ➤','Ayarlar':'设置','Ton':'语气','Web araması':'网页搜索','Yanıtı sesli oku':'朗读回复','Yazı boyutu':'字体大小','Tamam':'完成','Hafızayı sil':'清除记忆','Geçmişi sil':'清除历史记录','Görsel ekle':'添加图片','Sesle yaz':'语音输入','Kayıtlı hafıza notu':'已保存的记忆'}
-};
-Object.entries(EXTRA).forEach(([c,m])=>Object.assign(D[c],m));
+T.forEach(r=>{ANY[r[0]]=r[0];CODES.forEach((c,i)=>{D[c][r[0]]=r[i+1];ANY[r[i+1]]=r[0]})});
 const tt=s=>LG==='tr'?s:((D[LG]&&D[LG][s])||s);
-const vl=()=>({tr:'tr-TR',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR',ar:'ar-SA',th:'th-TH',he:'he-IL',hi:'hi-IN',ru:'ru-RU',zh:'zh-CN'})[S.lang]||navigator.language||'tr-TR';
+const vl=()=>({tr:'tr-TR',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR',ar:'ar-SA',ru:'ru-RU'})[S.lang]||navigator.language||'tr-TR';
 const tr1=v=>{const k=ANY[v];return k?(LG==='tr'?k:D[LG][k]):null};
 function trAll(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),L=[];let n;while(n=w.nextNode())L.push(n);
  L.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|PRE|CODE|TEXTAREA|INPUT)$/.test(p.tagName)||(p.closest('.m')&&!p.closest('.ch,.im')))return;const v=n.nodeValue.trim(),r=tr1(v);if(r&&r!==v)n.nodeValue=n.nodeValue.replace(v,r)});
@@ -399,7 +370,7 @@ function stripLatex(str){
     .replace(/\\end\{[a-zA-Z0-9*]+\}/g, '')
     .replace(/\\\[|\\\]|\\\(|\\\)|\$\$/g, '');
 
- for(let i=0; i<10; i++){
+  for(let i=0; i<10; i++){
     const next = out
       .replace(/\\(?:frac|dfrac|tfrac|cfrac)\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
       .replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^{}]+)\}/g, '($1. kok: $2)')
@@ -407,7 +378,7 @@ function stripLatex(str){
       .replace(/\\(?:text|mathrm|mathbf|mathit|mathsf|mathtt|operatorname|textbf|textit|textrm|emph)\s*\{([^{}]+)\}/g, '$1')
       .replace(/\^\{([^{}]+)\}/g, '^($1)')
       .replace(/_\{([^{}]+)\}/g, '_($1)');
-   if(next === out) break;
+    if(next === out) break;
     out = next;
   }
 
@@ -436,7 +407,7 @@ function stripLatex(str){
     .replace(/[ \t]{2,}/g, ' ');
 
   return out;
-}
+ }
 
 function code(l,c){
   const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c)||/<html[\s>]/i.test(c)||/<canvas[\s>]/i.test(c);
@@ -496,42 +467,25 @@ function stripAnswerLinks(text){
 
 function renderSrc(srcs){
   if(!srcs || !srcs.length) return '';
-  return '<div class="src"><span class="src-title">Kaynaklar</span>' + srcs.slice(0,4).map(s=>{
+  return '<div class="src"><div class="src-title">Kaynaklar (' + (srcs.length >= 5 ? '5+' : srcs.length) + ')</div>' + srcs.map(s=>{
     let host = '';
     try { host = new URL(s.u).hostname.replace(/^www\./,''); } catch(e) {}
     const fav = host ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64` : '';
     const letter = (host || s.t || 'W').charAt(0).toUpperCase();
     const label = s.t || host || 'Kaynak';
-    return `<a href="${esc(s.u)}" target="_blank" rel="noopener noreferrer" title="${esc(label)}"><span class="site-logo">${fav?`<img src="${fav}" alt="" loading="lazy" onerror="this.remove()">`:''}<span>${esc(letter)}</span></span><span class="stitle">${esc(host || label)}</span></a>`;
+    return `<a href="${esc(s.u)}" target="_blank" rel="noopener noreferrer"><span class="site-logo">${fav?`<img src="${fav}" alt="${esc(host)}" loading="lazy" onerror="this.remove()">`:''}<span>${esc(letter)}</span></span><span class="stitle">${esc(label)}</span></a>`;
   }).join('') + '</div>';
 }
 
-function renderStudioBox(){
-  const box = $('#studio-box');
-  const meta = STUDIO_META[S.mode];
-  if(!meta){
-    box.classList.remove('on');
-    return;
-  }
-  box.classList.add('on');
-  $('#sb-label').textContent = meta.label;
-  $('#studio-in').placeholder = meta.placeholder;
-  $('#sb-presets').innerHTML = meta.presets.map(p =>
-    `<button type="button" class="sb-preset" data-preset="${esc(p)}">${esc(p)}</button>`
-  ).join('');
-}
+function renderStudioBox(){}
 
 function render(){
   const c=cur(),L=c?c.msgs:[];
-  const mode=MODES[S.mode]||MODES.chat;
-  $('#pill').textContent=mode[2];
-  $('#in').placeholder=mode[3];
+  $('#in').placeholder=MODES[S.mode][3];
   $('#tn').textContent=S.tone;
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
-   :`<div class="m a">${x.load?`<div class="activity"><span>${esc(x.status || 'ÖMER AI hazırlanıyor...')}</span><span class="dots"><i></i><i></i><i></i></span></div>`:(renderSrc(x.src)+md(x.src?.length ? stripAnswerLinks(x.t) : x.t))}</div>`).join('');
-  $('#nav').innerHTML=Object.entries(MODES).map(([key,m])=>`<button type="button" class="nv ${S.mode===key?'on':''}" data-m="${key}"><span class="i">${m[0]}</span><span>${m[1]}</span></button>`).join('');
-  $('#cards').innerHTML=Object.entries(MODES).map(([key,m])=>`<button type="button" class="cd" data-m="${key}"><h3><i>${m[0]}</i>${m[4]}</h3><p>${m[5]}</p></button>`).join('');
+   :`<div class="m a">${x.load?'<span class="dots"><i></i><i></i><i></i></span>':md(x.src?.length ? stripAnswerLinks(x.t) : x.t)}${renderSrc(x.src)}</div>`).join('');
   $('#cnt').textContent=S.chats.length;
   $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
   renderStudioBox();
@@ -541,25 +495,21 @@ function render(){
 
 function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,160)+'px'}
 
-function detectTaskMode(text){
-  const q=String(text||'').toLocaleLowerCase('tr-TR');
-  if(/(oyun|game|platform|yılan oyunu|araba yarışı|minecraft|flappy|tetris)/i.test(q))return 'game';
-  if(/(web sitesi|site oluştur|website|uygulama|app oluştur|proje oluştur|panel oluştur|araç oluştur|tasarla ve oluştur)/i.test(q))return 'project';
-  if(/(kod yaz|kodla|programla|hata ayıkla|debug|python|javascript|html|css|sql|kodunu düzelt)/i.test(q))return 'code';
-  return 'chat';
+function shouldShowSearch(text){
+  const t=String(text||'').trim().toLocaleLowerCase('tr-TR');
+  if(!t || t.length<4)return false;
+  if(/^(merhaba|selam|sa|as|hey|hi|hello|günaydın|iyi akşamlar|iyi geceler|nasılsın|naber|teşekkürler|sağol|eyvallah|tamam|tmm|okey|ok|güle güle|bay bay)[.!?\s]*$/i.test(t))return false;
+  if(/^(hatırla|remember)[:,\s]/i.test(t))return false;
+  return /(araştır|internette ara|web.?arama|kaynak|güncel|son dakika|en son|bugün|şu an|şimdi|haber|fiyat|kaç tl|ne zaman|fikstür|maç|skor|puan durumu|hava durumu|deprem|kim kazandı|nedir|kimdir|nasıl çalışır)/i.test(t) || t.split(/\s+/).length>=4 || /[?？]/.test(t);
 }
-function isWebQuery(text){
-  return /(bugün|dün|son dakika|güncel|şu an|şimdi|kaç kaç|skor|haber|kim kazandı|ne zaman|202[5-9]|araştır|kaynak|internette|webde)/i.test(String(text||''));
-}
+
 async function sendWithText(customText){
   const t = typeof customText === 'string' ? customText.trim() : $('#in').value.trim();
-  const taskMode = detectTaskMode(t);
-  const requestMode = S.mode === 'chat' && taskMode !== 'game' ? taskMode : S.mode;
   if((!t&&!img)||busy)return;
   let c=cur();
   if(!c) c=newChat(true);
   if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
-  c.mode=requestMode;
+  S.mode='chat';c.mode='chat';
   if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
   c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
 
@@ -567,89 +517,25 @@ async function sendWithText(customText){
   const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
   historyMsgs.unshift({role:'user',text:cleanDirective});
 
-  const p={mode:requestMode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
-  if(requestMode==='project'){
-    p.messages.push({
-      role:'user',
-      text:'PROJECT BUILDER DIRECTIVE: Create a complete, clean, working single-file HTML/CSS/JS project that can be run immediately in the browser preview. Include clear UI, responsive layout, interactive functionality, and zero raw LaTeX or # or * or ? symbols in your explanation.'
-    });
-  } else if(requestMode==='code'){
-    p.messages.push({
-      role:'user',
-      text:'CODING STUDIO DIRECTIVE: Provide clean, well-structured, runnable code with clear step-by-step notes. Never output raw LaTeX commands or # or * or ? characters in explanations.'
-    });
-  }
+  const p={mode:S.mode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
 
+  const hadImage=!!img;
   if(img)p.image=img;img=null;$('#prev').innerHTML='';
   if(!customText){$('#in').value='';fit();}
-  const status=isWebQuery(t)?'Web’de aranıyor...':taskMode==='game'?'Oyun hazırlanıyor...':taskMode==='project'?'Proje oluşturuluyor...':taskMode==='code'?'Kod hazırlanıyor...':'ÖMER AI düşünüyor...';
-  const ai={r:'ai',t:'',load:true,status};c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
+  const ai={r:'ai',t:'',load:true};c.msgs.push(ai);busy=true;$('#go').disabled=true;
+  const status=$('#search-status');
+  const likelySearch=S.search!==false && shouldShowSearch(t) && !hadImage;
+  status.classList.toggle('on',likelySearch);render();
   try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
-   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=stripLatex(d.text||'');ai.src=normalizeSources(d)}
+   const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=stripLatex(d.text||'');ai.src=normalizeSources(d);if(d.webSearch?.error)ai.searchError=d.webSearch.error}
   catch(e){ai.t='⚠️ '+e.message}
-  delete ai.load;busy=false;$('#go').disabled=false;$('#studio-send').disabled=false;save();render();
+  delete ai.load;busy=false;$('#go').disabled=false;status.classList.remove('on');save();render();
   if(S.tts&&window.speechSynthesis&&ai.t&&!ai.t.startsWith('⚠️')){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripLatex(ai.t).replace(/```[\s\S]*?```/g,' kod bloğu ').replace(/[*#`?$]/g,''));u.lang=vl();speechSynthesis.speak(u)}
 }
 
 function send(){return sendWithText();}
 
-function setMode(m){
-  if(!MODES[m])return;
-  S.mode=m;
-  const c=cur();
-  if(c&&!c.msgs.length)c.mode=m;
-  save();
-  render();
-  closeSb();
-  const stIn=$('#studio-in');
-   if(STUDIO_META[m] && stIn){
-    stIn.focus();
-  } else {
-    $('#in').focus();
-  }
-}
-
-$('#nav').addEventListener('click',e=>{
-  const m=e.target.closest('[data-m]');
- if(m){
-    e.preventDefault();
-    e.stopPropagation();
-    setMode(m.dataset.m);
-  }
-});
-
-$('#cards').addEventListener('click',e=>{
-  const m=e.target.closest('[data-m]');
-  if(m){
-    e.preventDefault();
-    e.stopPropagation();
-    setMode(m.dataset.m);
-  }
-});
-
-$('#sb-presets').addEventListener('click',e=>{
-  const p=e.target.closest('[data-preset]');
-  if(!p)return;
-  const val=p.dataset.preset;
-  const stIn=$('#studio-in');
-  stIn.value = stIn.value ? `${stIn.value} - ${val}` : val;
-  stIn.focus();
-});
-
-$('#studio-send').onclick=()=>{
-  const stIn=$('#studio-in');
-  const txt=stIn.value.trim();
-  if(!txt || busy)return;
-  stIn.value='';
-  sendWithText(txt);
-};
-
-$('#studio-in').onkeydown=e=>{
-  if(e.key==='Enter' && !e.shiftKey){
-    e.preventDefault();
-    $('#studio-send').click();
-  }
-};
+function setMode(){S.mode='chat';save();render();closeSb();$('#in').focus()}
 
 document.addEventListener('click',e=>{
  const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;const found=cur();if(found)S.mode=found.mode||'chat';save();render();closeSb();return}
@@ -660,6 +546,9 @@ document.addEventListener('click',e=>{
 
 $('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
 const closeSb=()=>$('#sb').classList.remove('o');
+let touchStartX=0,touchStartY=0;
+document.addEventListener('touchstart',e=>{const t=e.touches[0];touchStartX=t.clientX;touchStartY=t.clientY},{passive:true});
+document.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;if(innerWidth<=900&&Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)){if(dx>0&&touchStartX<35)$('#sb').classList.add('o');else if(dx<0&&$('#sb').classList.contains('o'))closeSb()}},{passive:true});
 $('#burger').onclick=e=>{e.stopPropagation();$('#sb').classList.toggle(innerWidth>900?'c':'o')};
 $('#bk').onclick=closeSb;
 $('#sb').addEventListener('click',e=>{e.stopPropagation()});
@@ -685,7 +574,7 @@ function startFreshChat(e){
   $('#in').focus();
 }
 $('#new').onclick=startFreshChat;
-$('#edit').onclick=startFreshChat;
+
 
 function dlg(t,b,btns){$('#dgt').textContent=t;$('#dgb').textContent=b;$('#dgs').innerHTML='';
  btns.forEach(([l,f,p])=>{const x=document.createElement('button');x.type='button';x.textContent=l;if(p)x.className='pr';x.onclick=()=>{$('#dg').style.display='none';f&&f()};$('#dgs').appendChild(x)});$('#dg').style.display='flex';trAll()}
@@ -716,7 +605,7 @@ $('#mic').onclick=()=>{if(!SR)return dlg('Ses tanıma','Bu tarayıcı sesle yazm
  rec.onend=()=>{rec=null;$('#mic').classList.remove('on')};$('#mic').classList.add('on');rec.start()};
 fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok';trAll()}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı';trAll()});
 
-applyFs();applyLang();if(!cur())newChat(true);render();
+applyFs();applyLang();if(!cur())newChat(true);else if(cur().msgs.length)newChat(true);render();
 </script>
 </body>
 </html>
