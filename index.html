@@ -39,6 +39,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
 header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd)}
 header h1{font-size:22px}
+#date-chip{font-size:12px;color:#c4b5fd;background:#100d2b;border:1px solid var(--bd);border-radius:10px;padding:5px 9px;white-space:nowrap}
 #pill{font-size:14px;color:#d8c8ff;background:#1c1140;border:1px solid #4b3a99;border-radius:14px;padding:2px 14px}
 .sp{flex:1}
 .chip{border:1px solid var(--bd);background:#0d0b2a;border-radius:16px;padding:6px 14px;font-size:14px}
@@ -68,7 +69,7 @@ header h1{font-size:22px}
 .src .site-logo{width:14px;height:14px;border-radius:4px;flex-shrink:0;display:grid;place-items:center;background:#1e244d;color:#67e8f9;font-weight:700;font-size:9px;overflow:hidden;position:relative}
 .src .site-logo img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
 .src a span.stitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
+.project-actions{display:flex;justify-content:flex-end;margin:8px 0}.project-actions button{background:var(--g);border:0;border-radius:10px;padding:8px 13px;font-weight:700;font-size:13px}.cb{margin:10px 0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:#07061a}
 .ch{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#15123a;font-size:12px;color:var(--mu)}
 .ch button{margin-left:8px;border:1px solid #4b3a99;border-radius:8px;padding:2px 9px;color:var(--tx);font-size:12px}
 .ch button.run{background:var(--g)}
@@ -141,7 +142,7 @@ pre,.ch{direction:ltr;unicode-bidi:isolate;text-align:left}
  <div class="ft"><button id="memb" type="button"><span class="dot"></span>Hafıza Aktif</button><span id="st"><span class="dot"></span>Çevrimiçi</span></div>
 </aside><div id="bk"></div>
 <div id="main">
- <header><button class="ib" id="burger" type="button">☰</button><h1>ÖMER AI</h1><span id="pill">Sohbet</span><span class="sp"></span>
+ <header><button class="ib" id="burger" type="button">☰</button><h1>ÖMER AI</h1><span id="date-chip" title="Türkiye yerel tarihi ve saati">Tarih yükleniyor…</span><span id="pill">Sohbet</span><span class="sp"></span>
  <button class="chip" id="tone" type="button"><span class="dot" style="background:#a855f7"></span><span id="tn">Arkadaş canlısı</span> • TR</button>
  <button class="ib" id="edit" type="button" title="Yeni sohbet">✎</button><button class="ib" id="menu" type="button" title="Ayarlar">⋮</button></header>
  <div id="chat">
@@ -256,8 +257,8 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
   };
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
 
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    const swCode = `
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+   const swCode = `
       const CACHE = 'omer-ai-v3';
       self.addEventListener('install', e => { self.skipWaiting(); });
       self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
@@ -275,7 +276,8 @@ const $=s=>document.querySelector(s),K='omer_ai_v3',TONES=['Arkadaş canlısı',
 const MODES={
   chat:['💬','Yapay Zekâ Sohbet','Sohbet',"ÖMER AI Ultimate'e bir mesaj yazın...",'Akıllı Sohbet & Analiz','Sorular sorun, fikir geliştirin, web araması ve hafızalı asistanla sohbet edin.'],
   code:['</>','Kodlama Stüdyosu','Kodlama','Ne kodlayalım? Kod yazın, hata ayıklayın...','Kodlama Stüdyosu','HTML, JS, Python ve daha fazlası için kod yazın, hata ayıklayın.'],
-  project:['🧱','Proje Oluşturucu','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Oluşturucu','Tek mesajla çalışan web sitesi veya uygulama oluşturun, anında önizleyin.']
+  project:['🧱','Proje Fabrikası','Proje','Nasıl bir proje istiyorsun? (site, uygulama, araç...)','Proje Fabrikası','Tek mesajla çalışan web sitesi veya uygulama oluşturun, önizleyin ve ZIP indirin.'],
+  game:['🎮','Oyun Fabrikası','Oyun','Nasıl bir oyun yapalım?','Oyun Fabrikası','Oynanabilir, mobil uyumlu oyunlar oluşturun; önizleyin ve ZIP indirin.']
 };
 const STUDIO_META={
   code:{
@@ -284,9 +286,14 @@ const STUDIO_META={
     presets:['Python API sunucusu','JavaScript oyun döngüsü','SQL tablo ve sorgu','Hata ayıkla']
   },
   project:{
-    label:'🧱 Proje Mesaj Kutusu',
-    placeholder:'Nasıl bir tek sayfalık site veya araç istiyorsun? Örn: Neon temalı pomodoro ve not uygulaması',
+    label:'🧱 Proje Fabrikası',
+    placeholder:'Nasıl bir site, uygulama veya araç oluşturalım?',
     presets:['Pomodoro & Görev Sitesi','Hesap Makinesi Aracı','Kişisel Portföy Sayfası','Hava / Saat Paneli']
+  },
+  game:{
+    label:'🎮 Oyun Fabrikası',
+    placeholder:'Nasıl bir oyun oluşturalım? Örn: Mobil uyumlu 2D futbol oyunu',
+    presets:['2D futbol oyunu','Platform macera oyunu','Araba yarışı oyunu','Hafıza eşleştirme oyunu']
   }
 };
 
@@ -401,7 +408,7 @@ function stripLatex(str){
 
  for(let i=0; i<10; i++){
     const next = out
-      .replace(/\\(?:frac|dfrac|tfrac|cfrac)\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
+     .replace(/\\(?:frac|dfrac|tfrac|cfrac)\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1 / $2)')
       .replace(/\\sqrt\s*\[([^\]]+)\]\s*\{([^{}]+)\}/g, '($1. kok: $2)')
       .replace(/\\sqrt\s*\{([^{}]+)\}/g, 'karekok($1)')
       .replace(/\\(?:text|mathrm|mathbf|mathit|mathsf|mathtt|operatorname|textbf|textit|textrm|emph)\s*\{([^{}]+)\}/g, '$1')
@@ -438,14 +445,22 @@ function stripLatex(str){
   return out;
 }
 
-function code(l,c){
+function code(l,c,fileName,mode){
   const h=/^(html|htm)$/i.test(l)||/^\s*<!doctype html/i.test(c)||/<html[\s>]/i.test(c)||/<canvas[\s>]/i.test(c);
-  return `<div class="cb"><div class="ch"><span>${esc(l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">▶ Çalıştır</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`;
+  const name=fileName||'';
+  const runLabel=mode==='game'?'▶ Oyunu Oyna':'▶ Önizle';
+  return `<div class="cb" data-file="${esc(name)}" data-lang="${esc(l||'')}"><div class="ch"><span>${esc(name||l||'kod')}</span><span><button type="button" data-a="copy">Kopyala</button>${h?'<button type="button" data-a="dl">İndir</button><button type="button" class="run" data-a="run">'+runLabel+'</button>':''}</span></div><pre><code>${esc(c)}</code></pre></div>`;
 }
 
-function md(t){
+function md(t,mode='chat'){
   const B=[];
-  t=String(t||'').replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(_,l,c)=>(B.push(code(l,c.replace(/\n$/,''))),'\u0001'+(B.length-1)+'\u0001'));
+  t=String(t||'').replace(/```([\w+-]*)\n?([\s\S]*?)```/g,(whole,l,c,offset,source)=>{
+    const before=source.slice(0,offset);
+    const matches=[...before.matchAll(/(?:Dosya|FILE|File)\s*[:：-]\s*([^\r\n]+)/gi)];
+    const fileName=matches.length?matches[matches.length-1][1].trim().replace(/[`*]/g,''):'';
+    B.push(code(l,c.replace(/\n$/,''),fileName,mode));
+    return '\u0001'+(B.length-1)+'\u0001';
+  });
   t=stripLatex(t);
   t=esc(t)
     .replace(/`([^`\n]+)`/g,'<code>$1</code>')
@@ -453,9 +468,10 @@ function md(t){
     .replace(/^#{1,6}\s*(.+)$/gm,'<h4>$1</h4>')
     .replace(/^[-*•]\s+(.+)$/gm,'<li>$1</li>')
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-        .replace(/[*#~`$?]/g,'')
+    .replace(/[*#~`$?]/g,'')
     .replace(/\n/g,'<br>');
-  return t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
+  const rendered=t.replace(/\u0001(\d+)\u0001/g,(_,i)=>B[i]);
+  return B.length?`<div class="project-actions"><button type="button" data-a="zip">⬇ Tüm projeyi ZIP indir</button></div>${rendered}`:rendered;
 }
 
 function normalizeSources(d){
@@ -529,7 +545,7 @@ function render(){
   $('#tn').textContent=S.tone;
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
-   :`<div class="m a">${x.load?`<div class="activity"><span>${esc(x.status || 'ÖMER AI hazırlanıyor...')}</span><span class="dots"><i></i><i></i><i></i></span></div>`:(renderSrc(x.src)+md(x.src?.length ? stripAnswerLinks(x.t) : x.t))}</div>`).join('');
+   :`<div class="m a">${x.load?`<div class="activity"><span>${esc(x.status || 'ÖMER AI hazırlanıyor...')}</span><span class="dots"><i></i><i></i><i></i></span></div>`:(renderSrc(x.src)+md(x.src?.length ? stripAnswerLinks(x.t) : x.t,x.mode||c?.mode||S.mode))}</div>`).join('');
   $('#nav').innerHTML=Object.entries(MODES).map(([key,m])=>`<button type="button" class="nv ${S.mode===key?'on':''}" data-m="${key}"><span class="i">${m[0]}</span><span>${m[1]}</span></button>`).join('');
   $('#cards').innerHTML=Object.entries(MODES).map(([key,m])=>`<button type="button" class="cd" data-m="${key}"><h3><i>${m[0]}</i>${m[4]}</h3><p>${m[5]}</p></button>`).join('');
   $('#cnt').textContent=S.chats.length;
@@ -543,18 +559,34 @@ function fit(){const e=$('#in');e.style.height='auto';e.style.height=Math.min(e.
 
 function detectTaskMode(text){
   const q=String(text||'').toLocaleLowerCase('tr-TR');
-  if(/(oyun|game|platform|yılan oyunu|araba yarışı|minecraft|flappy|tetris)/i.test(q))return 'game';
-  if(/(web sitesi|site oluştur|website|uygulama|app oluştur|proje oluştur|panel oluştur|araç oluştur|tasarla ve oluştur)/i.test(q))return 'project';
+  if(/(oyun yap|oyun oluştur|oyun geliştir|oyun kodla|game|platform oyunu|yılan oyunu|araba yarışı|futbol oyunu|flappy|tetris)/i.test(q))return 'game';
+  if(/(web sitesi|site oluştur|website|uygulama oluştur|app oluştur|proje oluştur|panel oluştur|araç oluştur|tasarla ve oluştur)/i.test(q))return 'project';
   if(/(kod yaz|kodla|programla|hata ayıkla|debug|python|javascript|html|css|sql|kodunu düzelt)/i.test(q))return 'code';
   return 'chat';
 }
 function isWebQuery(text){
-  return /(bugün|dün|son dakika|güncel|şu an|şimdi|kaç kaç|skor|haber|kim kazandı|ne zaman|202[5-9]|araştır|kaynak|internette|webde)/i.test(String(text||''));
+  return /(bugün|dün|yarın|bu hafta|gelecek hafta|son dakika|güncel|şu an|şimdi|en son|kaç kaç|skor|maç|fikstür|puan durumu|haber|kim kazandı|ne zaman|hangi gün|hangi tarihte|saat kaç|hava durumu|sıcaklık|kur|fiyat|seçim|araştır|kaynak|internette|webde|doğrula|gerçek mi|doğru mu|iddia)/i.test(String(text||''));
+}
+function dateContext(){
+  const now=new Date();
+  const f=(opts)=>new Intl.DateTimeFormat('tr-TR',{timeZone:'Europe/Istanbul',...opts}).format(now);
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now).map(x=>[x.type,x.value]));
+  return {
+    date:f({day:'2-digit',month:'long',year:'numeric'}),
+    weekday:f({weekday:'long'}),
+    time:f({hour:'2-digit',minute:'2-digit',hour12:false}),
+    iso:`${parts.year}-${parts.month}-${parts.day}`,
+    timezone:'Europe/Istanbul'
+  };
+}
+function updateDateBadge(){
+  const d=dateContext(),el=$('#date-chip');
+  if(el)el.textContent=`${d.weekday}, ${d.date} • ${d.time}`;
 }
 async function sendWithText(customText){
   const t = typeof customText === 'string' ? customText.trim() : $('#in').value.trim();
   const taskMode = detectTaskMode(t);
-  const requestMode = S.mode === 'chat' && taskMode !== 'game' ? taskMode : S.mode;
+  const requestMode = S.mode === 'chat' ? taskMode : S.mode;
   if((!t&&!img)||busy)return;
   let c=cur();
   if(!c) c=newChat(true);
@@ -565,25 +597,25 @@ async function sendWithText(customText){
 
   const cleanDirective = 'FORMAT RULE: Never use LaTeX syntax or commands (no \\[, \\], \\(, \\), $$, \\frac, \\sum, \\int, \\begin, \\end, \\zeta, \\infty, etc.) and never use raw markdown symbols like #, ##, ###, *, **, ***, or ? in text responses. Write mathematical expressions and formulas in plain readable text with normal symbols like /, ^, =, +, -, and Unicode signs like π, Σ, ∞, √.';
   const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
+  const today=dateContext();
+  const dateDirective=`CURRENT DATE AND TIME: Today is ${today.weekday}, ${today.date}; local time ${today.time}; timezone ${today.timezone}. Use this as the authoritative current date for relative dates, schedules, fixtures, news freshness and time-sensitive answers. Never assume the model's training date is today's date. If research is needed, search for information current as of this date and show publication/event dates.`;
+  const architectureDirective='ÖMER AI THREE-LAYER ARCHITECTURE: (1) Groq is the reasoning and response brain. (2) Universal Smart Research gathers, compares and verifies current information across ALL topics, not only sports; use web research automatically for current, changing, disputed or source-dependent questions. Prefer multiple independent reliable sources, distinguish publication date from event date, cite links, and say clearly when evidence is insufficient. (3) Turkish Culture Layer communicates in natural, correct Turkish by default and understands Türkiye-specific context, local terminology, education, geography, history and culture without stereotypes. Never invent research results or sources.';
   historyMsgs.unshift({role:'user',text:cleanDirective});
 
-  const p={mode:requestMode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
-  if(requestMode==='project'){
-    p.messages.push({
-      role:'user',
-      text:'PROJECT BUILDER DIRECTIVE: Create a complete, clean, working single-file HTML/CSS/JS project that can be run immediately in the browser preview. Include clear UI, responsive layout, interactive functionality, and zero raw LaTeX or # or * or ? symbols in your explanation.'
-    });
-  } else if(requestMode==='code'){
-    p.messages.push({
-      role:'user',
-      text:'CODING STUDIO DIRECTIVE: Provide clean, well-structured, runnable code with clear step-by-step notes. Never output raw LaTeX commands or # or * or ? characters in explanations.'
-    });
-  }
+ const researchRequired=isWebQuery(t);
+  const modeInstructions={
+    chat:'Yanıtı sorunun türüne göre üret. Güncel, değişken veya doğrulama gerektiren sorularda evrensel web araştırması karar mekanizmasını kullan.',
+    code:'Kodlama Stüdyosu: temiz, düzenli, çalıştırılabilir kod üret; hata ayıklarken gerçek nedeni açıkla. Birden fazla dosya gerekiyorsa her kod bloğundan önce Dosya: filename.ext satırı yaz ve tüm gerekli dosyaları ver.',
+    project:'Proje Fabrikası: mobil uyumlu, gerçekten çalışan ve tamamlanmış proje üret. Birden fazla dosya gerekiyorsa her kod bloğundan önce Dosya: index.html gibi dosya adını yaz; tüm dosyaları dahil et. Mümkünse tek HTML dosyası üret.',
+    game:'Oyun Fabrikası: maket değil, oynanabilir ve mobil uyumlu tarayıcı oyunu üret. Başlat/yeniden başlat, skor/hedef, klavye ve uygun olduğunda dokunmatik kontroller ekle. Birden fazla dosya gerekiyorsa her kod bloğundan önce Dosya: filename.ext satırı yaz ve tüm dosyaları dahil et. Mümkünse tek HTML dosyası üret.'
+  };
+  const fullSystemContext=`${S.tone}.\n${architectureDirective}\n${dateDirective}\n${modeInstructions[requestMode]||modeInstructions.chat}`;
+  const p={mode:requestMode,tone:fullSystemContext,searchEnabled:S.search!==false,researchRequired,lang:S.lang,memory:S.mem,messages:historyMsgs,currentDate:today.iso,currentWeekday:today.weekday,currentTime:today.time,timeZone:today.timezone,researchPolicy:'universal_verify_all_topics',architecture:'groq_brain+universal_research+turkish_culture'};
 
   if(img)p.image=img;img=null;$('#prev').innerHTML='';
   if(!customText){$('#in').value='';fit();}
-  const status=isWebQuery(t)?'Web’de aranıyor...':taskMode==='game'?'Oyun hazırlanıyor...':taskMode==='project'?'Proje oluşturuluyor...':taskMode==='code'?'Kod hazırlanıyor...':'ÖMER AI düşünüyor...';
-  const ai={r:'ai',t:'',load:true,status};c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
+  const status=isWebQuery(t)?'Evrensel Akıllı Araştırma kaynakları kontrol ediyor...':requestMode==='game'?'Oyun hazırlanıyor...':requestMode==='project'?'Proje oluşturuluyor...':requestMode==='code'?'Kod hazırlanıyor...':'ÖMER AI düşünüyor...';
+  const ai={r:'ai',t:'',load:true,status,mode:requestMode};c.msgs.push(ai);busy=true;$('#go').disabled=true;$('#studio-send').disabled=true;render();
   try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
    const d=await r.json();if(!r.ok)throw new Error(d.error||'Sunucu hatası');ai.t=stripLatex(d.text||'');ai.src=normalizeSources(d)}
   catch(e){ai.t='⚠️ '+e.message}
@@ -653,10 +685,27 @@ $('#studio-in').onkeydown=e=>{
 
 document.addEventListener('click',e=>{
  const h=e.target.closest('[data-h]');if(h){if(swd)return;S.cur=+h.dataset.h;const found=cur();if(found)S.mode=found.mode||'chat';save();render();closeSb();return}
- const b=e.target.closest('[data-a]');if(!b)return;const cd=b.closest('.cb').querySelector('code').textContent,a=b.dataset.a;
- if(a==='copy'){navigator.clipboard.writeText(cd);b.textContent=tt('✓ Kopyalandı')}
- if(a==='run'){$('#fr').srcdoc=cd;$('#pv').style.display='flex'}
- if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([cd],{type:'text/html'}));l.download='proje.html';l.click()}});
+ const b=e.target.closest('[data-a]');if(!b)return;
+ const a=b.dataset.a,card=b.closest('.cb'),bubble=b.closest('.m.a');
+ const cd=card?.querySelector('code')?.textContent||'';
+ if(a==='copy'&&cd){navigator.clipboard.writeText(cd).then(()=>{b.textContent=tt('✓ Kopyalandı')}).catch(()=>{b.textContent='Kopyalanamadı'})}
+ if(a==='run'&&cd){$('#fr').srcdoc=cd;$('#pv').style.display='flex'}
+ if(a==='dl'&&cd){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([cd],{type:'text/html'}));l.download=(card.dataset.file||'proje.html').split('/').pop();l.click();setTimeout(()=>URL.revokeObjectURL(l.href),1000)}
+ if(a==='zip'&&bubble){
+   const blocks=[...bubble.querySelectorAll('.cb')];
+   if(!blocks.length)return;
+   if(!window.JSZip){alert('ZIP aracı yüklenemedi. İnternet bağlantısını kontrol edip tekrar dene.');return}
+   const zip=new JSZip(),used=new Set();
+   blocks.forEach((node,i)=>{
+     const extMap={html:'html',htm:'html',css:'css',js:'js',javascript:'js',ts:'ts',typescript:'ts',py:'py',python:'py',json:'json',svg:'svg',xml:'xml',md:'md',sql:'sql'};
+     let name=(node.dataset.file||'').trim()||`dosya-${i+1}.${extMap[(node.dataset.lang||'').toLowerCase()]||'txt'}`;
+     name=name.replace(/^[/\\]+/,'').replace(/\\.\\./g,'').replace(/[<>:"|?*]/g,'_');
+     if(used.has(name))name=`${i+1}-${name}`;used.add(name);
+     zip.file(name,node.querySelector('code')?.textContent||'');
+   });
+   zip.generateAsync({type:'blob'}).then(blob=>{const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='omer-ai-proje.zip';link.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}).catch(()=>alert('ZIP oluşturulamadı.'));
+ }
+});
 
 $('#cl').onclick=()=>{$('#pv').style.display='none';$('#fr').srcdoc=''};
 const closeSb=()=>$('#sb').classList.remove('o');
@@ -716,7 +765,8 @@ $('#mic').onclick=()=>{if(!SR)return dlg('Ses tanıma','Bu tarayıcı sesle yazm
  rec.onend=()=>{rec=null;$('#mic').classList.remove('on')};$('#mic').classList.add('on');rec.start()};
 fetch('/api/health').then(r=>r.json()).then(d=>{if(!d.key){$('#st').innerHTML='<span class="dot off"></span>Anahtar yok';trAll()}}).catch(()=>{$('#st').innerHTML='<span class="dot off"></span>Çevrimdışı';trAll()});
 
-applyFs();applyLang();if(!cur())newChat(true);render();
+applyFs();applyLang();if(!cur())newChat(true);render();updateDateBadge();setInterval(updateDateBadge,30000);
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" referrerpolicy="no-referrer"></script>
 </body>
 </html>
