@@ -24,7 +24,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .brand b{font-size:19px}.brand small{display:block;color:var(--mu);font-size:12px}
 .tag{font-size:11px;background:#2a1b5a;border:1px solid #5b3fc4;border-radius:8px;padding:1px 7px;margin-left:6px;vertical-align:2px}
 #new{display:flex;align-items:center;justify-content:center;width:100%;height:48px;min-height:48px;background:var(--g);border-radius:12px;padding:0 14px;font-weight:700;box-shadow:0 4px 18px #7c3aed55;flex-shrink:0;white-space:nowrap}
-.lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between;flex-shrink:0}\n#sb>.lb:first-of-type,#nav,#studio-box,#cards{display:none!important}
+.lb{font-size:12px;color:var(--mu);letter-spacing:.06em;margin:10px 4px 0;display:flex;justify-content:space-between;flex-shrink:0}
 .nv{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;border:1px solid transparent;text-align:left;width:100%;flex-shrink:0;position:relative;z-index:3}
 .nv:hover{background:#191236}
 .nv.on{background:#241047;border-color:#5b3fc4}
@@ -256,7 +256,7 @@ document.getElementById('wel-logo').innerHTML = OMER_LOGO_SVG;
   };
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
 
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     const swCode = `
       const CACHE = 'omer-ai-v3';
       self.addEventListener('install', e => { self.skipWaiting(); });
@@ -292,7 +292,6 @@ const STUDIO_META={
 
 let S={chats:[],cur:null,mode:'chat',tone:TONES[0],mem:[],search:true,tts:false,fs:16,lang:'auto'},img=null,busy=false,rec=null;
 try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
-S.mode='chat';
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cur=()=>S.chats.find(c=>c.id===S.cur)||null;
@@ -524,17 +523,18 @@ function renderStudioBox(){
 
 function render(){
   const c=cur(),L=c?c.msgs:[];
-  $('#pill').textContent='Sohbet';
-  $('#in').placeholder=MODES[S.mode][3];
+  const mode=MODES[S.mode]||MODES.chat;
+  $('#pill').textContent=mode[2];
+  $('#in').placeholder=mode[3];
   $('#tn').textContent=S.tone;
   $('#wel').style.display=L.length?'none':'flex';
   $('#msgs').innerHTML=L.map(x=>x.r==='user'?`<div class="m u">${x.img?'<div class="im">🖼️ Görsel eklendi</div>':''}${esc(x.t).replace(/\n/g,'<br>')}</div>`
    :`<div class="m a">${x.load?`<div class="activity"><span>${esc(x.status || 'ÖMER AI hazırlanıyor...')}</span><span class="dots"><i></i><i></i><i></i></span></div>`:(renderSrc(x.src)+md(x.src?.length ? stripAnswerLinks(x.t) : x.t))}</div>`).join('');
-  $('#nav').innerHTML='';
-  $('#cards').innerHTML='';
+  $('#nav').innerHTML=Object.entries(MODES).map(([key,m])=>`<button type="button" class="nv ${S.mode===key?'on':''}" data-m="${key}"><span class="i">${m[0]}</span><span>${m[1]}</span></button>`).join('');
+  $('#cards').innerHTML=Object.entries(MODES).map(([key,m])=>`<button type="button" class="cd" data-m="${key}"><h3><i>${m[0]}</i>${m[4]}</h3><p>${m[5]}</p></button>`).join('');
   $('#cnt').textContent=S.chats.length;
   $('#hist').innerHTML=S.chats.map(h=>`<button type="button" class="hi ${h.id===S.cur?'on':''}" data-h="${h.id}">💬 ${esc(h.title)}</button>`).join('');
-  $('#studio-box').classList.remove('on');
+  renderStudioBox();
   $('#chat').scrollTop=1e9;
   trAll();
 }
@@ -553,11 +553,13 @@ function isWebQuery(text){
 }
 async function sendWithText(customText){
   const t = typeof customText === 'string' ? customText.trim() : $('#in').value.trim();
+  const taskMode = detectTaskMode(t);
+  const requestMode = S.mode === 'chat' && taskMode !== 'game' ? taskMode : S.mode;
   if((!t&&!img)||busy)return;
   let c=cur();
   if(!c) c=newChat(true);
   if(/^(hatırla|remember)[:,\s]/i.test(t))S.mem=[...S.mem,t.replace(/^(hatırla|remember)[:,\s]*/i,'')].slice(-30);
-  c.mode='chat';
+  c.mode=requestMode;
   if(!c.msgs.length)c.title=(t||tt('Görsel analizi')).slice(0,30);
   c.msgs.push({r:'user',t:t||tt('Bu görseli detaylıca analiz et.'),img:!!img});
 
@@ -565,13 +567,13 @@ async function sendWithText(customText){
   const historyMsgs = c.msgs.filter(x=>!x.t.startsWith('⚠️')).slice(-20).map(x=>({role:x.r==='user'?'user':'model',text:x.t}));
   historyMsgs.unshift({role:'user',text:cleanDirective});
 
-  const p={mode:S.mode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
-  if(S.mode==='project'){
+  const p={mode:requestMode,tone:S.tone,searchEnabled:S.search!==false,lang:S.lang,memory:S.mem,messages:historyMsgs};
+  if(requestMode==='project'){
     p.messages.push({
       role:'user',
       text:'PROJECT BUILDER DIRECTIVE: Create a complete, clean, working single-file HTML/CSS/JS project that can be run immediately in the browser preview. Include clear UI, responsive layout, interactive functionality, and zero raw LaTeX or # or * or ? symbols in your explanation.'
     });
-  } else if(taskMode==='code'){
+  } else if(requestMode==='code'){
     p.messages.push({
       role:'user',
       text:'CODING STUDIO DIRECTIVE: Provide clean, well-structured, runnable code with clear step-by-step notes. Never output raw LaTeX commands or # or * or ? characters in explanations.'
